@@ -1,0 +1,10 @@
+[24-Jun-2025 16:51:30 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'token_exp_user' in 'field list' in C:\xampp\htdocs\chatcenter\api\models\put.model.php:53
+Stack trace:
+#0 C:\xampp\htdocs\chatcenter\api\models\put.model.php(53): PDOStatement->execute()
+#1 C:\xampp\htdocs\chatcenter\api\controllers\post.controller.php(138): PutModel::putData('users', Array, '1', 'id_user')
+#2 C:\xampp\htdocs\chatcenter\api\routes\services\post.php(57): PostController::postLogin('users', Array, 'user')
+#3 C:\xampp\htdocs\chatcenter\api\routes\routes.php(87): include('C:\\xampp\\htdocs...')
+#4 C:\xampp\htdocs\chatcenter\api\controllers\routes.controller.php(13): include('C:\\xampp\\htdocs...')
+#5 C:\xampp\htdocs\chatcenter\api\index.php(29): RoutesController->index()
+#6 {main}
+  thrown in C:\xampp\htdocs\chatcenter\api\models\put.model.php on line 53
