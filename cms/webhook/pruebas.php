@@ -22,7 +22,7 @@ require_once "../controllers/bots.controller.php";
 Simulación del contenido JSON
 =============================================*/
 
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"963763899281770","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556473933","phone_number_id":"609724448890981"},"contacts":[{"profile":{"name":"Tutoriales a tu Alcance"},"wa_id":"573022258002"}],"messages":[{"from":"573022258002","id":"wamid.HBgMNTczMDIyMjU4MDAyFQIAEhgUM0EyMjg4MTNGNzQxNDUwNjlCNjkA","timestamp":"1744913375","text":{"body":"Buenas tardes"},"type":"text"}]},"field":"messages"}]}]}';
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgUM0ZFQTExNjUzMTJGQ0I0ODExMjAA","timestamp":"1753136348","text":{"body":"Hello there"},"type":"text"}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo
@@ -57,7 +57,7 @@ if(isset($data->entry[0]->changes[0]->value->messages)){
 if(isset($data->entry[0]->changes[0]->value->statuses)){
 
 	$type_message = "business";
-	
+
 }
 
 echo '<pre>$type_message '; print_r($type_message); echo '</pre>';
@@ -76,7 +76,7 @@ if($getApiWS->status == 200){
 
 	$getApiWS = $getApiWS->results[0];
 	$id_whatsapp_message = $getApiWS->id_whatsapp;
-	
+
 }
 
 echo '<pre>$id_whatsapp_message '; print_r($id_whatsapp_message); echo '</pre>';
@@ -94,9 +94,9 @@ if($type_message == "client"){
 	=============================================*/
 
 	if(isset($data->entry[0]->changes[0]->value->messages[0]->text)){
-		
+
 		$client_message = $data->entry[0]->changes[0]->value->messages[0]->text->body;
-		
+
 		$type_conversation = "text";
 	}
 
@@ -109,14 +109,14 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->image->caption)){
 
 			$caption = $data->entry[0]->changes[0]->value->messages[0]->image->caption;
-		
+
 		}else{
 
 			$caption = "";
 		}
 
 		$client_message = '{"type":"image","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->image->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->image->id.'","caption":"'.$caption.'"}';
-		
+
 		$type_conversation = "image";
 	}
 
@@ -129,9 +129,9 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->video->caption)){
 
 			$caption = $data->entry[0]->changes[0]->value->messages[0]->video->caption;
-		
+
 		}else{
-			
+
 			$caption = "";
 		}
 
@@ -147,7 +147,7 @@ if($type_message == "client"){
 	if(isset($data->entry[0]->changes[0]->value->messages[0]->audio)){
 
 		$client_message = '{"type":"audio","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->id.'"}';
-		
+
 		$type_conversation = "audio";
 
 	}
@@ -161,9 +161,9 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->document->caption)){
 
 			$caption = $data->entry[0]->changes[0]->value->messages[0]->document->caption;
-		
+
 		}else{
-			
+
 			$caption = "";
 		}
 
@@ -171,9 +171,9 @@ if($type_message == "client"){
 
 		$type_conversation = "document";
 	}
-	
-	
-	
+
+
+
 	echo '<pre>$client_message '; print_r($client_message); echo '</pre>';
 	echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
 
@@ -184,11 +184,11 @@ if($type_message == "client"){
 	$url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
 
 	$getMessages = CurlController::request($url,$method,$fields);
-	
+
 	if($getMessages->status == 200){
 
 		$order_message = $getMessages->results[0]->order_message + 1;
-	
+
 	}
 
 	/*=============================================
@@ -216,20 +216,8 @@ if($type_message == "client"){
 
 		$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation);
 		echo '<pre>$responseClients '; print_r($responseClients); echo '</pre>';
-		
+
 	}
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
