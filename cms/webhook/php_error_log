@@ -1,5 +1,0 @@
-[22-Jul-2025 03:48:09 Europe/Berlin] PHP Warning:  Undefined property: stdClass::$ai_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\clients.controller.php on line 33
-[22-Jul-2025 03:48:09 Europe/Berlin] PHP Warning:  Undefined property: stdClass::$ai_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\clients.controller.php on line 60
-[22-Jul-2025 03:48:09 Europe/Berlin] PHP Warning:  Undefined property: stdClass::$id_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 63
-[22-Jul-2025 03:48:09 Europe/Berlin] PHP Warning:  Undefined property: stdClass::$id_number_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\curl.controller.php on line 81
-[22-Jul-2025 03:48:09 Europe/Berlin] PHP Warning:  Undefined property: stdClass::$token_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\curl.controller.php on line 91
