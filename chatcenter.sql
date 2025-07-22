@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 22, 2025 at 07:33 PM
+-- Generation Time: Jul 22, 2025 at 10:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -199,7 +199,8 @@ CREATE TABLE `files` (
 
 INSERT INTO `files` (`id_file`, `id_folder_file`, `name_file`, `extension_file`, `type_file`, `size_file`, `link_file`, `thumbnail_vimeo_file`, `id_mailchimp_file`, `date_created_file`, `date_updated_file`) VALUES
 (1, 1, 'Captura', 'JPG', 'image/jpeg', 115477, 'http://cms-chatcenter.com/views/assets/files/685af23da4ff117.JPG', NULL, NULL, '2025-06-24', '2025-06-24 18:45:17'),
-(2, 1, 'Snow', 'PNG', 'image/png', 1654733, 'http://cms-chatcenter.com/views/assets/files/685afb5e89e3b14.PNG', NULL, NULL, '2025-06-24', '2025-06-24 19:24:14');
+(2, 1, 'Snow', 'PNG', 'image/png', 1654733, 'http://cms-chatcenter.com/views/assets/files/685afb5e89e3b14.PNG', NULL, NULL, '2025-06-24', '2025-06-24 19:24:14'),
+(3, 1, '6812890bcf30915', 'png', 'image/png', 544340, 'http://cms-chatcenter.com/views/assets/files/687fe56ad61c926.png', NULL, NULL, '2025-07-22', '2025-07-22 19:24:26');
 
 -- --------------------------------------------------------
 
@@ -224,7 +225,7 @@ CREATE TABLE `folders` (
 --
 
 INSERT INTO `folders` (`id_folder`, `name_folder`, `size_folder`, `total_folder`, `max_upload_folder`, `url_folder`, `keys_folder`, `date_created_folder`, `date_updated_folder`) VALUES
-(1, 'Server', '200000000000', 1770210, '500000000', 'http://cms-chatcenter.com', NULL, '2025-06-24', '2025-06-24 19:24:14');
+(1, 'Server', '200000000000', 2314550, '500000000', 'http://cms-chatcenter.com', NULL, '2025-06-24', '2025-07-22 19:24:26');
 
 -- --------------------------------------------------------
 
@@ -313,7 +314,7 @@ CREATE TABLE `pages` (
 --
 
 INSERT INTO `pages` (`id_page`, `title_page`, `url_page`, `icon_page`, `type_page`, `order_page`, `date_created_page`, `date_updated_page`) VALUES
-(1, 'Inicio', 'inicio', 'bi bi-house-door-fill', 'modules', 1, '2025-06-24', '2025-06-24 18:05:47'),
+(1, 'Chat', 'chat', 'bi bi-chat-dots-fill', 'custom', 1, '2025-06-24', '2025-07-22 19:16:42'),
 (2, 'Admins', 'admins', 'bi bi-person-fill-gear', 'modules', 2, '2025-06-24', '2025-06-24 18:05:47'),
 (3, 'Archivos', 'archivos', 'bi bi-file-earmark-image', 'custom', 3, '2025-06-24', '2025-06-24 18:05:47'),
 (6, 'API-WS', 'api-ws', 'bi bi-whatsapp', 'modules', 1000, '2025-07-22', '2025-07-22 14:20:15'),
@@ -442,7 +443,7 @@ ALTER TABLE `contacts`
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id_file` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_file` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `folders`
@@ -466,7 +467,7 @@ ALTER TABLE `modules`
 -- AUTO_INCREMENT for table `pages`
 --
 ALTER TABLE `pages`
-  MODIFY `id_page` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_page` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `whatsapps`
