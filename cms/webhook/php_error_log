@@ -1,5 +1,0 @@
-[20-Jul-2025 00:00:28 Europe/Berlin] PHP Warning:  require_once(../controllers/clients.controller.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\chatcenter\cms\webhook\index.php on line 18
-[20-Jul-2025 00:00:28 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../controllers/clients.controller.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\chatcenter\cms\webhook\index.php:18
-Stack trace:
-#0 {main}
-  thrown in C:\xampp\htdocs\chatcenter\cms\webhook\index.php on line 18
