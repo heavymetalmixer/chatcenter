@@ -21,6 +21,9 @@ SET time_zone = "+00:00";
 -- Database: `chatcenter`
 --
 
+CREATE DATABASE IF NOT EXISTS chatcenter;
+USE chatcenter;
+
 -- --------------------------------------------------------
 
 --
