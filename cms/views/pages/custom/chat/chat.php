@@ -21,7 +21,14 @@ if ($getContacts->status == 200) {
     Traemos la conversación más reciente
     ===========================================================*/
 
-    $url = "messages?linkTo=phone_message&equalTo=" . $contacts[0]->phone_contact . "&orderBy=id_message&orderMode=DESC&startAt=0&endAt=" . $limit_message;
+    if (isset($_GET["phone"])) {
+        $url = "messages?linkTo=phone_message&equalTo=" . explode("_", $_GET["phone"])[0] . "&orderBy=id_message&orderMode=DESC&startAt=0&endAt=" . $limit_message;
+    }
+    else {
+        $url = "messages?linkTo=phone_message&equalTo=" . $contacts[0]->phone_contact . "&orderBy=id_message&orderMode=DESC&startAt=0&endAt=" . $limit_message;
+    }
+
+
     $getMessages = CurlController::request($url, $method, $fields);
     // echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
 

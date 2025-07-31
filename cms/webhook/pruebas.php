@@ -26,7 +26,7 @@ date_default_timezone_set("America/Bogota");
 Simulación del contenido JSON
 =============================================*/
 
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgUM0Y0MTNEMzQ3OTkxNDAyODgxQTgA","timestamp":"1753148885","text":{"body":"Holaaaaaaaaaaaaa"},"type":"text"}]},"field":"messages"}]}]}';
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"statuses":[{"id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAERgSMDhDM0Q0RTU2RTVFODMwRThFAA==","status":"sent","timestamp":"1753741188","recipient_id":"573014115327","conversation":{"id":"0604b09a4836684f395ac528ef1239e1","expiration_timestamp":"1753741188","origin":{"type":"service"}},"pricing":{"billable":false,"pricing_model":"PMP","category":"service","type":"free_customer_service"}}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo
@@ -54,17 +54,12 @@ Tipo de mensajes
 =============================================*/
 
 if(isset($data->entry[0]->changes[0]->value->messages)){
-
 	$type_message = "client";
-
 }
 
 if(isset($data->entry[0]->changes[0]->value->statuses)){
-
 	$type_message = "business";
 	$status_message = $data->entry[0]->changes[0]->value->statuses[0]->status;
-
-
 }
 
 // echo '<pre>$status_message '; print_r($status_message); echo '</pre>';

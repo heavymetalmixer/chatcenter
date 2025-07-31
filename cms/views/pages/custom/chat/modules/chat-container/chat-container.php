@@ -10,7 +10,7 @@
           id="customCheck"
           name="example1"
 
-          <?php if ($contacts[0]->ai_contact == 1): ?> checked
+          <?php if (isset($_GET["phone"]) && explode("_", $_GET["phone"])[1] == 1 || $contacts[0]->ai_contact == 1): ?> checked
           <?php endif ?>
 
           style="width:18px !important; height:18px !important">
@@ -19,9 +19,15 @@
 
       </div>
       <div class="text-center">
-        +<?php echo mb_substr($contacts[0]->phone_contact, 0, 2); ?>
-        <?php echo mb_substr($contacts[0]->phone_contact, 2, 3); ?>
-        <?php echo mb_substr($contacts[0]->phone_contact, 5, 7); ?>
+        <?php if (isset($_GET["phone"])): $phoneContact = explode("_", $_GET["phone"])[0]; ?>
+
+        <?php else: $phoneContact = $contacts[0]->phone_contact; ?>
+
+        <?php endif ?>
+
+        +<?php echo mb_substr($phoneContact, 0, 2); ?>
+         <?php echo mb_substr($phoneContact, 2, 3); ?>
+         <?php echo mb_substr($phoneContact, 5, 7); ?>
       </div>
       <div>
         <button type="button" class="btn btn-sm text-white rounded m-0 px-1 py-0 border-0"><i class="bi bi-pencil-square"></i></button>
@@ -36,6 +42,14 @@
 
     <?php if (!empty($messages)): $messages =array_reverse($messages) ?>
 
+      <input type="hidden" id="phoneMessage" value="<?php echo $phoneContact ?>">
+      <input type="hidden" id="orderMessage" value="<?php echo end($messages)->order_message ?>">
+
+
+      <!--=============================================
+			Fecha de los mensajes
+			==============================================-->
+
       <div class="d-flex justify-content-center text-center">
         <span class="badge border bg-success rounded py-2 px-2">
 
@@ -47,6 +61,11 @@
 
         </span>
       </div>
+
+      <!--=============================================
+			Separar conversación del cliente con el negocio
+			==============================================-->
+
 
       <?php foreach ($messages as $key => $value): ?>
 
@@ -63,6 +82,11 @@
     <?php endif ?>
 
   </div>
+
+
+  <!--=============================================
+  Formulario para enviar mensajes manuales
+  ==============================================-->
 
   <div class="chat-footer position-relative w-100">
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 define('DIR', __DIR__);
 
@@ -22,6 +22,14 @@ class ChatAjax{
 
 	public function ajaxLastMessage(){
 
+		// Por alguna razón usar echo dentro de esta clase causa errores en el JSON resultante que chat.js lee
+
+		// echo '<pre>$this->phoneMessage'; print_r($this->phoneMessage); echo '</pre>';
+		// echo '<pre>$this->orderMessage'; print_r($this->orderMessage); echo '</pre>';
+
+		// echo $this->phoneMessage;
+		// echo $this->orderMessage;
+
 		/*=============================================
 		Revisar si hay nuevas respuestas
 		=============================================*/
@@ -31,7 +39,7 @@ class ChatAjax{
 		$fields = array();
 
 		$getMessages = CurlController::request($url,$method,$fields);
-		
+
 		if($getMessages->status == 200){
 
 			if($getMessages->total > 1){
@@ -46,7 +54,7 @@ class ChatAjax{
 					$message = '<div class="msg user">
 									'.$getMessages->results[1]->client_message.'<br>
 									<span class="small text-muted float-end mt-2">
-										'.TemplateController::formatDate(6,$getMessages->results[1]->date_updated_message).'	
+										'.TemplateController::formatDate(6,$getMessages->results[1]->date_updated_message).'
 									</span>
 								</div>';
 
@@ -69,7 +77,7 @@ class ChatAjax{
 					$message = '<div class="msg bot">
 									'.$getMessages->results[1]->business_message.'<br>
 									<span class="small text-muted float-end mt-2">
-										'.TemplateController::formatDate(6,$getMessages->results[1]->date_updated_message).'	
+										'.TemplateController::formatDate(6,$getMessages->results[1]->date_updated_message).'
 									</span>
 								</div>';
 
@@ -80,7 +88,6 @@ class ChatAjax{
 					);
 
 					echo json_encode($response);
-
 
 				}
 			}
@@ -97,6 +104,10 @@ class ChatAjax{
 	public $token;
 
 	public function ajaxSendMessage(){
+
+		// echo '<pre>$this->conversation '; print_r($this->conversation); echo '</pre>';
+		// echo '<pre>$this->phone '; print_r($this->phone); echo '</pre>';
+		// echo '<pre>$this->token '; print_r($this->token); echo '</pre>';
 
 		/*=============================================
 		JSON para enviar a WS
@@ -122,20 +133,20 @@ class ChatAjax{
 
 		$url = "messages?linkTo=phone_message&equalTo=".$this->phone."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
 		$method = "GET";
-		$fields = array(); 
+		$fields = array();
 
 		$getMessages = CurlController::request($url,$method,$fields);
-		
+
 		if($getMessages->status == 200){
 
 			$order_message = $getMessages->results[0]->order_message + 1;
-		
+
 		}
 
 		/*=============================================
 		Capturar API WS activa
 		=============================================*/
-		
+
 		$url = "whatsapps?linkTo=status_whatsapp&equalTo=1&orderBy=id_whatsapp&orderMode=DESC&startAt=0&endAt=1";
 
 		$getApiWS = CurlController::request($url,$method,$fields);
@@ -172,7 +183,7 @@ class ChatAjax{
 
       		$apiWS = CurlController::apiWS($getApiWS,$json);
       		echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
-		
+
 		}
 
 	}
@@ -262,12 +273,12 @@ class ChatAjax{
                 	if($key == 0){
 
                 		$textSuccess = "text-success";
-                	
+
                 	}else{
 
                 		$textSuccess = "";
                 	}
-                    
+
                 }
 
             /*=============================================
@@ -279,7 +290,7 @@ class ChatAjax{
               $date_updated_message = $value->date_updated_contact;
               $textMessage = "";
               $bellNotification = "";
-            
+
             }
 
 
@@ -287,14 +298,14 @@ class ChatAjax{
 
 		  			if($this->borderChat != "" && $this->borderChat == $value->phone_contact){
 
-		  				$chats .= '<div class="contact-item pb-0" style="border:1px solid #090">';	
-		  			
+		  				$chats .= '<div class="contact-item pb-0" style="border:1px solid #090">';
+
 		  			}else{
 
-		  				$chats .= '<div class="contact-item pb-0">';	
+		  				$chats .= '<div class="contact-item pb-0">';
 		  			}
 
-	
+
 			        $chats .= '<div class="d-flex justify-content-between pb-0">
 
 			              <div>
@@ -308,7 +319,7 @@ class ChatAjax{
 			                $chats .= '<strong>
 			                    +'.mb_substr($value->phone_contact,0,2).'
 			                      '.mb_substr($value->phone_contact,2,3).'
-			                      '.mb_substr($value->phone_contact,5,7).' 
+			                      '.mb_substr($value->phone_contact,5,7).'
 			                  </strong>
 			                </span>
 			              </div>
@@ -316,33 +327,33 @@ class ChatAjax{
 			              <div>';
 
 			            if (date("Y-m-d") == TemplateController::formatDate(8,$date_updated_message)){
-			                    
+
 			                $chats .= '<span class="small">'.TemplateController::formatDate(6,$date_updated_message).'</span>';
 
 			            }else{
 
 			                $chats .= '<span class="small">'.TemplateController::formatDate(5,$date_updated_message).'</span>';
 			            }
-			      
+
 			             $chats .= '</div>
 
 			            </div>
 
 			            <div class="d-flex justify-content-between pb-0">
-			              
+
 			              <div>
-			   
+
 			                <p class="small">'.$textMessage.'</p>
-			                 
+
 			              </div>
 
 			              <div class="custom-control custom-checkbox">
-			                <input 
-			                type="checkbox" 
-			                class="custom-control-input mt-2 form-check-input" 
-			                id="customCheck" 
+			                <input
+			                type="checkbox"
+			                class="custom-control-input mt-2 form-check-input"
+			                id="customCheck"
 			                name="example1"';
-			               
+
 			               if ($value->ai_contact == 1){
 
 			               	$chats .= 'checked';
@@ -354,7 +365,7 @@ class ChatAjax{
 			                <label class="custom-control-label mb-1" for="customCheck">
 			                  <i class="fas fa-robot text-success"></i>
 			                </label>
-			                
+
 			              </div>
 
 			            </div>
@@ -373,7 +384,7 @@ class ChatAjax{
 		    }
 
 		}
-		
+
 
 		// echo '<pre>$lastIdMessage '; print_r($this->lastIdMessage); echo '</pre>';
 		// echo '<pre>$phone '; print_r($this->phone); echo '</pre>';
@@ -422,3 +433,5 @@ if(isset($_POST["lastIdMessage"])){
 	$ajax -> borderChat = $_POST["borderChat"];
 	$ajax -> ajaxLastChat();
 }
+
+?>

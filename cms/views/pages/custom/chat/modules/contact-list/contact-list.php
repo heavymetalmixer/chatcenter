@@ -5,58 +5,105 @@
   <?php if (!empty($contacts)): ?>
 
     <?php foreach ($contacts as $key => $value): ?>
-      <div class="contact-item pb-0">
+      <a href="/chat?phone=<?php echo $value->phone_contact ?>_<?php echo $value->ai_contact ?>_<?php echo
+        $value->id_contact ?>" class="text-dark" onclick="alertClick('Cargando conversación...')">
 
-        <div class="d-flex justify-content-between pb-0">
-          <div>
-            <span class="small">
-              <strong>
-                +<?php echo mb_substr($value->phone_contact, 0, 2); ?>
-                 <?php echo mb_substr($value->phone_contact, 2, 3); ?>
-                 <?php echo mb_substr($value->phone_contact, 5, 7); ?>
-              </strong>
-            </span>
-          </div>
-          <div>
+        <div class="contact-item pb-0">
 
-            <?php if (!empty($messages)): ?>
-              <?php if (date("Y-m-d") == TemplateController::formatDate(8, end($messages)->date_updated_message)): ?>
-                <span class="small"><?php echo TemplateController::formatDate(6, end($messages)->date_updated_message); ?></span>
+          <div class="d-flex justify-content-between pb-0">
+            <div>
+              <span class="small">
+                <strong>
+                  +<?php echo mb_substr($value->phone_contact, 0, 2); ?>
+                  <?php echo mb_substr($value->phone_contact, 2, 3); ?>
+                  <?php echo mb_substr($value->phone_contact, 5, 7); ?>
+                </strong>
+              </span>
+            </div>
+
+
+            <!--===========================================================
+            Fecha u hora del mensaje
+            ============================================================-->
+
+            <div>
+
+              <!--===========================================================
+              Mensaje más reciente
+              ============================================================-->
+
+              <?php if (!empty($messages) && end($messages)->phone_message == $value->phone_contact): $date_updated_message = end($messages)->date_updated_message ?>
+                <?php if (end($messages)->type_message == "business"): $textMessage = "..." ?>
+
+                <?php else: $textMessage = mb_substr(end($messages)->client_message, 0, 17) . "..." ?>
+                <?php endif ?>
+
+              <!--===========================================================
+              Resto de mensajes
+              ============================================================-->
+
               <?php else: ?>
-                <span class="small"><?php echo TemplateController::formatDate(5, end($messages)->date_updated_message); ?></span>
+
+              <?php
+
+              $url = "messages?linkTo=phone_message&equalTo=" . $value->phone_contact . "&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC&select=date_updated_message,type_message,client_message";
+
+              $lastMessage = CurlController::request($url, $method, $fields);
+
+              if ($lastMessage->status == 200) {
+                $date_updated_message = $lastMessage->results[0]->date_updated_message;
+
+                if ($lastMessage->results[0]->type_message == "business") {
+                  $textMessage = "...";
+                }
+                else {
+                  $textMessage = mb_substr($lastMessage->results[0]->client_message, 0, 17) . "...";
+                }
+              }
+              else {
+                $date_updated_message = $value->date_updated_contact;
+                $textMessage = "";
+              }
+
+              ?>
+
               <?php endif ?>
-            <?php endif ?>
 
-          </div>
-        </div>
+              <?php if (date("Y-m-d") == TemplateController::formatDate(8, $date_updated_message)): ?>
+                <span class="small"><?php echo TemplateController::formatDate(6, $date_updated_message); ?></span>
 
-        <div class="d-flex justify-content-between pb-0">
-          <div>
-            <?php if (!empty($messages)): ?>
-              <?php if (end($messages)->type_message == "business"): ?>
-                <p class="small">...</p>
               <?php else: ?>
-                <p class="small"><?php echo mb_substr(end($messages)->client_message, 0, 17) . "..."; ?></p>
+                <span class="small"><?php echo TemplateController::formatDate(5, $date_updated_message); ?></span>
+
               <?php endif ?>
-            <?php endif ?>
+
+
+
+            </div>
           </div>
 
-          <div class="custom-control custom-checkbox">
-            <input
-            type="checkbox"
-            class="custom-control-input mt-2 form-check-input"
-            id="customCheck"
-            name="example1"
+          <div class="d-flex justify-content-between pb-0">
+            <div>
+              <p class="small"><?php echo $textMessage; ?></p>
+            </div>
 
-            <?php if ($value->ai_contact == 1): ?> checked
-            <?php endif ?>
+            <div class="custom-control custom-checkbox">
+              <input
+              type="checkbox"
+              class="custom-control-input mt-2 form-check-input"
+              id="customCheck"
+              name="example1"
 
-            style="width:18px !important; height:18px !important">
-            <label class="custom-control-label mb-1" for="customCheck"><i class="fas fa-robot text-success"></i></label>
+              <?php if ($value->ai_contact == 1): ?> checked
+              <?php endif ?>
+
+              style="width:18px !important; height:18px !important">
+              <label class="custom-control-label mb-1" for="customCheck"><i class="fas fa-robot text-success"></i></label>
+            </div>
           </div>
+
         </div>
-
-      </div>
+      </a>
     <?php endforeach ?>
 
   <?php endif ?>

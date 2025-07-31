@@ -13,7 +13,7 @@ function scrollMoveToEnd(){
 			$("html, body, #chatBody").animate({
 
 				scrollTop: $("#chatBody")[0].scrollHeight
-			
+
 			},500);
 
 		}
@@ -33,9 +33,9 @@ Revisar si hay mensajes nuevos en el chat
 var interval = setInterval(function(){
 
 	var phoneMessage = $("#phoneMessage").val();
-	// console.log("phoneMessage", phoneMessage);
+	console.log("phoneMessage", phoneMessage);
 	var orderMessage = $("#orderMessage").val();
-	// console.log("orderMessage", orderMessage);
+	console.log("orderMessage", orderMessage);
 
 	if(phoneMessage != undefined && orderMessage != undefined){
 
@@ -69,15 +69,17 @@ function intervalMessage(phoneMessage,orderMessage){
 		cache: false,
         processData: false,
         success: function (response){
-        	
-        	// console.log("response", response);
-        	
+
+        	console.log("response", response);
+
         	if(response != ""){
-        		
+
         		// console.log("response", response);
 
         		var response = JSON.parse("["+response+"]");
-        		
+
+				// console.log("response", response);
+
         		$("#chatBody").append(decodeURIComponent(escape(atob(response[0].message))));
         		$("#orderMessage").val(response[0].lastOrder);
 
@@ -151,8 +153,8 @@ function sendMessage(conversation){
 		cache: false,
         processData: false,
         success: function (response){
-        	
-        	// console.log("response", response);
+
+        	console.log("response", response);
         }
 
     })
@@ -178,11 +180,11 @@ function intervalChat(){
 		cache: false,
         processData: false,
         success: function (response){
-        	
+
         	if(response != ""){
 
         		$("#lastIdMessage").html('');
-        		
+
         		// console.log("response", response);
 
         		var response = JSON.parse("["+response.slice(0,-1)+"]");
@@ -203,7 +205,7 @@ function intervalChat(){
         			$("#lastIdMessage").append(decodeURIComponent(escape(atob(e.chats))));
 
         		})
-        		
+
         	}
         }
 
