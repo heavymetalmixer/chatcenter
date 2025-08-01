@@ -96,8 +96,6 @@ Class ClientsController{
 
             $updateContact = CurlController::request($url,$method,$fields);
 
-
-
         }
 	}
 

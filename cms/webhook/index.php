@@ -14,7 +14,7 @@ ini_set("error_log", DIR."/php_error_log");
 Controladores
 =============================================*/
 
-require_once "../controllers/curl.controller.php"; 
+require_once "../controllers/curl.controller.php";
 require_once "../controllers/clients.controller.php";
 require_once "../controllers/bots.controller.php";
 
@@ -31,7 +31,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["hub_verify_token"])){
 		echo $_GET["hub_challenge"];
 
 		exit;
-	
+
 	}else{
 
 		echo "Token inválido";
@@ -51,10 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	/*=============================================
     // Obtén el contenido JSON
     =============================================*/
-   
+
     $input = file_get_contents('php://input');
 
-    file_put_contents("webhook_log.txt", $input."\n\n", FILE_APPEND); 
+    file_put_contents("webhook_log.txt", $input."\n\n", FILE_APPEND);
 
   	/*=============================================
 	Convierte el JSON a array asociativo
@@ -91,8 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		$type_message = "business";
 		$status_message = $data->entry[0]->changes[0]->value->statuses[0]->status;
-		
-		
+
+
 	}
 
 	// echo '<pre>$status_message '; print_r($status_message); echo '</pre>';
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		$getApiWS = $getApiWS->results[0];
 		$id_whatsapp_message = $getApiWS->id_whatsapp;
-		
+
 	}
 
 	echo '<pre>$id_whatsapp_message '; print_r($id_whatsapp_message); echo '</pre>';
@@ -132,9 +132,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		=============================================*/
 
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->text)){
-			
+
 			$client_message = $data->entry[0]->changes[0]->value->messages[0]->text->body;
-			
+
 			$type_conversation = "text";
 		}
 
@@ -147,14 +147,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if(isset($data->entry[0]->changes[0]->value->messages[0]->image->caption)){
 
 				$caption = $data->entry[0]->changes[0]->value->messages[0]->image->caption;
-			
+
 			}else{
 
 				$caption = "";
 			}
 
 			$client_message = '{"type":"image","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->image->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->image->id.'","caption":"'.$caption.'"}';
-			
+
 			$type_conversation = "image";
 		}
 
@@ -167,9 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if(isset($data->entry[0]->changes[0]->value->messages[0]->video->caption)){
 
 				$caption = $data->entry[0]->changes[0]->value->messages[0]->video->caption;
-			
+
 			}else{
-				
+
 				$caption = "";
 			}
 
@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->audio)){
 
 			$client_message = '{"type":"audio","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->id.'"}';
-			
+
 			$type_conversation = "audio";
 
 		}
@@ -199,9 +199,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if(isset($data->entry[0]->changes[0]->value->messages[0]->document->caption)){
 
 				$caption = $data->entry[0]->changes[0]->value->messages[0]->document->caption;
-			
+
 			}else{
-				
+
 				$caption = "";
 			}
 
@@ -209,9 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			$type_conversation = "document";
 		}
-		
-		
-		
+
+
+
 		echo '<pre>$client_message '; print_r($client_message); echo '</pre>';
 		echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
 
@@ -222,11 +222,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
 
 		$getMessages = CurlController::request($url,$method,$fields);
-		
+
 		if($getMessages->status == 200){
 
 			$order_message = $getMessages->results[0]->order_message + 1;
-		
+
 		}
 
 		/*=============================================
@@ -254,9 +254,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation);
 			echo '<pre>$responseClients '; print_r($responseClients); echo '</pre>';
-			
+
 		}
-		
+
 	}
 
 	/*=============================================
@@ -301,7 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if($getMessage->status == 200){
 
 			$getMessage = $getMessage->results[0];
-			
+
 			/*=============================================
 			Actualizar última respuesta del negocio
 			=============================================*/
