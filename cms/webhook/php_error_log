@@ -1,1 +1,12 @@
-[04-Aug-2025 19:42:05 America/Bogota] PHP Warning:  Undefined variable $template_message in C:\xampp\htdocs\chatcenter\cms\webhook\index.php on line 234
+[05-Aug-2025 11:11:29 America/Bogota] PHP Warning:  Undefined variable $business_message in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 411
+[05-Aug-2025 11:11:29 America/Bogota] PHP Warning:  Undefined variable $template_message in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 414
+[05-Aug-2025 11:11:29 America/Bogota] PHP Warning:  Undefined variable $json in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 426
+[05-Aug-2025 11:11:30 America/Bogota] PHP Warning:  Undefined property: stdClass::$url in C:\xampp\htdocs\chatcenter\cms\controllers\curl.controller.php on line 135
+[05-Aug-2025 14:43:41 America/Bogota] PHP Warning:  Undefined variable $business_message in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 411
+[05-Aug-2025 14:43:41 America/Bogota] PHP Warning:  Undefined variable $template_message in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 414
+[05-Aug-2025 14:43:41 America/Bogota] PHP Warning:  Undefined variable $json in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 426
+[05-Aug-2025 14:43:42 America/Bogota] PHP Warning:  Undefined property: stdClass::$url in C:\xampp\htdocs\chatcenter\cms\controllers\curl.controller.php on line 135
+[05-Aug-2025 14:51:49 America/Bogota] PHP Warning:  Undefined variable $business_message in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 411
+[05-Aug-2025 14:51:49 America/Bogota] PHP Warning:  Undefined variable $template_message in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 414
+[05-Aug-2025 14:51:49 America/Bogota] PHP Warning:  Undefined variable $json in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 426
+[05-Aug-2025 14:51:50 America/Bogota] PHP Warning:  Undefined property: stdClass::$url in C:\xampp\htdocs\chatcenter\cms\controllers\curl.controller.php on line 135

@@ -1,0 +1,40 @@
+{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "573014115327",
+    "type": "interactive",
+    "interactive": {
+        "type": "button","header": {
+            "type": "image",
+            "image": {
+                "link": "http://res.cloudinary.com/dixojpt7d/image/upload/v1754236646/restaurant_slrzea.jpg"
+            }
+        },
+        "body": {
+            "text": "Bienvenido a *Restaurant*, soy el asistente virtual que te atenderá hoy, estoy muy entusiasmado por servirte. *¿Qué deseas realizar hoy?*"
+        },
+        "footer": {
+            "text": ""
+        },"action": {
+        "buttons": [{
+                "type": "reply",
+                "reply": {
+                    "id": "1",
+                    "title": "Realizar un pedido"
+                }
+            },{
+                "type": "reply",
+                "reply": {
+                    "id": "2",
+                    "title": "Reservar mesa"
+                }
+            },{
+                "type": "reply",
+                "reply": {
+                    "id": "3",
+                    "title": "Servicio al cliente"
+                }
+            }]
+        }
+    }
+}

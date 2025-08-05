@@ -377,7 +377,7 @@ Class BotsController{
 			}
 
 
-			echo '<pre>$json '; print_r($json); echo '</pre>';
+			// echo '<pre>$json '; print_r($json); echo '</pre>';
 
 			// return;
 

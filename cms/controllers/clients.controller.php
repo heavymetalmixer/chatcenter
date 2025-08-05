@@ -1,11 +1,11 @@
-<?php
+<?php 
 
 Class ClientsController{
 
 	static public function responseClients($getApiWS,$phone_message,$order_message,$type_conversation){
 
         $idListMenu = null;
-
+		
 		/*=============================================
 		Orden de la conversación
 		=============================================*/
@@ -37,7 +37,7 @@ Class ClientsController{
             	);
 
             	$createContact = CurlController::request($url,$method,$fields);
-
+            
             }else{
 
             	/*=============================================
@@ -67,9 +67,9 @@ Class ClientsController{
 
             	$responseBots = BotsController::responseBots("welcome",$getApiWS,$phone_message,$order_message,$idListMenu);
             	echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-
+            
             }
-
+		
         }else{
 
             /*=============================================
@@ -82,9 +82,9 @@ Class ClientsController{
 
             $getContact = CurlController::request($url,$method,$fields);
 
-            /*=============================================================
+            /*=============================================
             Actualizamos la fecha de la última conversación con el contacto
-            =============================================================*/
+            =============================================*/
             $url = "contacts?id=".$getContact->results[0]->id_contact."&nameId=id_contact&token=no&except=id_contact";
             $method = "PUT";
             $fields = array(
@@ -99,7 +99,7 @@ Class ClientsController{
             Traer la última conversacion del cliente
             =============================================*/
 
-            $url = "messages?linkTo=type_message,phone_message&equalTo=client," . $phone_message . "&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
+            $url = "messages?linkTo=type_message,phone_message&equalTo=client,".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
             $method = "GET";
             $fields = array();
 
@@ -107,9 +107,8 @@ Class ClientsController{
 
             if($getMessage->status == 200){
 
-                $message = $getMessage->results[0];
-                // echo '<pre>$message '; print_r($message); echo '</pre>';
-
+                $message = $getMessage->results[0];    
+                
                 /*=============================================
                 Si se envió la plantilla "welcome"
                 =============================================*/
@@ -130,7 +129,7 @@ Class ClientsController{
 
                             $responseBots = BotsController::responseBots("menu",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-
+                        
                         }
 
 
@@ -142,7 +141,7 @@ Class ClientsController{
 
                             $responseBots = BotsController::responseBots("reservation",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-
+                        
                         }
 
                         /*=============================================
@@ -153,7 +152,7 @@ Class ClientsController{
 
                             $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-
+                        
                         }
 
                     }else{
@@ -161,7 +160,7 @@ Class ClientsController{
                         $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
                     }
-
+                
                 }
 
                 /*=============================================
@@ -207,7 +206,7 @@ Class ClientsController{
                                 echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
 
                             }
-
+     
                         }
 
                     }else{
@@ -236,7 +235,7 @@ Class ClientsController{
 
                     }else{
 
-                        if($message->client_message == "Menú" ||
+                        if($message->client_message == "Menú" || 
                            $message->client_message == "menú" ||
                            $message->client_message == "Menu" ||
                            $message->client_message == "MENÚ" ||
@@ -304,7 +303,7 @@ Class ClientsController{
                 =============================================*/
 
                 if($message->template_message == '{"type":"bot","title":"confirmation"}'){
-
+                   
                     /*=============================================
                     Si la respuesta es interactiva
                     =============================================*/
@@ -319,7 +318,7 @@ Class ClientsController{
                         }else{
 
                             $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
-                            echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+                            echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>'; 
                         }
 
                     }else{
@@ -341,7 +340,7 @@ Class ClientsController{
                     echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
 
                 }
-
+            
             }
 
         }

@@ -18,6 +18,7 @@ Controladores
 
 require_once "../controllers/curl.controller.php";
 require_once "../controllers/clients.controller.php";
+require_once "../controllers/business.controller.php";
 require_once "../controllers/bots.controller.php";
 
 date_default_timezone_set("America/Bogota");
@@ -26,8 +27,7 @@ date_default_timezone_set("America/Bogota");
 Simulación del contenido JSON
 =============================================*/
 
-// $input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"statuses":[{"id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAERgSMDhDM0Q0RTU2RTVFODMwRThFAA==","status":"sent","timestamp":"1753741188","recipient_id":"573014115327","conversation":{"id":"0604b09a4836684f395ac528ef1239e1","expiration_timestamp":"1753741188","origin":{"type":"service"}},"pricing":{"billable":false,"pricing_model":"PMP","category":"service","type":"free_customer_service"}}]},"field":"messages"}]}]}';
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"context":{"from":"15556588621","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAERgSRkRBMkJDRkEzRDNBN0U2MjBEAA=="},"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhggNDBCOUY1OEJGRUIwNDM1MzQyOEUyODkxQUE3NEQ1RTUA","timestamp":"1754354557","type":"interactive","interactive":{"type":"button_reply","button_reply":{"id":"1","title":"Realizar un pedido"}}}]},"field":"messages"}]}]}';
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"context":{"from":"15556588621","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAERgSQ0FDMTU5NTFFMUY2NDdBQzJGAA=="},"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMDA2NUI3MTU3OERGRjc4OEE2MwA=","timestamp":"1754422980","type":"interactive","interactive":{"type":"list_reply","list_reply":{"id":"1","title":"Entradas","description":"Quiero una deliciosa entrada"}}}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo
@@ -42,25 +42,33 @@ $data = json_decode($input);
 Variables iniciales
 =============================================*/
 
+$id_conversation_message = null;
 $type_message = null;
 $status_message = null;
 $id_whatsapp_message = null;
 $client_message	= null;
 $phone_message	= null;
+$template_message = null;
 $order_message = 0;
 $type_conversation = null;
+$expiration_message = null;
 
 /*=============================================
 Tipo de mensajes
 =============================================*/
 
-if (isset($data->entry[0]->changes[0]->value->messages)) {
-    $type_message = "client";
+if(isset($data->entry[0]->changes[0]->value->messages)){
+
+	$type_message = "client";
+
 }
 
-if (isset($data->entry[0]->changes[0]->value->statuses)) {
-    $type_message = "business";
-    $status_message = $data->entry[0]->changes[0]->value->statuses[0]->status;
+if(isset($data->entry[0]->changes[0]->value->statuses)){
+
+	$type_message = "business";
+	$status_message = $data->entry[0]->changes[0]->value->statuses[0]->status;
+
+
 }
 
 // echo '<pre>$status_message '; print_r($status_message); echo '</pre>';
@@ -78,147 +86,189 @@ $fields = array();
 
 $getApiWS = CurlController::request($url,$method,$fields);
 
-if ($getApiWS->status == 200) {
-    $getApiWS = $getApiWS->results[0];
-    $id_whatsapp_message = $getApiWS->id_whatsapp;
+if($getApiWS->status == 200){
+
+	$getApiWS = $getApiWS->results[0];
+	$id_whatsapp_message = $getApiWS->id_whatsapp;
+
 }
 
-// echo '<pre>$id_whatsapp_message '; print_r($id_whatsapp_message); echo '</pre>';
+echo '<pre>$getApiWS '; print_r($getApiWS); echo '</pre>';
+echo '<pre>$id_whatsapp_message '; print_r($id_whatsapp_message); echo '</pre>';
 
 /*=============================================
 Capturar mensaje del cliente
 =============================================*/
 
-if ($type_message == "client") {
-    $phone_message = $data->entry[0]->changes[0]->value->messages[0]->from;
+if($type_message == "client"){
 
-    /*=============================================
-    Cuando capturamos un texto
-    =============================================*/
+	$phone_message = $data->entry[0]->changes[0]->value->messages[0]->from;
 
-    if (isset($data->entry[0]->changes[0]->value->messages[0]->text)) {
-        $client_message = $data->entry[0]->changes[0]->value->messages[0]->text->body;
+	/*=============================================
+	Cuando capturamos un texto
+	=============================================*/
 
-        $type_conversation = "text";
-    }
+	if(isset($data->entry[0]->changes[0]->value->messages[0]->text)){
 
-    /*=============================================
-    Capturando una imagen
-    =============================================*/
+		$client_message = $data->entry[0]->changes[0]->value->messages[0]->text->body;
 
-    if (isset($data->entry[0]->changes[0]->value->messages[0]->image)) {
-        if (isset($data->entry[0]->changes[0]->value->messages[0]->image->caption)) {
-            $caption = $data->entry[0]->changes[0]->value->messages[0]->image->caption;
-        }
-        else {
-            $caption = "";
-        }
+		$type_conversation = "text";
+	}
 
-        $client_message = '{"type":"image","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->image->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->image->id.'","caption":"'.$caption.'"}';
+	/*=============================================
+	Capturando una imagen
+	=============================================*/
 
-        $type_conversation = "image";
-    }
+	if(isset($data->entry[0]->changes[0]->value->messages[0]->image)){
 
-    /*=============================================
-    Capturando un video
-    =============================================*/
+		if(isset($data->entry[0]->changes[0]->value->messages[0]->image->caption)){
 
-    if (isset($data->entry[0]->changes[0]->value->messages[0]->video)) {
-        if (isset($data->entry[0]->changes[0]->value->messages[0]->video->caption)) {
-            $caption = $data->entry[0]->changes[0]->value->messages[0]->video->caption;
-        }
-        else {
-            $caption = "";
-        }
+			$caption = $data->entry[0]->changes[0]->value->messages[0]->image->caption;
 
-        $client_message = '{"type":"video","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->video->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->video->id.'","caption":"'.$caption.'"}';
+		}else{
 
-        $type_conversation = "video";
-    }
+			$caption = "";
+		}
 
-    /*=============================================
-    Capturando un audio
-    =============================================*/
+		$client_message = '{"type":"image","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->image->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->image->id.'","caption":"'.$caption.'"}';
 
-    if (isset($data->entry[0]->changes[0]->value->messages[0]->audio)) {
-        $client_message = '{"type":"audio","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->id.'"}';
+		$type_conversation = "image";
+	}
 
-        $type_conversation = "audio";
-    }
+	/*=============================================
+	Capturando un video
+	=============================================*/
 
-    /*=============================================
-    Capturando un documento
-    =============================================*/
+	if(isset($data->entry[0]->changes[0]->value->messages[0]->video)){
 
-    if (isset($data->entry[0]->changes[0]->value->messages[0]->document)) {
-        if (isset($data->entry[0]->changes[0]->value->messages[0]->document->caption)) {
-            $caption = $data->entry[0]->changes[0]->value->messages[0]->document->caption;
-        }
-        else {
-            $caption = "";
-        }
+		if(isset($data->entry[0]->changes[0]->value->messages[0]->video->caption)){
 
-        $client_message = '{"type":"document","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->document->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->document->id.'","caption":"'.$caption.'"}';
+			$caption = $data->entry[0]->changes[0]->value->messages[0]->video->caption;
 
-        $type_conversation = "document";
-    }
+		}else{
+
+			$caption = "";
+		}
+
+		$client_message = '{"type":"video","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->video->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->video->id.'","caption":"'.$caption.'"}';
+
+		$type_conversation = "video";
+	}
+
+	/*=============================================
+	Capturando un audio
+	=============================================*/
+
+	if(isset($data->entry[0]->changes[0]->value->messages[0]->audio)){
+
+		$client_message = '{"type":"audio","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->id.'"}';
+
+		$type_conversation = "audio";
+
+	}
+
+	/*=============================================
+	Capturando un documento
+	=============================================*/
+
+	if(isset($data->entry[0]->changes[0]->value->messages[0]->document)){
+
+		if(isset($data->entry[0]->changes[0]->value->messages[0]->document->caption)){
+
+			$caption = $data->entry[0]->changes[0]->value->messages[0]->document->caption;
+
+		}else{
+
+			$caption = "";
+		}
+
+		$client_message = '{"type":"document","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->document->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->document->id.'","caption":"'.$caption.'"}';
+
+		$type_conversation = "document";
+	}
+
+	/*=============================================
+	Capturando respuesta interactiva
+	=============================================*/
+
+	if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive)){
+
+		$type_conversation = "interactive";
+
+		/*=============================================
+		Respuesta interacción de botón
+		=============================================*/
+
+		if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply)){
+
+			$client_message = '{"id":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->id.'","text":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->title.'"}';
+
+		}
+
+		/*=============================================
+		Respuesta interacción de lista
+		=============================================*/
+
+		if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply)){
+
+			$client_message = '{"id":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply->id.'","text":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply->title.'"}';
+
+		}
+	}
 
 
-    // echo '<pre>$client_message '; print_r($client_message); echo '</pre>';
-    // echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
-
-    /*=============================================
-    Capturando una respuesta interactiva
-    =============================================*/
-
-    if (isset($data->entry[0]->changes[0]->value->messages[0]->interactive)) {
-        $type_conversation = "interactive";
-
-        if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply)) {
-            $client_message = '{"id": "' . $data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->id . '", "text": "' . $data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->title . '"}';
-        }
-    }
 
 
-    /*=============================================
-    Llevar el orden de los mensajes
-    =============================================*/
+	echo '<pre>$client_message '; print_r($client_message); echo '</pre>';
+	echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
 
-    $url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
+	/*=============================================
+	Llevar el orden de los mensajes
+	=============================================*/
 
-    $getMessages = CurlController::request($url,$method,$fields);
+	$url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
 
-    if ($getMessages->status == 200) {
-        $order_message = $getMessages->results[0]->order_message + 1;
-        $template_message = $getMessages->results[0]->template_message;
-    }
+	$getMessages = CurlController::request($url,$method,$fields);
 
-    /*=============================================
-    Guardar mensaje del cliente
-    =============================================*/
+	if($getMessages->status == 200){
 
-    $url = "messages?token=no&except=id_message";
-    $method = "POST";
-    $fields = array(
-        "type_message" => $type_message,
-        "id_whatsapp_message" => $id_whatsapp_message,
-        "client_message" => $client_message,
-        "phone_message" => $phone_message,
-        "template_message" => $template_message,
-        "order_message" => $order_message,
-        "date_created_message" => date("Y-m-d")
-    );
+		$order_message = $getMessages->results[0]->order_message + 1;
+		$template_message = $getMessages->results[0]->template_message;
+		$id_conversation_message = $getMessages->results[0]->id_conversation_message;
+		$expiration_message = $getMessages->results[0]->expiration_message;
 
-    $saveMessage = CurlController::request($url,$method,$fields);
+	}
 
-    if ($saveMessage->status == 200) {
-        /*=============================================
-        Responder al cliente
-        =============================================*/
+	/*=============================================
+	Guardar mensaje del cliente
+	=============================================*/
 
-        $responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation);
-        // echo '<pre>$responseClients '; print_r($responseClients); echo '</pre>';
-    }
+	$url = "messages?token=no&except=id_message";
+	$method = "POST";
+	$fields = array(
+		"id_conversation_message" => $id_conversation_message,
+		"type_message" => $type_message,
+		"id_whatsapp_message" => $id_whatsapp_message,
+		"client_message" => $client_message,
+		"phone_message" => $phone_message,
+		"template_message" => $template_message,
+		"order_message" => $order_message,
+		"expiration_message" => $expiration_message,
+		"date_created_message" => date("Y-m-d")
+	);
+
+	$saveMessage = CurlController::request($url,$method,$fields);
+
+	if($saveMessage->status == 200){
+
+		/*=============================================
+		Responder al cliente
+		=============================================*/
+
+		$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation);
+		echo '<pre>$responseClients '; print_r($responseClients); echo '</pre>';
+
+	}
 
 }
 
@@ -226,62 +276,69 @@ if ($type_message == "client") {
 Capturar mensaje del negocio
 =============================================*/
 
-if ($type_message == "business" && $status_message == "sent") {
-    /*=============================================
-    Capturar el número de teléfono
-    =============================================*/
+if($type_message == "business" && $status_message == "sent"){
 
-    $phone_message = $data->entry[0]->changes[0]->value->statuses[0]->recipient_id;
-    echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
+	/*=============================================
+	Capturar el número de teléfono
+	=============================================*/
 
-    /*=============================================
-    Capturar id conversación
-    =============================================*/
+	$phone_message = $data->entry[0]->changes[0]->value->statuses[0]->recipient_id;
+	echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
 
-    $idConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->id;
-    echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+	/*=============================================
+	Capturar id conversación
+	=============================================*/
 
-    /*=============================================
-    Capturar fecha de vencimiento
-    =============================================*/
+	$idConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->id;
+	echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
 
-    $expireConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->expiration_timestamp;
-    $expireConversation = new DateTime("@$expireConversation");
-    $expireConversation = $expireConversation->format('Y-m-d H:i:s');
-    echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+	/*=============================================
+	Capturar fecha de vencimiento
+	=============================================*/
 
-    /*=============================================
-    Traer la última respuesta del negocio
-    =============================================*/
+	$expireConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->expiration_timestamp;
+	$expireConversation = new DateTime("@$expireConversation");
+	$expireConversation = $expireConversation->format('Y-m-d H:i:s');
+	echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
 
-    $url = "messages?linkTo=type_message,phone_message&equalTo=business,".$phone_message."&orderBy=id_message&orderMode=DESC&startAt=0&endAt=1";
-    $method  = "GET";
-    $fields = array();
+	/*=============================================
+	Traer la última respuesta del negocio
+	=============================================*/
 
-    $getMessage = CurlController::request($url,$method,$fields);
+	$url = "messages?linkTo=type_message,phone_message&equalTo=business,".$phone_message."&orderBy=id_message&orderMode=DESC&startAt=0&endAt=1";
+	$method  = "GET";
+	$fields = array();
 
-    if ($getMessage->status == 200) {
-        $getMessage = $getMessage->results[0];
+	$getMessage = CurlController::request($url,$method,$fields);
 
-        /*=============================================
-        Actualizar última respuesta del negocio
-        =============================================*/
+	if($getMessage->status == 200){
 
-        $url = "messages?id=".$getMessage->id_message."&nameId=id_message&token=no&except=id_message";
+		$getMessage = $getMessage->results[0];
+
+		/*=============================================
+		Actualizar última respuesta del negocio
+		=============================================*/
+
+		$url = "messages?id=".$getMessage->id_message."&nameId=id_message&token=no&except=id_message";
         $method = "PUT";
         $fields = array(
-            "id_conversation_message" => $idConversation,
-            "expiration_message" => $expireConversation
+        	"id_conversation_message" => $idConversation,
+        	"expiration_message" => $expireConversation
         );
 
         $fields = http_build_query($fields);
 
         $updateMessage = CurlController::request($url,$method,$fields);
 
-        if ($updateMessage->status == 200) {
-            echo "todo Ok";
-        }
-    }
-}
+        if($updateMessage->status == 200){
 
-?>
+        	/*=============================================
+			Respuestas del negocio
+			=============================================*/
+
+			$responseBusiness = BusinessController::responseBusiness($idConversation,$getApiWS,$phone_message,$getMessage->order_message);
+			echo '<pre>$responseBusiness '; print_r($responseBusiness); echo '</pre>';
+        }
+	}
+
+}
