@@ -237,12 +237,14 @@ Class ClientsController{
 
                     }else{
 
-                        if($message->client_message == "Menú" ||
-                           $message->client_message == "menú" ||
-                           $message->client_message == "Menu" ||
-                           $message->client_message == "MENÚ" ||
-                           $message->client_message == "MENU" ||
-                           $message->client_message == "menu"){
+                        // if($message->client_message == "Menú" ||
+                        //    $message->client_message == "menú" ||
+                        //    $message->client_message == "Menu" ||
+                        //    $message->client_message == "MENÚ" ||
+                        //    $message->client_message == "MENU" ||
+                        //    $message->client_message == "menu"){
+                        if(mb_strtolower(trim($message->client_message)) == "menú" ||
+                           mb_strtolower(trim($message->client_message)) == "menu") {
 
                             $responseBots = BotsController::responseBots("menu",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';

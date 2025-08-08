@@ -1,7 +1,14 @@
-[07-Aug-2025 17:27:17 America/Bogota] PHP Warning:  Undefined property: stdClass::$ai_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\clients.controller.php on line 35
-[07-Aug-2025 17:27:17 America/Bogota] PHP Warning:  Undefined property: stdClass::$ai_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\clients.controller.php on line 62
-[07-Aug-2025 17:27:17 America/Bogota] PHP Warning:  Undefined property: stdClass::$id_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 410
-[07-Aug-2025 17:27:17 America/Bogota] PHP Warning:  Undefined property: stdClass::$id_number_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\curl.controller.php on line 81
-[07-Aug-2025 17:27:17 America/Bogota] PHP Warning:  Undefined property: stdClass::$token_whatsapp in C:\xampp\htdocs\chatcenter\cms\controllers\curl.controller.php on line 115
-[08-Aug-2025 00:36:28 Europe/Berlin] PHP Warning:  Undefined array key "REQUEST_METHOD" in C:\xampp\htdocs\chatcenter\cms\webhook\index.php on line 28
-[08-Aug-2025 00:36:28 Europe/Berlin] PHP Warning:  Undefined array key "REQUEST_METHOD" in C:\xampp\htdocs\chatcenter\cms\webhook\index.php on line 48
+[08-Aug-2025 09:35:19 America/Bogota] PHP Warning:  Undefined variable $business_message in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 411
+[08-Aug-2025 09:35:19 America/Bogota] PHP Warning:  Undefined variable $template_message in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 414
+[08-Aug-2025 09:35:19 America/Bogota] PHP Warning:  Undefined variable $json in C:\xampp\htdocs\chatcenter\cms\controllers\bots.controller.php on line 426
+[08-Aug-2025 09:35:20 America/Bogota] PHP Warning:  Undefined property: stdClass::$url in C:\xampp\htdocs\chatcenter\cms\controllers\curl.controller.php on line 135
+[08-Aug-2025 10:16:33 America/Bogota] PHP Fatal error:  Uncaught Error: Call to undefined function mb_trim() in C:\xampp\htdocs\chatcenter\cms\controllers\clients.controller.php:246
+Stack trace:
+#0 C:\xampp\htdocs\chatcenter\cms\webhook\pruebas.php(267): ClientsController::responseClients(Object(stdClass), '573014115327', 10, 'text')
+#1 {main}
+  thrown in C:\xampp\htdocs\chatcenter\cms\controllers\clients.controller.php on line 246
+[08-Aug-2025 10:20:11 America/Bogota] PHP Fatal error:  Uncaught Error: Call to undefined function mb_trim() in C:\xampp\htdocs\chatcenter\cms\controllers\clients.controller.php:246
+Stack trace:
+#0 C:\xampp\htdocs\chatcenter\cms\webhook\pruebas.php(267): ClientsController::responseClients(Object(stdClass), '573014115327', 10, 'text')
+#1 {main}
+  thrown in C:\xampp\htdocs\chatcenter\cms\controllers\clients.controller.php on line 246

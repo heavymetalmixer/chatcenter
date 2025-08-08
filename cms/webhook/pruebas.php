@@ -27,7 +27,7 @@ date_default_timezone_set("America/Bogota");
 Simulación del contenido JSON
 =============================================*/
 
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"context":{"from":"15556588621","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAERgSRDZGQjkzMkZEQ0I2NTVFNzY2AA=="},"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMEI2NUQyRDA3QzA0QTRENzVEOQA=","timestamp":"1754605797","type":"interactive","interactive":{"type":"list_reply","list_reply":{"id":"1","title":"Entradas","description":"Quiero una deliciosa entrada"}}}]},"field":"messages"}]}]}';
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"context":{"from":"15556588621","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAERgSQ0NBMDQ4MkJDMzk4MEIwMkE3AA=="},"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMDk2NUQwNzIzOERDNEYwOTA3NgA=","timestamp":"1754666815","type":"interactive","interactive":{"type":"list_reply","list_reply":{"id":"sku001","title":"Papas R\u00fasticas","description":"$5 USD"}}}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo

@@ -1,4 +1,0 @@
-[07-Aug-2025 17:38:32 America/Bogota] PHP Warning:  Undefined array key "REQUEST_URI" in C:\xampp\htdocs\chatcenter\cms\views\template.php on line 14
-[07-Aug-2025 17:38:34 America/Bogota] PHP Warning:  Attempt to read property "status" on null in C:\xampp\htdocs\chatcenter\cms\views\template.php on line 35
-[07-Aug-2025 17:38:34 America/Bogota] PHP Warning:  Attempt to read property "results" on null in C:\xampp\htdocs\chatcenter\cms\views\template.php on line 41
-[07-Aug-2025 17:38:34 America/Bogota] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\chatcenter\cms\views\template.php on line 41
