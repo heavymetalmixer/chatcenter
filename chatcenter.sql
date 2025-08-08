@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 05, 2025 at 10:49 PM
+-- Generation Time: Aug 08, 2025 at 02:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,7 +55,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id_admin`, `email_admin`, `password_admin`, `rol_admin`, `permissions_admin`, `token_admin`, `token_exp_admin`, `status_admin`, `title_admin`, `symbol_admin`, `font_admin`, `color_admin`, `back_admin`, `scode_admin`, `chatgpt_admin`, `date_created_admin`, `date_updated_admin`) VALUES
-(1, 'superadmin@chatcenter.com', '$2a$07$azybxcags23425sdg23sdeanQZqjaf6Birm2NvcYTNtJw24CsO5uq', 'superadmin', '{\"todo\":\"on\"}', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTQ0MDI5NTQsImV4cCI6MTc1NDQ4OTM1NCwiZGF0YSI6eyJpZCI6MSwiZW1haWwiOiJzdXBlcmFkbWluQGNoYXRjZW50ZXIuY29tIn19.f3214PsBwr18LrfViV2LRxN2obruvjj9vhJfxyilDiA', '1754489354', 1, 'ChatCenter', '<i class=\"bi bi-robot\"></i>', '', '#37ab34', 'http://cms-chatcenter.com/views/assets/files/687bbdcfc9ff623.jpg', NULL, NULL, '2025-07-18', '2025-08-05 14:09:14'),
+(1, 'superadmin@chatcenter.com', '$2a$07$azybxcags23425sdg23sdeanQZqjaf6Birm2NvcYTNtJw24CsO5uq', 'superadmin', '{\"todo\":\"on\"}', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTQ1ODE0NjksImV4cCI6MTc1NDY2Nzg2OSwiZGF0YSI6eyJpZCI6MSwiZW1haWwiOiJzdXBlcmFkbWluQGNoYXRjZW50ZXIuY29tIn19.c2U0i2jSVauLfCp5nsJXWmYZ9N4JxFpwcJgJnIhvdbw', '1754667869', 1, 'ChatCenter', '<i class=\"bi bi-robot\"></i>', '', '#37ab34', 'http://cms-chatcenter.com/views/assets/files/687bbdcfc9ff623.jpg', NULL, NULL, '2025-07-18', '2025-08-07 15:44:29'),
 (2, 'admin@chatcenter.com', '$2a$07$azybxcags23425sdg23sdeanQZqjaf6Birm2NvcYTNtJw24CsO5uq', 'admin', '%7B%22TODO%22%3A%22ON%22%7D', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTI5NDAzNTgsImV4cCI6MTc1MzAyNjc1OCwiZGF0YSI6eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBjaGF0Y2VudGVyLmNvbSJ9fQ.kdI0m7f72epdAmUKily4MA_fkgIl9_PguHFav4JoeWg', '1753026758', 1, '', '', '', '', '', '', '%7B%7D', '2025-07-19', '2025-07-19 15:52:38'),
 (3, 'editor-archivos@chatcenter.com', '$2a$07$azybxcags23425sdg23sdeanQZqjaf6Birm2NvcYTNtJw24CsO5uq', 'editor', '%7B%22archivos%22%3A%22ON%22%7D', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTI5NDA1MzgsImV4cCI6MTc1MzAyNjkzOCwiZGF0YSI6eyJpZCI6MywiZW1haWwiOiJlZGl0b3ItYXJjaGl2b3NAY2hhdGNlbnRlci5jb20ifX0.WHrSQo3sIUhoo-PWN3PO7fCcNDFW9Ccq3aiZPEvdexs', '1753026938', 1, '', '', '', '', '', '', '%7B%7D', '2025-07-19', '2025-07-19 15:55:38');
 
@@ -90,8 +90,8 @@ INSERT INTO `bots` (`id_bot`, `title_bot`, `type_bot`, `header_text_bot`, `heade
 (2, 'conversation', 'text', '', '', '', 'En unos instantes un agente se comunicará para conversar contigo.', '', 'none', '{}', '[]', NULL, '2025-07-26', '2025-08-03 19:13:16'),
 (4, 'welcome', 'interactive', '', 'http://res.cloudinary.com/dixojpt7d/image/upload/v1754236646/restaurant_slrzea.jpg', '', 'Bienvenido a *Restaurant*, soy el asistente virtual que te atenderá hoy, estoy muy entusiasmado por servirte. *¿Qué deseas realizar hoy?*', '', 'button', '{\"1\":\"Realizar un pedido\",\"2\":\"Reservar mesa\",\"3\":\"Servicio al cliente\"}', '[]', NULL, '2025-08-03', '2025-08-04 00:36:09'),
 (5, 'reservation', 'text', '', '', '', 'Perfecto, vamos a reservar una mesa\\nPor favor indícame la siguiente información:\\nFecha:\\nHora:\\nNúmero de personas:\\nTu nombre y número de contacto:', '', 'none', '{}', '[]', NULL, '2025-08-04', '2025-08-04 22:27:55'),
-(7, 'menu', 'interactive', '', '', '', '%C2%A1Qu%C3%A9+rico%21+Te+comparto+nuestro+men%C3%BA', '', 'list', '%7B%7D', '%5B%7B%22id%22%3A%221%22%2C%22title%22%3A%22Entradas%22%2C%22description%22%3A%22Quiero+una+deliciosa+entrada%22%7D%2C%7B%22id%22%3A%222%22%2C%22title%22%3A%22Platos+fuertes%22%2C%22description%22%3A%22Quiero+una+deliciosa+receta%22%7D%2C%7B%22id%22%3A%223%22%2C%22title%22%3A%22Postres%22%2C%22description%22%3A%22Quiero+un+delicioso+postre%22%7D%2C%7B%22id%22%3A%224%22%2C%22title%22%3A%22Bebidas%22%2C%22description%22%3A%22Quiero+una+deliciosa+bebida%22%7D%2C%7B%22id%22%3A%225%22%2C%22title%22%3A%22Contactar+un+asistente%22%2C%22description%22%3A%22Atenci%C3%B3n+Personalizada%22%7D%5D', 'Men%C3%BA', '2025-08-05', '2025-08-05 15:59:34'),
-(8, 'listMenu', 'interactive', 'Selecciona una de nuestras delicias', '', '', 'Aquí tienes todo lo que te podemos ofrecer:', '', 'none', '{}', '[]', '', '2025-08-05', '2025-08-05 20:47:38');
+(7, 'menu', 'interactive', '', '', '', '¡Qué rico! Te comparto nuestro menú', '', 'list', '{}', '[{\"id\":\"1\",\"title\":\"Entradas\",\"description\":\"Quiero una deliciosa entrada\"},{\"id\":\"2\",\"title\":\"Platos Fuertes\",\"description\":\"Quiero una deliciosa receta\"},{\"id\":\"3\",\"title\":\"Postres\",\"description\":\"Quiero un delicioso postre\"},{\"id\":\"4\",\"title\":\"Bebidas\",\"description\":\"Quiero una deliciosa bebida\"},{\"id\":\"5\",\"title\":\"Contactar un asistente\",\"description\":\"Atención Personalizada\"}]', 'Menú', '2025-08-05', '2025-08-07 22:06:57'),
+(8, 'listMenu', 'interactive', 'Entradas', '', '', 'Selecciona una de nuestras delicias:', 'O regresa al Menú Principal escribiendo la palabra *menu*', 'none', '{}', '[]', '', '2025-08-05', '2025-08-08 00:21:31');
 
 -- --------------------------------------------------------
 
@@ -209,7 +209,7 @@ CREATE TABLE `contacts` (
 --
 
 INSERT INTO `contacts` (`id_contact`, `phone_contact`, `name_contact`, `ai_contact`, `date_created_contact`, `date_updated_contact`) VALUES
-(1, '573014115327', NULL, 0, '2025-08-05', '2025-08-05 20:48:02');
+(1, '573014115327', NULL, 0, '2025-08-07', '2025-08-08 00:22:41');
 
 -- --------------------------------------------------------
 
@@ -295,12 +295,12 @@ CREATE TABLE `messages` (
 --
 
 INSERT INTO `messages` (`id_message`, `id_conversation_message`, `type_message`, `id_whatsapp_message`, `client_message`, `business_message`, `template_message`, `expiration_message`, `order_message`, `initial_message`, `phone_message`, `date_created_message`, `date_updated_message`) VALUES
-(1, '', 'client', 1, 'Hola', NULL, '', '0000-00-00 00:00:00', 0, 0, '573014115327', '2025-08-05', '2025-08-05 19:43:19'),
-(2, 'b47ecdd148191f0973fb2e77b30ecee3', 'business', 1, NULL, 'Bienvenido a *Restaurant*, soy el asistente virtual que te atenderá hoy, estoy muy entusiasmado por servirte. *¿Qué deseas realizar hoy?*', '{\"type\":\"bot\",\"title\":\"welcome\"}', '2025-08-05 19:42:41', 1, 0, '573014115327', '2025-08-05', '2025-08-05 19:43:21'),
-(3, 'b47ecdd148191f0973fb2e77b30ecee3', 'client', 1, '{\"id\":\"1\",\"text\":\"Realizar un pedido\"}', NULL, '{\"type\":\"bot\",\"title\":\"welcome\"}', '2025-08-05 19:42:41', 2, 0, '573014115327', '2025-08-05', '2025-08-05 19:43:24'),
-(4, 'af020d5f15d0c4f54df26344f14a551a', 'business', 1, NULL, '¡Qué rico! Te comparto nuestro menú', '{\"type\":\"bot\",\"title\":\"menu\"}', '2025-08-05 19:42:47', 3, 0, '573014115327', '2025-08-05', '2025-08-05 19:43:27'),
-(16, 'af020d5f15d0c4f54df26344f14a551a', 'client', 1, '{\"id\":\"1\",\"text\":\"Entradas\"}', NULL, '{\"type\":\"bot\",\"title\":\"menu\"}', '2025-08-05 19:42:47', 4, 0, '573014115327', '2025-08-05', '2025-08-05 20:48:02'),
-(17, '180600be572825351f6e69b03df4701e', 'business', 1, NULL, 'Aquí tienes todo lo que te podemos ofrecer:', '{\"type\":\"bot\",\"title\":\"listMenu\"}', '2025-08-05 20:47:24', 5, 0, '573014115327', '2025-08-05', '2025-08-05 20:48:05');
+(1, '', 'client', 1, 'Buenas noches', NULL, '', '0000-00-00 00:00:00', 0, 0, '573014115327', '2025-08-07', '2025-08-08 00:22:22'),
+(2, 'e28ced0c12ba03a79dba4213d0c5ad0b', 'business', 1, NULL, 'Bienvenido a *Restaurant*, soy el asistente virtual que te atenderá hoy, estoy muy entusiasmado por servirte. *¿Qué deseas realizar hoy?*', '{\"type\":\"bot\",\"title\":\"welcome\"}', '2025-08-08 00:22:36', 1, 0, '573014115327', '2025-08-07', '2025-08-08 00:22:29'),
+(3, 'e28ced0c12ba03a79dba4213d0c5ad0b', 'client', 1, '{\"id\":\"1\",\"text\":\"Realizar un pedido\"}', NULL, '{\"type\":\"bot\",\"title\":\"welcome\"}', '2025-08-08 00:22:36', 2, 0, '573014115327', '2025-08-07', '2025-08-08 00:22:30'),
+(4, '12bae3b3aa08c3b98c9954c819d5f6a3', 'business', 1, NULL, '¡Qué rico! Te comparto nuestro menú', '{\"type\":\"bot\",\"title\":\"menu\"}', '2025-08-08 00:22:44', 3, 0, '573014115327', '2025-08-07', '2025-08-08 00:22:36'),
+(5, '12bae3b3aa08c3b98c9954c819d5f6a3', 'client', 1, '{\"id\":\"1\",\"text\":\"Entradas\"}', NULL, '{\"type\":\"bot\",\"title\":\"menu\"}', '2025-08-08 00:22:44', 4, 0, '573014115327', '2025-08-07', '2025-08-08 00:22:41'),
+(6, '0199829f0960182db83be7f88285cbaa', 'business', 1, NULL, 'Selecciona una de nuestras delicias:', '{\"type\":\"bot\",\"title\":\"listMenu\"}', '2025-08-08 00:22:55', 5, 0, '573014115327', '2025-08-07', '2025-08-08 00:22:48');
 
 -- --------------------------------------------------------
 
@@ -560,7 +560,7 @@ ALTER TABLE `folders`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id_message` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_message` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `modules`

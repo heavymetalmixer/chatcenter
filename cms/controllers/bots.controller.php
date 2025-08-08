@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 Class BotsController{
 
@@ -37,7 +37,7 @@ Class BotsController{
 					$getOrder = CurlController::request($url,$method,$fields);
 
 					if($getOrder->status == 200){
-
+						
 						$getBot->body_text_bot = $getBot->body_text_bot;
 						$getBot->body_text_bot .= $getOrder->results[0]->total_order;
 
@@ -59,7 +59,7 @@ Class BotsController{
 
 				$business_message = $getBot->body_text_bot;
 				$template_message = '{"type":"bot","title":"'.$bot.'"}';
-
+      		
       		}
 
       		/*=============================================
@@ -93,7 +93,7 @@ Class BotsController{
 						$menu = $getMenu->results;
 						// echo '<pre>'; print_r($menu); echo '</pre>';
 						// return;
-
+						
 						$getBot->header_text_bot = $menu[0]->title_category;
 
 						$action = '"action": {
@@ -104,7 +104,7 @@ Class BotsController{
 						          "rows": [';
 
 								foreach ($menu as $key => $value) {
-
+									
 									$action .= '{
 							              "id": "'.$value->code_product.'",
 							              "title": "'.urldecode($value->title_product).'",
@@ -112,10 +112,10 @@ Class BotsController{
 							            },';
 								}
 
-								$action = mb_substr($action,0,-1);
-
+								$action = mb_substr($action,0,-1);		
+	     
 								$action .= ']
-
+						            
 						        }
 						      ]
 						    }
@@ -123,8 +123,8 @@ Class BotsController{
 						}';
 
 					}
-
-
+					
+				
 				}
 
 				/*=============================================
@@ -150,7 +150,7 @@ Class BotsController{
 					$getMessages = CurlController::request($url,$method,$fields);
 
 					if($getMessages->status == 200){
-
+						
 						$messages = $getMessages->results;
 
 						foreach ($messages as $key => $value) {
@@ -160,9 +160,9 @@ Class BotsController{
 							/*=============================================
                   			Encontrar coincidencia de Código de productos
                   			=============================================*/
-
+							
 							if(str_contains($value->client_message, 'sku')){
-
+								
 								/*=============================================
 								Buscamos productos con sus respectivos precios
 								=============================================*/
@@ -170,7 +170,7 @@ Class BotsController{
 								$url = "products?linkTo=code_product&equalTo=".json_decode($value->client_message)->id;
 
 								$getProduct = CurlController::request($url,$method,$fields);
-
+								
 								if($getProduct->status == 200){
 
 									$totalOrder += $getProduct->results[0]->price_product;
@@ -178,7 +178,7 @@ Class BotsController{
 									$getBot->body_text_bot .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
 
 									$order->products_order .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
-								}
+								}	
 
 							}
 
@@ -191,7 +191,7 @@ Class BotsController{
                   				$getBot->body_text_bot .= "\n*Nombre:* ".$value->client_message."\n";
                   				$order->name_order = $value->client_message;
 
-
+                  			
                   			}
 
                   			/*=============================================
@@ -202,7 +202,7 @@ Class BotsController{
 
                   				$getBot->body_text_bot .= "*Celular:* ".$value->client_message."\n";
                   				$order->phone_order = $value->client_message;
-
+                  			
                   			}
 
                   			/*=============================================
@@ -213,7 +213,7 @@ Class BotsController{
 
                   				$getBot->body_text_bot .= "*Email:* ".$value->client_message."\n";
                   				$order->email_order = $value->client_message;
-
+                  			
                   			}
 
                   			/*=============================================
@@ -224,7 +224,7 @@ Class BotsController{
 
                   				$getBot->body_text_bot .= "*Dirección:* ".$value->client_message."\n";
                   				$order->address_order = $value->client_message;
-
+                  			
                   			}
 
                   			if($totalMessages == count($messages)){
@@ -245,7 +245,7 @@ Class BotsController{
 
 					$createOrder = CurlController::request($url,$method,(array)$order);
 					// echo '<pre>$createOrder '; print_r($createOrder); echo '</pre>';
-
+		
 				}
 
 				/*=============================================
@@ -309,7 +309,7 @@ Class BotsController{
 					if(!empty($getBot->buttons_bot)){
 
 						foreach (json_decode(urldecode($getBot->buttons_bot)) as $key => $value) {
-
+							
 							$json .= '{
 						          "type": "reply",
 						          "reply": {
@@ -321,8 +321,8 @@ Class BotsController{
 
 					}
 
-					$json = mb_substr($json,0,-1);
-
+					$json = mb_substr($json,0,-1);		
+	     
 					$json .= ']
 						    }
 						  }
@@ -331,7 +331,7 @@ Class BotsController{
 				}
 
 				if($getBot->interactive_bot == "list"){
-
+						    
 					$json .= '"action": {
 						      "button":"Ver opciones",
 						      "sections": [
@@ -342,7 +342,7 @@ Class BotsController{
 					          if(!empty($getBot->list_bot)){
 
 									foreach (json_decode(urldecode($getBot->list_bot)) as $key => $value) {
-
+										
 										$json .= '{
 								              "id": "'.$value->id.'",
 								              "title": "'.$value->title.'",
@@ -352,10 +352,10 @@ Class BotsController{
 
 								}
 
-								$json = mb_substr($json,0,-1);
-
+								$json = mb_substr($json,0,-1);		
+	     
 								$json .= ']
-
+						            
 						        }
 						      ]
 						    }
@@ -380,7 +380,7 @@ Class BotsController{
 			// echo '<pre>$json '; print_r($json); echo '</pre>';
 
 			// return;
-
+      	
       	}
 
       	/*=============================================
@@ -392,11 +392,11 @@ Class BotsController{
 		$fields = array();
 
 		$getMessages = CurlController::request($url,$method,$fields);
-
+		
 		if($getMessages->status == 200){
 
 			$order_message = $getMessages->results[0]->order_message + 1;
-
+		
 		}
 
 	 	/*=============================================
@@ -425,7 +425,7 @@ Class BotsController{
 
       		$apiWS = CurlController::apiWS($getApiWS,$json);
       		echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
-
+		
 		}
 
 	}
