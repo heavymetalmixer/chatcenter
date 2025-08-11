@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 Class BusinessController{
 
@@ -16,7 +16,7 @@ Class BusinessController{
 
 			/*=============================================
 			Pedimos datos domicilio
-			=============================================*/	
+			=============================================*/
 
 			if($message->template_message == '{"type":"bot","title":"delivery"}'){
 
@@ -24,9 +24,12 @@ Class BusinessController{
             	echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
 			}
 
+			// echo '<pre>$getMessage '; print_r(value: $getMessage); echo '</pre>';
+			// return;
+
 			/*=============================================
 			Confirmar orden
-			=============================================*/	
+			=============================================*/
 
 			if($message->template_message == '{"type":"bot","title":"process"}'){
 
@@ -39,3 +42,5 @@ Class BusinessController{
 	}
 
 }
+
+?>

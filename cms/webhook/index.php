@@ -14,7 +14,7 @@ ini_set("error_log", DIR."/php_error_log");
 Controladores
 =============================================*/
 
-require_once "../controllers/curl.controller.php"; 
+require_once "../controllers/curl.controller.php";
 require_once "../controllers/clients.controller.php";
 require_once "../controllers/business.controller.php";
 require_once "../controllers/bots.controller.php";
@@ -32,7 +32,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["hub_verify_token"])){
 		echo $_GET["hub_challenge"];
 
 		exit;
-	
+
 	}else{
 
 		echo "Token inválido";
@@ -52,10 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	/*=============================================
     // Obtén el contenido JSON
     =============================================*/
-   
+
     $input = file_get_contents('php://input');
 
-    file_put_contents("webhook_log.txt", $input."\n\n", FILE_APPEND); 
+    file_put_contents("webhook_log.txt", $input."\n\n", FILE_APPEND);
 
   	/*=============================================
 	Convierte el JSON a array asociativo
@@ -95,8 +95,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		$type_message = "business";
 		$status_message = $data->entry[0]->changes[0]->value->statuses[0]->status;
-		
-		
+
+
 	}
 
 	// echo '<pre>$status_message '; print_r($status_message); echo '</pre>';
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		$getApiWS = $getApiWS->results[0];
 		$id_whatsapp_message = $getApiWS->id_whatsapp;
-		
+
 	}
 
 	echo '<pre>$id_whatsapp_message '; print_r($id_whatsapp_message); echo '</pre>';
@@ -136,9 +136,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		=============================================*/
 
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->text)){
-			
+
 			$client_message = $data->entry[0]->changes[0]->value->messages[0]->text->body;
-			
+
 			$type_conversation = "text";
 		}
 
@@ -151,14 +151,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if(isset($data->entry[0]->changes[0]->value->messages[0]->image->caption)){
 
 				$caption = $data->entry[0]->changes[0]->value->messages[0]->image->caption;
-			
+
 			}else{
 
 				$caption = "";
 			}
 
 			$client_message = '{"type":"image","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->image->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->image->id.'","caption":"'.$caption.'"}';
-			
+
 			$type_conversation = "image";
 		}
 
@@ -171,9 +171,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if(isset($data->entry[0]->changes[0]->value->messages[0]->video->caption)){
 
 				$caption = $data->entry[0]->changes[0]->value->messages[0]->video->caption;
-			
+
 			}else{
-				
+
 				$caption = "";
 			}
 
@@ -189,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->audio)){
 
 			$client_message = '{"type":"audio","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->id.'"}';
-			
+
 			$type_conversation = "audio";
 
 		}
@@ -203,9 +203,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if(isset($data->entry[0]->changes[0]->value->messages[0]->document->caption)){
 
 				$caption = $data->entry[0]->changes[0]->value->messages[0]->document->caption;
-			
+
 			}else{
-				
+
 				$caption = "";
 			}
 
@@ -243,11 +243,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			}
 		}
 
-		
-		
-		
+
+
+
 		echo '<pre>$client_message '; print_r($client_message); echo '</pre>';
 		echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
+
+//####################################################  MODIFIED BLOCK BEGINS  ##########################################################
 
 		/*=============================================
 		Llevar el orden de los mensajes
@@ -256,14 +258,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
 
 		$getMessages = CurlController::request($url,$method,$fields);
-		
-		if($getMessages->status == 200){
 
-			$order_message = $getMessages->results[0]->order_message + 1;
+		if ($getMessages->status == 200) {
+			if ($getMessages->results[0]->expiration_message < date("Y-m-d H:i:s")) {
+				$order_message = 0;
+				$id_conversation_message = null;
+				$expiration_message = "0000-00-00 00:00:00";
+
+				$url = "messages?id=" . $phone_message . "&nameId=phone_message&token=no&except=id_message";
+				$method = "PUT";
+				$fields = array(
+					"initial_message" => 0
+				);
+
+				$fields = http_build_query($fields);
+
+				$updateMessage = CurlController::request($url,$method,$fields);
+			}
+			else {
+				$order_message = $getMessages->results[0]->order_message + 1;
+				$id_conversation_message = $getMessages->results[0]->id_conversation_message;
+				$expiration_message = $getMessages->results[0]->expiration_message;
+			}
+
 			$template_message = $getMessages->results[0]->template_message;
-			$id_conversation_message = $getMessages->results[0]->id_conversation_message;
-			$expiration_message = $getMessages->results[0]->expiration_message;
-		
 		}
 
 		/*=============================================
@@ -281,8 +299,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			"template_message" => $template_message,
 			"order_message" => $order_message,
 			"expiration_message" => $expiration_message,
+			"initial_message" => 1,
 			"date_created_message" => date("Y-m-d")
 		);
+
+//####################################################  MODIFIED BLOCK ENDS  ##########################################################
 
 		$saveMessage = CurlController::request($url,$method,$fields);
 
@@ -294,9 +315,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation);
 			echo '<pre>$responseClients '; print_r($responseClients); echo '</pre>';
-			
+
 		}
-		
+
 	}
 
 	/*=============================================
@@ -312,21 +333,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$phone_message = $data->entry[0]->changes[0]->value->statuses[0]->recipient_id;
 		echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
 
-		/*=============================================
-		Capturar id conversación
-		=============================================*/
-
-		$idConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->id;
-		echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+//####################################################  MODIFIED BLOCK BEGINS  ##########################################################
 
 		/*=============================================
-		Capturar fecha de vencimiento
+		Capturar id conversación y fecha de expiración
 		=============================================*/
 
-		$expireConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->expiration_timestamp;
-		$expireConversation = new DateTime("@$expireConversation");
-		$expireConversation = $expireConversation->format('Y-m-d H:i:s');
-		echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+		$url = "messages?linkTo=phone_message,type_message&equalTo=" . $phone_message . ",client&select=id_conversation_message,expiration_message&orderBy=id_message&orderMode=DESC";
+		$method = "GET";
+		$fields = array();
+
+		$getIdConversation = CurlController::request($url,$method,$fields);
+
+		if ($getIdConversation->status == 200) {
+			$getIdConversation = $getIdConversation->results[0];
+
+			if ($getIdConversation->id_conversation_message == null) {
+				/*=============================================
+				Capturar id de la conversación
+				=============================================*/
+
+				$idConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->id;
+				echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+
+				/*=============================================
+				Capturar fecha de vencimiento
+				=============================================*/
+
+				$expireConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->expiration_timestamp;
+				$expireConversation = new DateTime("@$expireConversation");
+				$expireConversation = $expireConversation->format('Y-m-d H:i:s');
+				echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+			}
+			else {
+				$idConversation = $getIdConversation->id_conversation_message;
+				$expireConversation = $getIdConversation->expiration_message;
+
+				echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+				echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+			}
+		}
+
+//####################################################  MODIFIED BLOCK ENDS  ##########################################################
 
 		/*=============================================
 		Traer la última respuesta del negocio
@@ -341,7 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if($getMessage->status == 200){
 
 			$getMessage = $getMessage->results[0];
-			
+
 			/*=============================================
 			Actualizar última respuesta del negocio
 			=============================================*/
