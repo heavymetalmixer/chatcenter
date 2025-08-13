@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 class CurlController{
 
 	/*=============================================
 	Peticiones a la API
-	=============================================*/	
+	=============================================*/
 
 	static public function request($url,$method,$fields){
 
@@ -35,7 +35,7 @@ class CurlController{
 
 	/*=============================================
 	Peticiones a la API de ChatGPT
-	=============================================*/	
+	=============================================*/
 
 	static public function chatGPT($content,$token,$org){
 
@@ -71,7 +71,7 @@ class CurlController{
 
 	/*=============================================
 	Peticiones a la API de WS
-	=============================================*/	
+	=============================================*/
 
 	static public function apiWS($getApiWS,$json){
 
@@ -85,7 +85,7 @@ class CurlController{
 
 			$endpoint = 'https://graph.facebook.com/v22.0/'.explode("_",$json)[0];
 			$idArchive = explode("_",$json)[0];
-			
+
 			if(count(explode("_",$json)) > 1){
 
 				$ajax = "../";
@@ -124,7 +124,7 @@ class CurlController{
 		$response = json_decode($response);
 
 		if($method == 'POST'){
-		
+
 			return $response;
 
 		}else{
@@ -153,7 +153,7 @@ class CurlController{
 			if($httpcode == 200){
 
 				$filename = $ajax.'views/assets/ws/'.$idArchive.'.'.explode("/",$contentType)[1];
-				
+
 				file_put_contents($filename, $response);
 
 				return $filename;

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 $business_message = "";
 
@@ -72,72 +72,74 @@ if(isset(json_decode($value->template_message)->type) && json_decode($value->tem
 
 		}
 
-		/*=============================================
-		Si hay botones
-		=============================================*/
+		if($bot->type_bot == "interactive") {
 
-		if($bot->type_bot == "interactive" && $bot->interactive_bot == "button"){
+			/*=============================================
+			Si hay botones
+			=============================================*/
 
-			foreach (json_decode(urldecode($bot->buttons_bot)) as $index => $item) {
+			if($bot->interactive_bot == "button"){
 
-				$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><i class="bi bi-arrow-90deg-left"></i> '.$item.'</div>';
-				
-			}
-		}
+				foreach (json_decode(urldecode($bot->buttons_bot)) as $index => $item) {
 
-		/*=============================================
-		Si hay lista
-		=============================================*/
+					$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><i class="bi bi-arrow-90deg-left"></i> '.$item.'</div>';
 
-		if($bot->type_bot == "interactive" && $bot->interactive_bot == "list"){
-
-			foreach (json_decode(urldecode($bot->list_bot)) as $index => $item) {
-
-				$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.$item->title.'</strong><br>'.$item->description.'</div>';
-				
-			}
-		}
-
-		/*=============================================
-		Si hay lista de menú
-		=============================================*/
-
-		if($bot->type_bot == "interactive" && $bot->interactive_bot == "none"){
-
-			$url = "messages?linkTo=order_message,phone_message&equalTo=".($value->order_message-1).",".$value->phone_message."&select=client_message";
-			$method = "GET";
-			$fields = array();
-
-			$getMessage = CurlController::request($url,$method,$fields);
-
-			if($getMessage->status == 200){
-				
-				$getMessage = json_decode($getMessage->results[0]->client_message)->id;
-
+				}
 			}
 
 			/*=============================================
-			Traer Categorías y Productos
+			Si hay lista
 			=============================================*/
 
-			$url = "relations?rel=products,categories&type=product,category&linkTo=id_category&equalTo=".$getMessage;
-			$method = "GET";
-			$fields = array();
+			if($bot->interactive_bot == "list"){
 
-			$getMenu = CurlController::request($url,$method,$fields);
+				foreach (json_decode(urldecode($bot->list_bot)) as $index => $item) {
 
-			if($getMenu->status == 200){
+					$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.$item->title.'</strong><br>'.$item->description.'</div>';
 
-				$menu = $getMenu->results;
-				
-				foreach ($menu as $index => $item) {
-					
-					$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.urldecode($item->title_product).'</strong><br>$'.$item->price_product.' USD</div>';
+				}
+			}
+
+			/*=============================================
+			Si hay lista de menú
+			=============================================*/
+
+			if($bot->interactive_bot == "none"){
+
+				$url = "messages?linkTo=order_message,phone_message&equalTo=".($value->order_message-1).",".$value->phone_message."&select=client_message";
+				$method = "GET";
+				$fields = array();
+
+				$getMessage = CurlController::request($url,$method,$fields);
+
+				if($getMessage->status == 200){
+
+					$getMessage = json_decode($getMessage->results[0]->client_message)->id;
+
 				}
 
+				/*=============================================
+				Traer Categorías y Productos
+				=============================================*/
+
+				$url = "relations?rel=products,categories&type=product,category&linkTo=id_category&equalTo=".$getMessage;
+				$method = "GET";
+				$fields = array();
+
+				$getMenu = CurlController::request($url,$method,$fields);
+
+				if($getMenu->status == 200){
+
+					$menu = $getMenu->results;
+
+					foreach ($menu as $index => $item) {
+
+						$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.urldecode($item->title_product).'</strong><br>$'.$item->price_product.' USD</div>';
+					}
+
+				}
 			}
 		}
-
 	}
 
 }else{
@@ -150,9 +152,9 @@ if(isset(json_decode($value->template_message)->type) && json_decode($value->tem
 
 <div class="msg bot">
 	<div class="pt-2" style="max-width:300px">
-		<?php echo preg_replace('/\*(.*?)\*/', '<strong>$1</strong>', $business_message) ?>		
+		<?php echo preg_replace('/\*(.*?)\*/', '<strong>$1</strong>', $business_message) ?>
 	</div><br>
 	<span class="small text-muted float-end">
-		<?php echo TemplateController::formatDate(6,$value->date_updated_message) ?>		
+		<?php echo TemplateController::formatDate(6,$value->date_updated_message) ?>
 	</span>
 </div>

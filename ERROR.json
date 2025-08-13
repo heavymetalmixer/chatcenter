@@ -4,37 +4,31 @@
     "to": "573014115327",
     "type": "interactive",
     "interactive": {
-    "type": "list",
-    "header": {
-        "type": "text",
-        "text": "Entradas"
-    },
-    "body": {
-        "text": ""
-    },
-    "footer": {
-        "text": "O regresa al Menú Principal escribiendo la palabra 'menu'"
-    },"action": {
-        "button":"Ver opciones",
-        "sections": [
-        {
-            "title": "Entradas",
-            "rows": [{
-                    "id": "sku001",
-                    "title": "Papas Rústicas",
-                    "description": "$5 USD"
+        "type": "button","header": {
+                "type": "text",
+                "text": "Confirma tu pedido"
+            },
+        "body": {
+            "text": "Nachos de la Casa - $5 USD\nCostillas BBQ - $15 USD\nTiramisú - $5 USD\nLimonada - $3 USD\n\n*Nombre:* Julio Perez\n*Celular:* 3013456789\n*Email:* julio@gmail.com\n*Dirección:* Calle 12 #44\n\n*Total Pedido: $28 USD*"
+        },
+        "footer": {
+            "text": "¿Está bien tu pedido?"
+        },"action": {
+            "buttons": [
+                {
+                    "type": "reply",
+                    "reply": {
+                        "id": "1",
+                        "title": "Si"
+                    }
                 },{
-                    "id": "sku002",
-                    "title": "Nachos de la Casa",
-                    "description": "$5 USD"
-                },{
-                    "id": "sku003",
-                    "title": "Mazorca Gratinada",
-                    "description": "$5 USD"
-                }]
-
+                    "type": "reply",
+                    "reply": {
+                        "id": "2",
+                        "title": "No, corregir"
+                    }
+                }
+            ]
         }
-        ]
-    }
     }
 }

@@ -327,8 +327,8 @@ Class ClientsController{
 
                     }else{
 
-                      $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
-                            echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+                        $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
+                        echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
 
                     }
 

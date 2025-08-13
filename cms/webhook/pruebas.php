@@ -27,7 +27,7 @@ date_default_timezone_set("America/Bogota");
 Simulación del contenido JSON
 =============================================*/
 
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"statuses":[{"id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAERgSMzQ0Njc5QzFEMUM5N0VENjhBAA==","status":"sent","timestamp":"1754862999","recipient_id":"573014115327","conversation":{"id":"defed0312e27d68966aae0a486d42023","expiration_timestamp":"1754862999","origin":{"type":"service"}},"pricing":{"billable":false,"pricing_model":"PMP","category":"service","type":"free_customer_service"}}]},"field":"messages"}]}]}';
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMDBFRkE0NkQ5NTM0RUE4OUJBNwA=","timestamp":"1754961471","type":"image","image":{"mime_type":"image\/jpeg","sha256":"ehQ7WUIjw64RMNysLJ8lviT+nTrDlb0qnfACm7Dh9nQ=","id":"1303296321500641"}}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo
@@ -215,46 +215,65 @@ if($type_message == "client"){
 		}
 	}
 
-
-
-
 	echo '<pre>$client_message '; print_r($client_message); echo '</pre>';
 	echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
 
-	/*=============================================
-	Llevar el orden de los mensajes
-	=============================================*/
 
-	$url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
+//####################################################  MODIFIED BLOCK BEGINS  ##########################################################
 
-	$getMessages = CurlController::request($url,$method,$fields);
+		/*=============================================
+		Llevar el orden de los mensajes
+		=============================================*/
 
-	if($getMessages->status == 200){
+		$url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
 
-		$order_message = $getMessages->results[0]->order_message + 1;
-		$template_message = $getMessages->results[0]->template_message;
-		$id_conversation_message = $getMessages->results[0]->id_conversation_message;
-		$expiration_message = $getMessages->results[0]->expiration_message;
+		$getMessages = CurlController::request($url,$method,$fields);
 
-	}
+		if ($getMessages->status == 200) {
+			if ($getMessages->results[0]->expiration_message < date("Y-m-d H:i:s")) {
+				$order_message = 0;
+				$id_conversation_message = null;
+				$expiration_message = "0000-00-00 00:00:00";
 
-	/*=============================================
-	Guardar mensaje del cliente
-	=============================================*/
+				$url = "messages?id=" . $phone_message . "&nameId=phone_message&token=no&except=id_message";
+				$method = "PUT";
+				$fields = array(
+					"initial_message" => 0
+				);
 
-	$url = "messages?token=no&except=id_message";
-	$method = "POST";
-	$fields = array(
-		"id_conversation_message" => $id_conversation_message,
-		"type_message" => $type_message,
-		"id_whatsapp_message" => $id_whatsapp_message,
-		"client_message" => $client_message,
-		"phone_message" => $phone_message,
-		"template_message" => $template_message,
-		"order_message" => $order_message,
-		"expiration_message" => $expiration_message,
-		"date_created_message" => date("Y-m-d")
-	);
+				$fields = http_build_query($fields);
+
+				$updateMessage = CurlController::request($url,$method,$fields);
+			}
+			else {
+				$order_message = $getMessages->results[0]->order_message + 1;
+				$id_conversation_message = $getMessages->results[0]->id_conversation_message;
+				$expiration_message = $getMessages->results[0]->expiration_message;
+			}
+
+			$template_message = $getMessages->results[0]->template_message;
+		}
+
+		/*=============================================
+		Guardar mensaje del cliente
+		=============================================*/
+
+		$url = "messages?token=no&except=id_message";
+		$method = "POST";
+		$fields = array(
+			"id_conversation_message" => $id_conversation_message,
+			"type_message" => $type_message,
+			"id_whatsapp_message" => $id_whatsapp_message,
+			"client_message" => $client_message,
+			"phone_message" => $phone_message,
+			"template_message" => $template_message,
+			"order_message" => $order_message,
+			"expiration_message" => $expiration_message,
+			"initial_message" => 1,
+			"date_created_message" => date("Y-m-d")
+		);
+
+//####################################################  MODIFIED BLOCK ENDS  ##########################################################
 
 	$saveMessage = CurlController::request($url,$method,$fields);
 
@@ -284,21 +303,48 @@ if($type_message == "business" && $status_message == "sent"){
 	$phone_message = $data->entry[0]->changes[0]->value->statuses[0]->recipient_id;
 	echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
 
-	/*=============================================
-	Capturar id conversación
-	=============================================*/
+//####################################################  MODIFIED BLOCK BEGINS  ##########################################################
 
-	$idConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->id;
-	echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+		/*=============================================
+		Capturar id conversación y fecha de expiración
+		=============================================*/
 
-	/*=============================================
-	Capturar fecha de vencimiento
-	=============================================*/
+		$url = "messages?linkTo=phone_message,type_message&equalTo=" . $phone_message . ",client&select=id_conversation_message,expiration_message&orderBy=id_message&orderMode=DESC";
+		$method = "GET";
+		$fields = array();
 
-	$expireConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->expiration_timestamp;
-	$expireConversation = new DateTime("@$expireConversation");
-	$expireConversation = $expireConversation->format('Y-m-d H:i:s');
-	echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+		$getIdConversation = CurlController::request($url,$method,$fields);
+
+		if ($getIdConversation->status == 200) {
+			$getIdConversation = $getIdConversation->results[0];
+
+			if ($getIdConversation->id_conversation_message == null) {
+				/*=============================================
+				Capturar id de la conversación
+				=============================================*/
+
+				$idConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->id;
+				echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+
+				/*=============================================
+				Capturar fecha de vencimiento
+				=============================================*/
+
+				$expireConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->expiration_timestamp;
+				$expireConversation = new DateTime("@$expireConversation");
+				$expireConversation = $expireConversation->format('Y-m-d H:i:s');
+				echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+			}
+			else {
+				$idConversation = $getIdConversation->id_conversation_message;
+				$expireConversation = $getIdConversation->expiration_message;
+
+				echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+				echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+			}
+		}
+
+//####################################################  MODIFIED BLOCK ENDS  ##########################################################
 
 	/*=============================================
 	Traer la última respuesta del negocio

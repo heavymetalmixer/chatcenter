@@ -63,7 +63,7 @@ class ChatAjax{
 					}
 
 					/*=============================================
-					preguntamos si viene una respuesta interactivas
+					Preguntamos si viene una respuesta interactivas
 					=============================================*/
 
 					if(isset(json_decode($getMessages->results[1]->client_message)->id) && isset(json_decode($getMessages->results[1]->client_message)->text)){
@@ -71,7 +71,7 @@ class ChatAjax{
 						$getMessages->results[1]->client_message = json_decode($getMessages->results[1]->client_message)->text;
 
 					/*=============================================
-					preguntamos si viene una respuesta de imagen
+					Preguntamos si viene una respuesta de imagen
 					=============================================*/
 
 					}else if(isset(json_decode($getMessages->results[1]->client_message)->type) && json_decode($getMessages->results[1]->client_message)->type == "image"){
@@ -184,72 +184,74 @@ class ChatAjax{
 
 							}
 
-							/*=============================================
-							Si hay botones
-							=============================================*/
 
-							if($bot->type_bot == "interactive" && $bot->interactive_bot == "button"){
+							if($bot->type_bot == "interactive") {
 
-								foreach (json_decode(urldecode($bot->buttons_bot)) as $index => $item) {
+								/*=============================================
+								Si hay botones
+								=============================================*/
 
-									$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><i class="bi bi-arrow-90deg-left"></i> '.$item.'</div>';
+								if($bot->interactive_bot == "button"){
 
-								}
-							}
+									foreach (json_decode(urldecode($bot->buttons_bot)) as $index => $item) {
 
-							/*=============================================
-							Si hay lista
-							=============================================*/
+										$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><i class="bi bi-arrow-90deg-left"></i> '.$item.'</div>';
 
-							if($bot->type_bot == "interactive" && $bot->interactive_bot == "list"){
-
-								foreach (json_decode(urldecode($bot->list_bot)) as $index => $item) {
-
-									$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.$item->title.'</strong><br>'.$item->description.'</div>';
-
-								}
-							}
-
-							/*=============================================
-							Si hay lista de menú
-							=============================================*/
-
-							if($bot->type_bot == "interactive" && $bot->interactive_bot == "none"){
-
-								$url = "messages?linkTo=order_message,phone_message&equalTo=".($getMessages->results[1]->order_message-1).",".$getMessages->results[1]->phone_message."&select=client_message";
-								$method = "GET";
-								$fields = array();
-
-								$getMess = CurlController::request($url,$method,$fields);
-
-								if($getMess->status == 200){
-
-									$getMess = json_decode($getMess->results[0]->client_message)->id;
-
+									}
 								}
 
 								/*=============================================
-								Traer Categorías y Productos
+								Si hay lista
 								=============================================*/
 
-								$url = "relations?rel=products,categories&type=product,category&linkTo=id_category&equalTo=".$getMess;
-								$method = "GET";
-								$fields = array();
+								if($bot->interactive_bot == "list"){
 
-								$getMenu = CurlController::request($url,$method,$fields);
+									foreach (json_decode(urldecode($bot->list_bot)) as $index => $item) {
 
-								if($getMenu->status == 200){
+										$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.$item->title.'</strong><br>'.$item->description.'</div>';
 
-									$menu = $getMenu->results;
+									}
+								}
 
-									foreach ($menu as $index => $item) {
+								/*=============================================
+								Si hay lista de menú
+								=============================================*/
 
-										$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.urldecode($item->title_product).'</strong><br>$'.$item->price_product.' USD</div>';
+								if($bot->interactive_bot == "none"){
+
+									$url = "messages?linkTo=order_message,phone_message&equalTo=".($getMessages->results[1]->order_message-1).",".$getMessages->results[1]->phone_message."&select=client_message";
+									$method = "GET";
+									$fields = array();
+
+									$getMess = CurlController::request($url,$method,$fields);
+
+									if($getMess->status == 200){
+
+										$getMess = json_decode($getMess->results[0]->client_message)->id;
+
 									}
 
+									/*=============================================
+									Traer Categorías y Productos
+									=============================================*/
+
+									$url = "relations?rel=products,categories&type=product,category&linkTo=id_category&equalTo=".$getMess;
+									$method = "GET";
+									$fields = array();
+
+									$getMenu = CurlController::request($url,$method,$fields);
+
+									if($getMenu->status == 200){
+
+										$menu = $getMenu->results;
+
+										foreach ($menu as $index => $item) {
+
+											$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.urldecode($item->title_product).'</strong><br>$'.$item->price_product.' USD</div>';
+										}
+									}
 								}
 							}
-
 						}
 
 					}else{
@@ -354,6 +356,7 @@ class ChatAjax{
 		);
 
 		$saveMessage = CurlController::request($url,$method,$fields);
+		echo '<pre>$saveMessage '; print_r($saveMessage); echo '</pre>';
 
 		if($saveMessage->status == 200){
 

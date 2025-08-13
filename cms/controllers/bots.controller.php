@@ -38,10 +38,11 @@ Class BotsController{
 
 					if($getOrder->status == 200){
 
+						// echo '<pre>$getOrder '; print_r($getOrder); echo '</pre>';
+						// return;
+
 						$getBot->body_text_bot = $getBot->body_text_bot;
 						$getBot->body_text_bot .= $getOrder->results[0]->total_order;
-
-
 					}
 
 				}
@@ -134,14 +135,14 @@ Class BotsController{
 				if($bot == "confirmation"){
 
 					$getBot->body_text_bot = "";
-					// $totalOrder = 0;
-					// $totalMessages = 0;
-					// $order = new stdClass();
-					// $order->conversation_order = $idListMenu;
-					// $order->products_order = "";
-					// $order->contact_order = $phone_message;
-					// $order->status_order = "Pendiente";
-					// $order->date_created_order = date("Y-m-d");
+					$totalOrder = 0;
+					$totalMessages = 0;
+					$order = new stdClass();
+					$order->conversation_order = $idListMenu;
+					$order->products_order = "";
+					$order->contact_order = $phone_message;
+					$order->status_order = "Pendiente";
+					$order->date_created_order = date("Y-m-d");
 
 					$url = "messages?linkTo=id_conversation_message,type_message&equalTo=".$idListMenu.",client";
 					$method = "GET";
@@ -149,110 +150,118 @@ Class BotsController{
 
 					$getMessages = CurlController::request($url,$method,$fields);
 
-					echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
+					// echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
 					// return;
 
 					if($getMessages->status == 200){
 
-						echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
-						return;
+						// echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
+						// return;
 
 						$messages = $getMessages->results;
 
-					// 	foreach ($messages as $key => $value) {
+						foreach ($messages as $key => $value) {
 
-					// 		$totalMessages++;
+							$totalMessages++;
 
-					// 		/*=============================================
-                  	// 		Encontrar coincidencia de Código de productos
-                  	// 		=============================================*/
+							/*=============================================
+                  			Encontrar coincidencia de Código de productos
+                  			=============================================*/
 
-					// 		if(str_contains($value->client_message, 'sku')){
+							if(str_contains($value->client_message, 'sku')){
 
-					// 			/*=============================================
-					// 			Buscamos productos con sus respectivos precios
-					// 			=============================================*/
+								// echo '<pre>$value->client_message '; print_r($value->client_message); echo '</pre>';
 
-					// 			$url = "products?linkTo=code_product&equalTo=".json_decode($value->client_message)->id;
+								/*=============================================
+								Buscamos productos con sus respectivos precios
+								=============================================*/
 
-					// 			$getProduct = CurlController::request($url,$method,$fields);
+								$url = "products?linkTo=code_product&equalTo=".json_decode($value->client_message)->id;
 
-					// 			if($getProduct->status == 200){
+								$getProduct = CurlController::request($url,$method,$fields);
 
-					// 				$totalOrder += $getProduct->results[0]->price_product;
+								// echo '<pre>$getProduct '; print_r($getProduct); echo '</pre>';
+								// return;
 
-					// 				$getBot->body_text_bot .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
+								if($getProduct->status == 200){
 
-					// 				$order->products_order .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
-					// 			}
+									$totalOrder += $getProduct->results[0]->price_product;
 
-					// 		}
+									$getBot->body_text_bot .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
 
-					// 		/*=============================================
-                  	// 		Datos del nombre
-                  	// 		=============================================*/
+									$order->products_order .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
+								}
+							}
 
-                  	// 		if($value->template_message == '{"type":"bot","title":"name"}'){
+							/*=============================================
+                  			Datos del nombre
+                  			=============================================*/
 
-                  	// 			$getBot->body_text_bot .= "\n*Nombre:* ".$value->client_message."\n";
-                  	// 			$order->name_order = $value->client_message;
+                  			if($value->template_message == '{"type":"bot","title":"name"}'){
 
+                  				$getBot->body_text_bot .= "\n*Nombre:* ".$value->client_message."\n";
+                  				$order->name_order = $value->client_message;
 
-                  	// 		}
+                  			}
 
-                  	// 		/*=============================================
-                  	// 		Datos del celular
-                  	// 		=============================================*/
+                  			/*=============================================
+                  			Datos del celular
+                  			=============================================*/
 
-                  	// 		if($value->template_message == '{"type":"bot","title":"phone"}'){
+                  			if($value->template_message == '{"type":"bot","title":"phone"}'){
 
-                  	// 			$getBot->body_text_bot .= "*Celular:* ".$value->client_message."\n";
-                  	// 			$order->phone_order = $value->client_message;
+                  				$getBot->body_text_bot .= "*Celular:* ".$value->client_message."\n";
+                  				$order->phone_order = $value->client_message;
 
-                  	// 		}
+                  			}
 
-                  	// 		/*=============================================
-                  	// 		Datos del correo electrónico
-                  	// 		=============================================*/
+                  			/*=============================================
+                  			Datos del correo electrónico
+                  			=============================================*/
 
-                  	// 		if($value->template_message == '{"type":"bot","title":"email"}'){
+                  			if($value->template_message == '{"type":"bot","title":"email"}'){
 
-                  	// 			$getBot->body_text_bot .= "*Email:* ".$value->client_message."\n";
-                  	// 			$order->email_order = $value->client_message;
+                  				$getBot->body_text_bot .= "*Email:* ".$value->client_message."\n";
+                  				$order->email_order = $value->client_message;
 
-                  	// 		}
+                  			}
 
-                  	// 		/*=============================================
-                  	// 		Datos de dirección
-                  	// 		=============================================*/
+                  			/*=============================================
+                  			Datos de dirección
+                  			=============================================*/
 
-                  	// 		if($value->template_message == '{"type":"bot","title":"address"}'){
+                  			if($value->template_message == '{"type":"bot","title":"address"}'){
 
-                  	// 			$getBot->body_text_bot .= "*Dirección:* ".$value->client_message."\n";
-                  	// 			$order->address_order = $value->client_message;
+                  				$getBot->body_text_bot .= "*Dirección:* ".$value->client_message."\n";
+                  				$order->address_order = $value->client_message;
 
-                  	// 		}
+                  			}
 
-                  	// 		if($totalMessages == count($messages)){
+                  			if($totalMessages == count($messages)){
 
-                  	// 			$getBot->body_text_bot .= "\n*Total Pedido: \$".$totalOrder." USD*\n";
-                  	// 			$order->total_order = $totalOrder;
-                  	// 		}
-					// 	}
-
+                  				$getBot->body_text_bot .= "\n*Total Pedido: \$".$totalOrder." USD*\n";
+                  				$order->total_order = $totalOrder;
+                  			}
+						}
 					}
 
-					// /*=============================================
-					// Guardar orden en base de datos
-					// =============================================*/
+					/*=============================================
+					Guardar orden en base de datos
+					=============================================*/
 
-					// $url = "orders?token=no&except=id_order";
-					// $method = "POST";
+					$url = "orders?token=no&except=id_order";
+					$method = "POST";
 
-					// $createOrder = CurlController::request($url,$method,(array)$order);
-					// // echo '<pre>$createOrder '; print_r($createOrder); echo '</pre>';
-
+					$createOrder = CurlController::request($url,$method,(array)$order);
+					// echo '<pre>$createOrder '; print_r($createOrder); echo '</pre>';
 				}
+
+				// echo '<pre>$Order '; print_r((array)$order); echo '</pre>';
+				// echo '<pre>$totalOrder '; print_r($totalOrder); echo '</pre>';
+				// echo '<pre>$getBot->body_text_bot '; print_r($getBot->body_text_bot); echo '</pre>';
+
+				// return;
+
 
 				/*=============================================
 				Creamos el JSON para WhatsApp
@@ -399,6 +408,11 @@ Class BotsController{
 
 		$getMessages = CurlController::request($url,$method,$fields);
 
+		// echo '<pre>$json '; print_r($json); echo '</pre>';
+		// echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
+
+		// return;
+
 		if($getMessages->status == 200){
 
 			$order_message = $getMessages->results[0]->order_message + 1;
@@ -424,9 +438,18 @@ Class BotsController{
 			"date_created_message" => date("Y-m-d")
 		);
 
+		// echo '<pre>$json '; print_r($json); echo '</pre>';
+		// echo '<pre>$fields '; print_r($fields); echo '</pre>';
+
+		// return;
+
 //####################################################  MODIFIED BLOCK ENDS  ##########################################################
 
 		$saveMessage = CurlController::request($url,$method,$fields);
+
+		// echo '<pre>$saveMessage '; print_r($saveMessage); echo '</pre>';
+
+		// return;
 
 		if($saveMessage->status == 200){
 
@@ -435,7 +458,9 @@ Class BotsController{
       		=============================================*/
 
       		$apiWS = CurlController::apiWS($getApiWS,$json);
-      		echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
+      		// echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
+
+			// return;
 
 		}
 
