@@ -20,6 +20,7 @@ require_once "../controllers/curl.controller.php";
 require_once "../controllers/clients.controller.php";
 require_once "../controllers/business.controller.php";
 require_once "../controllers/bots.controller.php";
+require_once "../controllers/ia.controller.php";
 
 date_default_timezone_set("America/Bogota");
 
@@ -27,7 +28,7 @@ date_default_timezone_set("America/Bogota");
 Simulación del contenido JSON
 =============================================*/
 
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMDBFRkE0NkQ5NTM0RUE4OUJBNwA=","timestamp":"1754961471","type":"image","image":{"mime_type":"image\/jpeg","sha256":"ehQ7WUIjw64RMNysLJ8lviT+nTrDlb0qnfACm7Dh9nQ=","id":"1303296321500641"}}]},"field":"messages"}]}]}';
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMDdEOEIyOEVBRDZEOTIwRTk1RgA=","timestamp":"1755392909","text":{"body":"1"},"type":"text"}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo
@@ -283,7 +284,7 @@ if($type_message == "client"){
 		Responder al cliente
 		=============================================*/
 
-		$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation);
+		$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation, $client_message);
 		echo '<pre>$responseClients '; print_r($responseClients); echo '</pre>';
 
 	}

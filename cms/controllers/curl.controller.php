@@ -37,7 +37,7 @@ class CurlController{
 	Peticiones a la API de ChatGPT
 	=============================================*/
 
-	static public function chatGPT($content,$token,$org){
+	static public function chatGPT($messages,$token,$org){
 
 		$curl = curl_init();
 
@@ -51,8 +51,9 @@ class CurlController{
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => 'POST',
 		  CURLOPT_POSTFIELDS =>'{
-		    "model": "gpt-4-0613",
-		    "messages":[{"role": "user", "content": "'.$content.'"}]
+		    "model": "gpt-5",
+		    "messages":'.$messages.',
+			"temperature": 1
 		}',
 		  CURLOPT_HTTPHEADER => array(
 		    'Authorization: Bearer '.$token,
@@ -65,6 +66,8 @@ class CurlController{
 
 		curl_close($curl);
 		$response = json_decode($response);
+		// echo '<pre>$response '; print_r($response); echo '</pre>';
+		// return;
 		return $response->choices[0]->message->content;
 
 	}

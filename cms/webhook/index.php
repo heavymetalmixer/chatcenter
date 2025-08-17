@@ -18,6 +18,7 @@ require_once "../controllers/curl.controller.php";
 require_once "../controllers/clients.controller.php";
 require_once "../controllers/business.controller.php";
 require_once "../controllers/bots.controller.php";
+require_once "../controllers/ia.controller.php";
 
 /*=============================================
 TOKEN que configuras en la plataforma de Meta
@@ -313,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			Responder al cliente
 			=============================================*/
 
-			$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation);
+			$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation, $client_message);
 			echo '<pre>$responseClients '; print_r($responseClients); echo '</pre>';
 
 		}
