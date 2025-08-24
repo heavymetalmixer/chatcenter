@@ -15,16 +15,33 @@ Class IAController {
         if ($getPrompt->status == 200) {
             $prompt = $getPrompt->results[0];
 
+            /*==============================================
+            Los archivos JSON no admiten strings multilínea,
+            por lo que hay que convertir los \r y \n en
+            espacios
+            ==============================================*/
+
             if ($order_message == 0) {
                 // strip_tags quita tags de HTML dentro de un texto
+                // $messages = '[
+                //     {
+                //         "role": "system",
+                //         "content": "'.strip_tags($prompt->content_prompt).'"
+                //     },
+                //     {
+                //         "role": "user",
+                //         "content": "'.$client_message.'"
+                //     }
+                // ]';
+
                 $messages = '[
                     {
                         "role": "system",
-                        "content": "'.strip_tags($prompt->content_prompt).'"
+                        "content": "'.str_replace(["\r", "\n"], ' ', trim(strip_tags($prompt->content_prompt))).'"
                     },
                     {
                         "role": "user",
-                        "content": "'.$client_message.'"
+                        "content": "'.str_replace(["\r", "\n"], ' ', trim(strip_tags($client_message))).'"
                     }
                 ]';
             }
@@ -40,23 +57,38 @@ Class IAController {
                 $getMessages = CurlController::request($url,$method,$fields);
 
                 if($getMessages->status = 200) {
+                    // $messages = '[{
+                    //     "role": "system",
+                    //     "content": "'.str_replace(["\r", "\n"], '\n', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
+                    // },';
+
                     $messages = '[{
                         "role": "system",
-                        "content": "'.str_replace(["\r", "\n"], '\n', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
+                        "content": "'.str_replace(["\r", "\n"], ' ', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
                     },';
 
                     foreach ($getMessages->results as $key => $value) {
                         if ($value->type_message == "client") {
+                            // $messages .= '{
+                            //     "role": "user",
+                            //     "content": "'.str_replace(["\r", "\n"], '\n', trim($value->client_message)).'"
+                            // },';
+
                             $messages .= '{
                                 "role": "user",
-                                "content": "'.str_replace(["\r", "\n"], '\n', trim($value->client_message)).'"
+                                "content": "'.str_replace(["\r", "\n"], ' ', trim($value->client_message)).'"
                             },';
                         }
 
                         if ($value->type_message == "business") {
+                            // $messages .= '{
+                            //     "role": "system",
+                            //     "content": "'.str_replace(["\r", "\n"], '\n', trim($value->business_message)).'"
+                            // },';
+
                             $messages .= '{
                                 "role": "system",
-                                "content": "'.str_replace(["\r", "\n"], '\n', trim($value->business_message)).'"
+                                "content": "'.str_replace(["\r", "\n"], ' ', trim($value->business_message)).'"
                             },';
                         }
                     }
