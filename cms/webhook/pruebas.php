@@ -28,7 +28,7 @@ date_default_timezone_set("America/Bogota");
 Simulación del contenido JSON
 =============================================*/
 
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMDQ4QUYyQTVDRUY4MDkyQThBMwA=","timestamp":"1756053796","text":{"body":"Hola"},"type":"text"}]},"field":"messages"}]}]}';
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"statuses":[{"id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAERgSMjk1RkIyQUFGNDU0OUEyNENBAA==","status":"sent","timestamp":"1756417616","recipient_id":"573014115327","conversation":{"id":"3e94d39c24b8be5277dffbbe9babd851","expiration_timestamp":"1756417616","origin":{"type":"service"}},"pricing":{"billable":false,"pricing_model":"PMP","category":"service","type":"free_customer_service"}}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo
@@ -61,15 +61,12 @@ Tipo de mensajes
 if(isset($data->entry[0]->changes[0]->value->messages)){
 
 	$type_message = "client";
-
 }
 
 if(isset($data->entry[0]->changes[0]->value->statuses)){
 
 	$type_message = "business";
 	$status_message = $data->entry[0]->changes[0]->value->statuses[0]->status;
-
-
 }
 
 // echo '<pre>$status_message '; print_r($status_message); echo '</pre>';
@@ -91,7 +88,6 @@ if($getApiWS->status == 200){
 
 	$getApiWS = $getApiWS->results[0];
 	$id_whatsapp_message = $getApiWS->id_whatsapp;
-
 }
 
 echo '<pre>$id_whatsapp_message '; print_r($id_whatsapp_message); echo '</pre>';
@@ -124,8 +120,8 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->image->caption)){
 
 			$caption = $data->entry[0]->changes[0]->value->messages[0]->image->caption;
-
-		}else{
+		}
+		else {
 
 			$caption = "";
 		}
@@ -144,8 +140,8 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->video->caption)){
 
 			$caption = $data->entry[0]->changes[0]->value->messages[0]->video->caption;
-
-		}else{
+		}
+		else {
 
 			$caption = "";
 		}
@@ -164,7 +160,6 @@ if($type_message == "client"){
 		$client_message = '{"type":"audio","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->id.'"}';
 
 		$type_conversation = "audio";
-
 	}
 
 	/*=============================================
@@ -176,8 +171,8 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->document->caption)){
 
 			$caption = $data->entry[0]->changes[0]->value->messages[0]->document->caption;
-
-		}else{
+		}
+		else {
 
 			$caption = "";
 		}
@@ -202,7 +197,6 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply)){
 
 			$client_message = '{"id":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->id.'","text":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->title.'"}';
-
 		}
 
 		/*=============================================
@@ -212,7 +206,6 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply)){
 
 			$client_message = '{"id":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply->id.'","text":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply->title.'"}';
-
 		}
 	}
 
@@ -231,7 +224,9 @@ if($type_message == "client"){
 		$getMessages = CurlController::request($url,$method,$fields);
 
 		if ($getMessages->status == 200) {
+
 			if ($getMessages->results[0]->expiration_message < date("Y-m-d H:i:s")) {
+
 				$order_message = 0;
 				$id_conversation_message = null;
 				$expiration_message = "0000-00-00 00:00:00";
@@ -247,6 +242,7 @@ if($type_message == "client"){
 				$updateMessage = CurlController::request($url,$method,$fields);
 			}
 			else {
+
 				$order_message = $getMessages->results[0]->order_message + 1;
 				$id_conversation_message = $getMessages->results[0]->id_conversation_message;
 				$expiration_message = $getMessages->results[0]->expiration_message;
@@ -286,9 +282,7 @@ if($type_message == "client"){
 
 		$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation, $client_message);
 		echo '<pre>$responseClients '; print_r($responseClients); echo '</pre>';
-
 	}
-
 }
 
 /*=============================================
@@ -317,9 +311,11 @@ if($type_message == "business" && $status_message == "sent"){
 		$getIdConversation = CurlController::request($url,$method,$fields);
 
 		if ($getIdConversation->status == 200) {
+
 			$getIdConversation = $getIdConversation->results[0];
 
 			if ($getIdConversation->id_conversation_message == null) {
+
 				/*=============================================
 				Capturar id de la conversación
 				=============================================*/
@@ -337,6 +333,7 @@ if($type_message == "business" && $status_message == "sent"){
 				echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
 			}
 			else {
+
 				$idConversation = $getIdConversation->id_conversation_message;
 				$expireConversation = $getIdConversation->expiration_message;
 
@@ -386,5 +383,4 @@ if($type_message == "business" && $status_message == "sent"){
 			echo '<pre>$responseBusiness '; print_r($responseBusiness); echo '</pre>';
         }
 	}
-
 }

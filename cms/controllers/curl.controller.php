@@ -30,7 +30,6 @@ class CurlController{
         curl_close($curl);
         $response = json_decode($response);
         return $response;
-
     }
 
     /*=============================================
@@ -41,55 +40,30 @@ class CurlController{
 
         $curl = curl_init();
 
-        $array = array(
-            CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>'{
-                "model": "gpt-5",
-                "messages": '.$messages.'
-            }',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer '.$token,
-                'OpenAI-Organization: '.$org,
-                'Content-Type: application/json'
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_POSTFIELDS =>'{
+            "model": "gpt-5",
+            "messages": '.$messages.'}',
+          CURLOPT_HTTPHEADER => array(
+            'Authorization: Bearer '.$token,
+            'OpenAI-Organization: '.$org,
+            'Content-Type: application/json'
+          ),
         ));
 
-        echo '<pre>$messages '; print_r($messages); echo '</pre>';
-        echo '<pre>$array '; print_r($array); echo '</pre>';
-        // return;
-
-        curl_setopt_array($curl, $array);
-
-        // curl_setopt_array($curl, array(
-        //   CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
-        //   CURLOPT_RETURNTRANSFER => true,
-        //   CURLOPT_ENCODING => '',
-        //   CURLOPT_MAXREDIRS => 10,
-        //   CURLOPT_TIMEOUT => 0,
-        //   CURLOPT_FOLLOWLOCATION => true,
-        //   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        //   CURLOPT_CUSTOMREQUEST => 'POST',
-        //   CURLOPT_POSTFIELDS =>'{
-        //     "model": "gpt-5",
-        //     "messages": ['.$messages.']}',
-        //   CURLOPT_HTTPHEADER => array(
-        //     'Authorization: Bearer '.$token,
-        //     'OpenAI-Organization: '.$org,
-        //     'Content-Type: application/json'
-        //   ),
-        // ));
-
-        echo '<pre>curl_setopt_array($curl, $array) '; print_r(curl_setopt_array($curl, $array)); echo '</pre>';
+        // echo '<pre>curl_setopt_array($curl, $array) '; print_r(curl_setopt_array($curl, $array)); echo '</pre>';
 
         $response = curl_exec($curl);
 
-        echo '<pre>$response '; print_r($response); echo '</pre>';
+        // echo '<pre>$response '; print_r($response); echo '</pre>';
         // return;
 
         curl_close($curl);
@@ -99,7 +73,6 @@ class CurlController{
         // return;
 
         return $response->choices[0]->message->content;
-
     }
 
     /*=============================================
@@ -114,7 +87,8 @@ class CurlController{
             $endpoint = 'https://graph.facebook.com/v22.0/'.$getApiWS->id_number_whatsapp.'/messages';
             $method = 'POST';
 
-        }else{
+        }
+        else {
 
             $endpoint = 'https://graph.facebook.com/v22.0/'.explode("_",$json)[0];
             $idArchive = explode("_",$json)[0];
@@ -122,8 +96,8 @@ class CurlController{
             if(count(explode("_",$json)) > 1){
 
                 $ajax = "../";
-
-            }else{
+            }
+            else {
 
                 $ajax = "";
             }
@@ -159,8 +133,8 @@ class CurlController{
         if($method == 'POST'){
 
             return $response;
-
-        }else{
+        }
+        else {
 
             $curl = curl_init();
 
@@ -190,11 +164,7 @@ class CurlController{
                 file_put_contents($filename, $response);
 
                 return $filename;
-
             }
-
         }
-
     }
-
 }

@@ -2,6 +2,7 @@
 
 Class IAController {
     static public function responseIA($client_message, $getApiWS, $phone_message, $order_message) {
+
         /*=============================================
         Buscamos el prompt
         =============================================*/
@@ -13,6 +14,7 @@ Class IAController {
         $getPrompt = CurlController::request($url, $method, $fields);
 
         if ($getPrompt->status == 200) {
+
             $prompt = $getPrompt->results[0];
 
             /*==============================================
@@ -22,11 +24,12 @@ Class IAController {
             ==============================================*/
 
             if ($order_message == 0) {
+
                 // strip_tags quita tags de HTML dentro de un texto
                 // $messages = '[
                 //     {
                 //         "role": "system",
-                //         "content": "'.strip_tags($prompt->content_prompt).'"
+                //         "content": "'.str_replace(["\r", "\n"], '\n', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
                 //     },
                 //     {
                 //         "role": "user",
@@ -37,7 +40,7 @@ Class IAController {
                 $messages = '[
                     {
                         "role": "system",
-                        "content": "'.str_replace(["\r", "\n"], ' ', trim(strip_tags($prompt->content_prompt))).'"
+                        "content": "'.str_replace(["\r", "\n"], ' ', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
                     },
                     {
                         "role": "user",
@@ -46,6 +49,7 @@ Class IAController {
                 ]';
             }
             else {
+
                 /*=============================================
                 Traer conversaciones anteriores
                 =============================================*/
@@ -57,6 +61,7 @@ Class IAController {
                 $getMessages = CurlController::request($url,$method,$fields);
 
                 if($getMessages->status = 200) {
+
                     // $messages = '[{
                     //     "role": "system",
                     //     "content": "'.str_replace(["\r", "\n"], '\n', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
@@ -68,7 +73,9 @@ Class IAController {
                     },';
 
                     foreach ($getMessages->results as $key => $value) {
+
                         if ($value->type_message == "client") {
+
                             // $messages .= '{
                             //     "role": "user",
                             //     "content": "'.str_replace(["\r", "\n"], '\n', trim($value->client_message)).'"
@@ -81,6 +88,7 @@ Class IAController {
                         }
 
                         if ($value->type_message == "business") {
+
                             // $messages .= '{
                             //     "role": "system",
                             //     "content": "'.str_replace(["\r", "\n"], '\n', trim($value->business_message)).'"
@@ -114,6 +122,7 @@ Class IAController {
             $getAdmin = CurlController::request($url, $method, $fields);
 
             if ($getAdmin->status == 200) {
+
                 $admin = $getAdmin->results[0];
 
                 $token = json_decode($admin->chatgpt_admin)->token;
@@ -164,7 +173,7 @@ Class IAController {
 
 
 // Esta sección de código comentada crea un bug que provoca repetición infinita de los mensajes de ChatGPT dentro del CMS, aunque solo se envían
-// una vez por Whatsapp comom es debido
+// una vez por Whatsapp como es debido
 // //####################################################  MODIFIED BLOCK BEGINS  ##########################################################
 
 //                 /*=============================================
@@ -173,6 +182,7 @@ Class IAController {
 
 //                 $url = "messages?token=no&except=id_message";
 //                 $method = "POST";
+
 //                 $fields = array(
 //                     "type_message" => "business",
 //                     "id_whatsapp_message" => $getApiWS->id_whatsapp,
@@ -191,30 +201,22 @@ Class IAController {
 
 // //####################################################  MODIFIED BLOCK ENDS  ##########################################################
 
-//                 $saveMessage = CurlController::request($url,$method,$fields);
-
-//                 // echo '<pre>$saveMessage '; print_r($saveMessage); echo '</pre>';
-
-//                 // return;
-
-//                 if($saveMessage->status == 200){
-
-//                     /*=============================================
-//                     Enviamos datos JSON a la API de WhatsApp
-//                     =============================================*/
-
-//                     $apiWS = CurlController::apiWS($getApiWS,$json);
-//                     // echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
-
-//                     // return;
-//                 }
-
                 /*=============================================
                 Guardamos la respuesta del negocio
                 =============================================*/
 
                 $url = "messages?token=no&except=id_message";
                 $method = "POST";
+
+                // $fields = array(
+                //     "type_message" => "business",
+                //     "id_whatsapp_message" => $getApiWS->id_whatsapp,
+                //     "business_message" => $business_message,
+                //     "phone_message" => $phone_message,
+                //     "order_message" => $order_message,
+                //     "template_message" => $template_message,
+                //     "date_created_message" => date("Y-m-d")
+                // );
 
                 $fields = array(
                     "type_message" => "business",
@@ -223,18 +225,24 @@ Class IAController {
                     "phone_message" => $phone_message,
                     "order_message" => $order_message,
                     "template_message" => $template_message,
+                    "initial_message" => 1,
                     "date_created_message" => date("Y-m-d")
                 );
 
-                $saveMessage = CurlController::request($url,$method,$fields);
+                $saveMessage = CurlController::request($url, $method, $fields);
 
-                if($saveMessage->status == 200){
+                // echo '<pre>$saveMessage '; print_r($saveMessage); echo '</pre>';
+                // return;
+
+                if($saveMessage->status == 200) {
+
                     /*=============================================
                     Enviamos datos JSON a la API de WhatsApp
                     =============================================*/
 
                     $apiWS = CurlController::apiWS($getApiWS,$json);
                     // echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
+                    // return;
                 }
             }
         }

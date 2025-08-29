@@ -28,11 +28,11 @@ class ChatAjax{
 
 //####################################################  MODIFIED BLOCK BEGINS  ##########################################################
 
-        $url = "messages?linkTo=phone_message,date_created_message,initial_message&equalTo=" . $this->phoneMessage . "," . date("Y-m-d") . ",1&startAt=".$this->orderMessage."&endAt=2";
+        $url = "messages?linkTo=phone_message,date_created_message,initial_message&equalTo=".$this->phoneMessage.",".date("Y-m-d").",1&startAt=".$this->orderMessage."&endAt=2";
         $method = "GET";
         $fields = array();
 
-        $getMessages = CurlController::request($url,$method,$fields);
+        $getMessages = CurlController::request($url, $method, $fields);
 
 //####################################################  MODIFIED BLOCK ENDS  ##########################################################
 
