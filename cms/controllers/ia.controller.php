@@ -1,252 +1,173 @@
 <?php
 
-Class IAController {
-    static public function responseIA($client_message, $getApiWS, $phone_message, $order_message) {
+Class IAController{
 
-        /*=============================================
-        Buscamos el prompt
-        =============================================*/
+	static public function responseIA($client_message,$getApiWS,$phone_message,$order_message){
 
-        $url = "prompts?linkTo=status_prompt&equalTo=1&orderBy=id_prompt&orderMode=DESC";
-        $method = "GET";
-        $fields = array();
+		/*=============================================
+		Buscamos el prompt
+		=============================================*/
 
-        $getPrompt = CurlController::request($url, $method, $fields);
+		$url = "prompts?linkTo=status_prompt&equalTo=1&orderBy=id_prompt&orderMode=DESC";
+		$method = "GET";
+		$fields = array();
 
-        if ($getPrompt->status == 200) {
+		$getPrompt = CurlController::request($url,$method,$fields);
 
-            $prompt = $getPrompt->results[0];
+		if($getPrompt->status == 200){
 
-            /*==============================================
-            Los archivos JSON no admiten strings multilínea,
-            por lo que hay que convertir los \r y \n en
-            espacios
-            ==============================================*/
+			$prompt = $getPrompt->results[0];
 
-            if ($order_message == 0) {
+			if($order_message == 0){
 
-                // strip_tags quita tags de HTML dentro de un texto
-                // $messages = '[
-                //     {
-                //         "role": "system",
-                //         "content": "'.str_replace(["\r", "\n"], '\n', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
-                //     },
-                //     {
-                //         "role": "user",
-                //         "content": "'.$client_message.'"
-                //     }
-                // ]';
+				$messages = '[
+						      {
+						        "role": "system",
+						        "content": "'.str_replace(["\r", "\n"], '\n', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
+						      },
+						      {
+						        "role": "user",
+						        "content": "'.$client_message.'"
+						      }
+						    ]';
 
-                $messages = '[
-                    {
-                        "role": "system",
-                        "content": "'.str_replace(["\r", "\n"], ' ', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
-                    },
-                    {
-                        "role": "user",
-                        "content": "'.str_replace(["\r", "\n"], ' ', trim(strip_tags($client_message))).'"
-                    }
-                ]';
-            }
-            else {
+			}else{
 
-                /*=============================================
-                Traer conversaciones anteriores
-                =============================================*/
+				/*=============================================
+         		Traer conversaciones anteriores
+         		=============================================*/
 
-                $url = "messages?linkTo=phone_message&equalTo=".$phone_message."&select=client_message,business_message,type_message";
-                $method = "GET";
-                $fields = array();
+				$url = "messages?linkTo=phone_message&equalTo=".$phone_message."&select=client_message,business_message,type_message";
+				$method = "GET";
+				$fields = array();
 
-                $getMessages = CurlController::request($url,$method,$fields);
+				$getMessages = CurlController::request($url,$method,$fields);
 
-                if($getMessages->status = 200) {
+				if($getMessages->status == 200){
 
-                    // $messages = '[{
-                    //     "role": "system",
-                    //     "content": "'.str_replace(["\r", "\n"], '\n', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
-                    // },';
+					$messages = '[
+							      {
+							        "role": "system",
+							        "content": "'.str_replace(["\r", "\n"], '\n', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
+							      },';
 
-                    $messages = '[{
-                        "role": "system",
-                        "content": "'.str_replace(["\r", "\n"], ' ', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
-                    },';
+					foreach ($getMessages->results as $key => $value) {
 
-                    foreach ($getMessages->results as $key => $value) {
+						if($value->type_message == "client"){
 
-                        if ($value->type_message == "client") {
+							$messages .= '{
+									        "role": "user",
+									        "content": "'.str_replace(["\r", "\n"], '\n', trim($value->client_message)).'"
+									      },';
+						}
 
-                            // $messages .= '{
-                            //     "role": "user",
-                            //     "content": "'.str_replace(["\r", "\n"], '\n', trim($value->client_message)).'"
-                            // },';
+						if($value->type_message == "business"){
 
-                            $messages .= '{
-                                "role": "user",
-                                "content": "'.str_replace(["\r", "\n"], ' ', trim($value->client_message)).'"
-                            },';
-                        }
+							$messages .= '{
+									        "role": "system",
+									        "content": "'.str_replace(["\r", "\n"], '\n', trim($value->business_message)).'"
+									      },';
+						}
 
-                        if ($value->type_message == "business") {
+					}
 
-                            // $messages .= '{
-                            //     "role": "system",
-                            //     "content": "'.str_replace(["\r", "\n"], '\n', trim($value->business_message)).'"
-                            // },';
+					$messages = substr($messages,0,-1);
 
-                            $messages .= '{
-                                "role": "system",
-                                "content": "'.str_replace(["\r", "\n"], ' ', trim($value->business_message)).'"
-                            },';
-                        }
-                    }
+					$messages .= ']';
 
-                    $messages = substr($messages, 0, -1);
+				}
 
-                    $messages .= ']';
-                }
-            }
+			}
 
-            // echo '<pre>$messages '; print_r($messages); echo '</pre>';
-		    // return;
+			// echo '<pre>$messages '; print_r($messages); echo '</pre>';
 
+			// return;
 
-            /*=============================================
-            Traer info del SuperAdministrador
-            =============================================*/
+			/*=============================================
+         	Traer info del SuperAdministrador
+         	=============================================*/
 
-            $url = "admins?linkTo=rol_admin&equalTo=superadmin&select=chatgpt_admin";
-            $method = "GET";
-            $fields = array();
+         	$url = "admins?linkTo=rol_admin&equalTo=superadmin&select=chatgpt_admin";
+         	$getAdmin = CurlController::request($url,$method,$fields);
 
-            $getAdmin = CurlController::request($url, $method, $fields);
+         	if($getAdmin->status == 200){
 
-            if ($getAdmin->status == 200) {
+         		$admin = $getAdmin->results[0];
 
-                $admin = $getAdmin->results[0];
+         		$token = json_decode($admin->chatgpt_admin)->token;
+         		$org = json_decode($admin->chatgpt_admin)->org;
 
-                $token = json_decode($admin->chatgpt_admin)->token;
-                $org = json_decode($admin->chatgpt_admin)->org;
+         		$chatGPT = CurlController::chatGPT($messages,$token,$org);
+         		// echo '<pre>$chatGPT '; print_r($chatGPT); echo '</pre>';
+         		// return;
 
-                $chatGPT = CurlController::chatGPT($messages, $token, $org);
-                // echo '<pre>$chatGPT '; print_r($chatGPT); echo '</pre>';
-                // return;
+         		/*=============================================
+         		Plantilla de tipo texto que debemos enviar a WS
+         		=============================================*/
 
+         		$json = '{
+				  "messaging_product": "whatsapp",
+				  "recipient_type": "individual",
+				  "to": "'.$phone_message.'",
+				  "type": "text",
+				  "text": {
+				    "preview_url": true,
+				    "body": "'.str_replace(["\r", "\n"], '\n', trim(urldecode($chatGPT))).'"
+				  }
+				}';
 
-                /*=============================================
-                Plantilla de tipo texto que debemos enviar a WS
-                =============================================*/
-
-                $json = '{
-                    "messaging_product": "whatsapp",
-                    "recipient_type": "individual",
-                    "to": "'.$phone_message.'",
-                    "type": "text",
-                    "text": {
-                        "preview_url": true,
-                        "body": "'.str_replace(["\r", "\n"], '\n', trim(urldecode($chatGPT))).'"
-                    }
-                }';
-
-                $business_message = $chatGPT;
+				$business_message = $chatGPT;
 				$template_message = '{"type":"ia","title":""}';
 
+				/*=============================================
+				Llevar el orden de los mensajes
+				=============================================*/
 
-                /*=============================================
-                Llevar el orden de los mensajes
-                =============================================*/
+				$url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
+				$method = "GET";
+				$fields = array();
 
-                $url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
-                $method = "GET";
-                $fields = array();
+				$getMessages = CurlController::request($url,$method,$fields);
 
-                $getMessages = CurlController::request($url,$method,$fields);
+				if($getMessages->status == 200){
 
-                // echo '<pre>$json '; print_r($json); echo '</pre>';
-                // echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
+					$order_message = $getMessages->results[0]->order_message + 1;
 
-                // return;
+				}
 
-                if($getMessages->status == 200){
-                    $order_message = $getMessages->results[0]->order_message + 1;
-                }
+				/*=============================================
+		      	Guardamos la respuesta del negocio
+		      	=============================================*/
 
+				$url = "messages?token=no&except=id_message";
+				$method = "POST";
+				$fields = array(
+					"type_message" => "business",
+					"id_whatsapp_message" => $getApiWS->id_whatsapp,
+					"business_message" => $business_message,
+					"phone_message" => $phone_message,
+					"order_message" => $order_message,
+					"template_message" => $template_message,
+					"initial_message" => 1,
+					"date_created_message" => date("Y-m-d")
+				);
 
-// Esta sección de código comentada crea un bug que provoca repetición infinita de los mensajes de ChatGPT dentro del CMS, aunque solo se envían
-// una vez por Whatsapp como es debido
-// //####################################################  MODIFIED BLOCK BEGINS  ##########################################################
+				$saveMessage = CurlController::request($url,$method,$fields);
 
-//                 /*=============================================
-//                 Guardamos la respuesta del negocio
-//                 =============================================*/
+				if($saveMessage->status == 200){
 
-//                 $url = "messages?token=no&except=id_message";
-//                 $method = "POST";
+					/*=============================================
+		      		Enviamos datos JSON a la API de WhatsApp
+		      		=============================================*/
 
-//                 $fields = array(
-//                     "type_message" => "business",
-//                     "id_whatsapp_message" => $getApiWS->id_whatsapp,
-//                     "business_message" => $business_message,
-//                     "phone_message" => $phone_message,
-//                     "order_message" => $order_message,
-//                     "template_message" => $template_message,
-//                     "initial_message" => 1,
-//                     "date_created_message" => date("Y-m-d")
-//                 );
+		      		$apiWS = CurlController::apiWS($getApiWS,$json);
+		      		echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
 
-//                 // echo '<pre>$json '; print_r($json); echo '</pre>';
-//                 // echo '<pre>$fields '; print_r($fields); echo '</pre>';
+				}
 
-//                 // return;
+         	}
+		}
 
-// //####################################################  MODIFIED BLOCK ENDS  ##########################################################
+	}
 
-                /*=============================================
-                Guardamos la respuesta del negocio
-                =============================================*/
-
-                $url = "messages?token=no&except=id_message";
-                $method = "POST";
-
-                // $fields = array(
-                //     "type_message" => "business",
-                //     "id_whatsapp_message" => $getApiWS->id_whatsapp,
-                //     "business_message" => $business_message,
-                //     "phone_message" => $phone_message,
-                //     "order_message" => $order_message,
-                //     "template_message" => $template_message,
-                //     "date_created_message" => date("Y-m-d")
-                // );
-
-                $fields = array(
-                    "type_message" => "business",
-                    "id_whatsapp_message" => $getApiWS->id_whatsapp,
-                    "business_message" => $business_message,
-                    "phone_message" => $phone_message,
-                    "order_message" => $order_message,
-                    "template_message" => $template_message,
-                    "initial_message" => 1,
-                    "date_created_message" => date("Y-m-d")
-                );
-
-                $saveMessage = CurlController::request($url, $method, $fields);
-
-                // echo '<pre>$saveMessage '; print_r($saveMessage); echo '</pre>';
-                // return;
-
-                if($saveMessage->status == 200) {
-
-                    /*=============================================
-                    Enviamos datos JSON a la API de WhatsApp
-                    =============================================*/
-
-                    $apiWS = CurlController::apiWS($getApiWS,$json);
-                    // echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
-                    // return;
-                }
-            }
-        }
-    }
 }
-
-?>

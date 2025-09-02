@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 $business_message = "";
 
@@ -6,137 +6,159 @@ $business_message = "";
 preguntamos si viene una respuesta de bot
 =============================================*/
 
-if ((isset(json_decode($value->template_message)->type) && json_decode($value->template_message)->type == "bot") ||
-    (isset(json_decode($value->template_message)->type) && json_decode($value->template_message)->type == "ia")) {
-    $url = "bots?linkTo=title_bot&equalTo=".json_decode($value->template_message)->title;
-    $method = "GET";
-    $fields = array();
+if(isset(json_decode($value->template_message)->type) && json_decode($value->template_message)->type == "bot" ||
+   isset(json_decode($value->template_message)->type) && json_decode($value->template_message)->type == "ia"){
 
-    $getBot = CurlController::request($url,$method,$fields);
+	$url = "bots?linkTo=title_bot&equalTo=".json_decode($value->template_message)->title;
+	$method = "GET";
+	$fields = array();
 
-    if ($getBot->status == 200) {
-        $bot = $getBot->results[0];
+	$getBot = CurlController::request($url,$method,$fields);
 
-        /*=============================================
-        Si hay cabecera de imagen
-        =============================================*/
+	if($getBot->status == 200){
 
-        if (!empty($bot->header_image_bot)) {
-            $business_message .= '<a href="'.urldecode($bot->header_image_bot).'" target="_blank"><img src="'.urldecode($bot->header_image_bot).'" class="img-fluid rounded"></a>';
-        }
+		$bot = $getBot->results[0];
 
-        /*=============================================
-        Si hay cabecera de texto
-        =============================================*/
+		/*=============================================
+		Si hay cabecera de imagen
+		=============================================*/
 
-        if (!empty($bot->header_text_bot)) {
-            $business_message .= '<div><strong>'.str_replace("\\n","<br>", urldecode($bot->header_text_bot)).'</strong></div>';
-        }
+		if(!empty($bot->header_image_bot)){
 
-        /*=============================================
-        Si hay cabecera de video
-        =============================================*/
+			$business_message .= '<a href="'.urldecode($bot->header_image_bot).'" target="_blank"><img src="'.urldecode($bot->header_image_bot).'" class="img-fluid rounded"></a>';
+		}
 
-        if (!empty($bot->header_video_bot)) {
-            $business_message .= '<video controls src="'.urldecode($bot->header_video_bot).'" class="img-fluid rounded"></video>';
-        }
+		/*=============================================
+		Si hay cabecera de texto
+		=============================================*/
 
-        /*=============================================
-        El cuerpo del mensaje
-        =============================================*/
+		if(!empty($bot->header_text_bot)){
 
-        if (!empty($bot->body_text_bot)) {
-            $business_message .= str_replace("\\n","<br>", urldecode($bot->body_text_bot));
-        }
-        else {
-            $value->business_message = str_replace(["\r", "\n" ], '\n', $value->business_message);
+			$business_message .= '<div><strong>'.str_replace("\\n","<br>", urldecode($bot->header_text_bot)).'</strong></div>';
 
-            $business_message .= str_replace("\\n","<br>", urldecode($value->business_message));
-        }
+		}
 
-        /*=============================================
-        Si hay footer
-        =============================================*/
+		/*=============================================
+		Si hay cabecera de video
+		=============================================*/
 
-        if (!empty($bot->footer_text_bot)) {
-            $business_message .= '<hr><div><small>'.str_replace("\\n","<br>", urldecode($bot->footer_text_bot)).'</small></div>';
-        }
+		if(!empty($bot->header_video_bot)){
 
-        if ($bot->type_bot == "interactive") {
-            /*=============================================
-            Si hay botones
-            =============================================*/
+			$business_message .= '<video controls src="'.urldecode($bot->header_video_bot).'" class="img-fluid rounded"></video>';
+		}
 
-            if ($bot->interactive_bot == "button") {
-                foreach (json_decode(urldecode($bot->buttons_bot)) as $index => $item) {
-                    $business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><i class="bi bi-arrow-90deg-left"></i> '.$item.'</div>';
-                }
-            }
+		/*=============================================
+		El cuerpo del mensaje
+		=============================================*/
 
-            /*=============================================
-            Si hay lista
-            =============================================*/
+		if(!empty($bot->body_text_bot)){
 
-            if ($bot->interactive_bot == "list") {
-                foreach (json_decode(urldecode($bot->list_bot)) as $index => $item) {
-                    $business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.$item->title.'</strong><br>'.$item->description.'</div>';
-                }
-            }
+			$business_message .= str_replace("\\n","<br>", urldecode($bot->body_text_bot));
 
-            /*=============================================
-            Si hay lista de menú
-            =============================================*/
+		}else{
 
-            if ($bot->interactive_bot == "none") {
-                $url = "messages?linkTo=order_message,phone_message&equalTo=".($value->order_message-1).",".$value->phone_message."&select=client_message";
-                $method = "GET";
-                $fields = array();
+			$value->business_message = str_replace(["\r", "\n" ], '\n', $value->business_message);
 
-                $getMessage = CurlController::request($url,$method,$fields);
+			$business_message .= str_replace("\\n","<br>", urldecode($value->business_message));
+		}
 
-                if ($getMessage->status == 200) {
-                    $getMessage = json_decode($getMessage->results[0]->client_message)->id;
-                }
+		/*=============================================
+		Si hay footer
+		=============================================*/
 
-                /*=============================================
-                Traer Categorías y Productos
-                =============================================*/
+		if(!empty($bot->footer_text_bot)){
 
-                $url = "relations?rel=products,categories&type=product,category&linkTo=id_category&equalTo=".$getMessage;
-                $method = "GET";
-                $fields = array();
 
-                $getMenu = CurlController::request($url,$method,$fields);
+			$business_message .= '<hr><div><small>'.str_replace("\\n","<br>", urldecode($bot->footer_text_bot)).'</small></div>';
 
-                if ($getMenu->status == 200) {
-                    $menu = $getMenu->results;
+		}
 
-                    foreach ($menu as $index => $item) {
-                        $business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.urldecode($item->title_product).'</strong><br>$'.$item->price_product.' USD</div>';
-                    }
-                }
-            }
-        }
-    }
-    else {
-        $value->business_message = str_replace(["\r", "\n" ], '\n', $value->business_message);
+		/*=============================================
+		Si hay botones
+		=============================================*/
 
-        $business_message .= str_replace("\\n","<br>", urldecode($value->business_message));
-    }
+		if($bot->type_bot == "interactive" && $bot->interactive_bot == "button"){
 
-}
-else {
-    $business_message = $value->business_message;
+			foreach (json_decode(urldecode($bot->buttons_bot)) as $index => $item) {
+
+				$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><i class="bi bi-arrow-90deg-left"></i> '.$item.'</div>';
+				
+			}
+		}
+
+		/*=============================================
+		Si hay lista
+		=============================================*/
+
+		if($bot->type_bot == "interactive" && $bot->interactive_bot == "list"){
+
+			foreach (json_decode(urldecode($bot->list_bot)) as $index => $item) {
+
+				$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.$item->title.'</strong><br>'.$item->description.'</div>';
+				
+			}
+		}
+
+		/*=============================================
+		Si hay lista de menú
+		=============================================*/
+
+		if($bot->type_bot == "interactive" && $bot->interactive_bot == "none"){
+
+			$url = "messages?linkTo=order_message,phone_message&equalTo=".($value->order_message-1).",".$value->phone_message."&select=client_message";
+			$method = "GET";
+			$fields = array();
+
+			$getMessage = CurlController::request($url,$method,$fields);
+
+			if($getMessage->status == 200){
+				
+				$getMessage = json_decode($getMessage->results[0]->client_message)->id;
+
+			}
+
+			/*=============================================
+			Traer Categorías y Productos
+			=============================================*/
+
+			$url = "relations?rel=products,categories&type=product,category&linkTo=id_category&equalTo=".$getMessage;
+			$method = "GET";
+			$fields = array();
+
+			$getMenu = CurlController::request($url,$method,$fields);
+
+			if($getMenu->status == 200){
+
+				$menu = $getMenu->results;
+				
+				foreach ($menu as $index => $item) {
+					
+					$business_message .= '<div class="small mt-2 border-top p-2 w-100 text-start bg-light"><strong>'.urldecode($item->title_product).'</strong><br>$'.$item->price_product.' USD</div>';
+				}
+
+			}
+		}
+
+	}else{
+
+		$value->business_message = str_replace(["\r", "\n" ], '\n', $value->business_message);
+
+		$business_message .= str_replace("\\n","<br>", urldecode($value->business_message));
+	}
+
+}else{
+
+	$business_message = $value->business_message;
 }
 
 
 ?>
 
 <div class="msg bot">
-    <div class="pt-2" style="max-width:300px">
-        <?php echo preg_replace('/\*(.*?)\*/', '<strong>$1</strong>', $business_message) ?>
-    </div><br>
-    <span class="small text-muted float-end">
-        <?php echo TemplateController::formatDate(6,$value->date_updated_message) ?>
-    </span>
+	<div class="pt-2" style="max-width:300px">
+		<?php echo preg_replace('/\*(.*?)\*/', '<strong>$1</strong>', $business_message) ?>		
+	</div><br>
+	<span class="small text-muted float-end">
+		<?php echo TemplateController::formatDate(6,$value->date_updated_message) ?>		
+	</span>
 </div>

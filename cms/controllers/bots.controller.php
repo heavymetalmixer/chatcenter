@@ -1,451 +1,435 @@
-<?php
+<?php 
 
 Class BotsController{
 
-    static public function responseBots($bot,$getApiWS,$phone_message,$order_message,$idListMenu){
+	static public function responseBots($bot,$getApiWS,$phone_message,$order_message,$idListMenu){
 
-        /*=============================================
-        Traemos la plantilla Bot
-        =============================================*/
+		/*=============================================
+      	Traemos la plantilla Bot
+      	=============================================*/
 
-        $url = "bots?linkTo=title_bot&equalTo=".$bot;
-        $method = "GET";
-        $fields = array();
+      	$url = "bots?linkTo=title_bot&equalTo=".$bot;
+      	$method = "GET";
+      	$fields = array();
 
-        $getBot = CurlController::request($url,$method,$fields);
+      	$getBot = CurlController::request($url,$method,$fields);
 
-        if($getBot->status == 200){
+      	if($getBot->status == 200){
 
-            $getBot = $getBot->results[0];
+      		$getBot = $getBot->results[0];
 
-            /*=============================================
-            Plantilla de tipo texto
-            =============================================*/
+      		/*=============================================
+			Plantilla de tipo texto
+			=============================================*/
 
-              if($getBot->type_bot == "text"){
+      		if($getBot->type_bot == "text"){
 
-                /*=============================================
-                Enviamos el checkout
-                =============================================*/
+      			/*=============================================
+				Enviamos el checkout
+				=============================================*/
 
-                if($bot == "checkout"){
+				if($bot == "checkout"){
 
-                    $url = "orders?linkTo=conversation_order&equalTo=".$idListMenu."&select=total_order";
-                    $method = "GET";
-                    $fields = array();
+					$url = "orders?linkTo=conversation_order&equalTo=".$idListMenu."&select=total_order";
+					$method = "GET";
+					$fields = array();
 
-                    $getOrder = CurlController::request($url,$method,$fields);
+					$getOrder = CurlController::request($url,$method,$fields);
 
-                    if($getOrder->status == 200){
+					if($getOrder->status == 200){
+						
+						$getBot->body_text_bot = $getBot->body_text_bot;
+						$getBot->body_text_bot .= $getOrder->results[0]->total_order;
 
-                        // echo '<pre>$getOrder '; print_r($getOrder); echo '</pre>';
-                        // return;
 
-                        $getBot->body_text_bot = $getBot->body_text_bot;
-                        $getBot->body_text_bot .= $getOrder->results[0]->total_order;
-                    }
-                }
+					}
 
-                $json = '{
-                    "messaging_product": "whatsapp",
-                    "recipient_type": "individual",
-                    "to": "'.$phone_message.'",
-                    "type": "text",
-                    "text": {
-                    "preview_url": true,
-                    "body": "'.str_replace(["\r", "\n"], '\n', trim(urldecode($getBot->body_text_bot))).'"
-                    }
-                }';
+				}
 
-                $business_message = $getBot->body_text_bot;
-                $template_message = '{"type":"bot","title":"'.$bot.'"}';
-            }
+      			$json = '{
+				  "messaging_product": "whatsapp",
+				  "recipient_type": "individual",
+				  "to": "'.$phone_message.'",
+				  "type": "text",
+				  "text": {
+				    "preview_url": true,
+				    "body": "'.str_replace(["\r", "\n"], '\n', trim(urldecode($getBot->body_text_bot))).'"
+				  }
+				}';
 
-            /*=============================================
-            Plantilla de tipo interactivo
-            =============================================*/
+				$business_message = $getBot->body_text_bot;
+				$template_message = '{"type":"bot","title":"'.$bot.'"}';
+      		
+      		}
 
-            if($getBot->type_bot == "interactive"){
+      		/*=============================================
+			Plantilla de tipo interactivo
+			=============================================*/
 
-                $interactive_bot = $getBot->interactive_bot;
+			if($getBot->type_bot == "interactive"){
 
-                /*=============================================
-                Cuando construimos la lista del menú
-                =============================================*/
+				$interactive_bot = $getBot->interactive_bot;
 
-                if($getBot->interactive_bot == "none"){
+				/*=============================================
+				Cuando construimos la lista del menú
+				=============================================*/
 
-                    $interactive_bot = "list";
+				if($getBot->interactive_bot == "none"){
 
-                    /*=============================================
-                    Traer Categorías y Productos
-                    =============================================*/
+					$interactive_bot = "list";
 
-                    $url = "relations?rel=products,categories&type=product,category&linkTo=id_category&equalTo=".$idListMenu;
-                    $method = "GET";
-                    $fields = array();
+					/*=============================================
+					Traer Categorías y Productos
+					=============================================*/
 
-                    $getMenu = CurlController::request($url,$method,$fields);
+					$url = "relations?rel=products,categories&type=product,category&linkTo=id_category&equalTo=".$idListMenu;
+					$method = "GET";
+					$fields = array();
 
-                    if($getMenu->status == 200){
+					$getMenu = CurlController::request($url,$method,$fields);
 
-                        $menu = $getMenu->results;
-                        // echo '<pre>'; print_r($menu); echo '</pre>';
-                        // return;
+					if($getMenu->status == 200){
 
-                        $getBot->header_text_bot = $menu[0]->title_category;
+						$menu = $getMenu->results;
+						// echo '<pre>'; print_r($menu); echo '</pre>';
+						// return;
+						
+						$getBot->header_text_bot = $menu[0]->title_category;
 
-                        $action = '"action": {
-                              "button":"Ver opciones",
-                              "sections": [
-                                {
-                                  "title": "'.urldecode($menu[0]->title_category).'",
-                                  "rows": [';
+						$action = '"action": {
+						      "button":"Ver opciones",
+						      "sections": [
+						        {
+						          "title": "'.urldecode($menu[0]->title_category).'",
+						          "rows": [';
 
-                                foreach ($menu as $key => $value) {
+								foreach ($menu as $key => $value) {
+									
+									$action .= '{
+							              "id": "'.$value->code_product.'",
+							              "title": "'.urldecode($value->title_product).'",
+							              "description": "$'.$value->price_product.' USD"
+							            },';
+								}
 
-                                    $action .= '{
-                                          "id": "'.$value->code_product.'",
-                                          "title": "'.urldecode($value->title_product).'",
-                                          "description": "$'.$value->price_product.' USD"
-                                        },';
-                                }
+								$action = mb_substr($action,0,-1);		
+	     
+								$action .= ']
+						            
+						        }
+						      ]
+						    }
+						  }
+						}';
 
-                                $action = mb_substr($action,0,-1);
+					}
+					
+				
+				}
 
-                                $action .= ']
+				/*=============================================
+				Cuando construimos la órden
+				=============================================*/
 
-                                }
-                              ]
-                            }
-                          }
-                        }';
-                    }
-                }
+				if($bot == "confirmation"){
 
-                /*=============================================
-                Cuando construimos la órden
-                =============================================*/
+					$getBot->body_text_bot = "";
+					$totalOrder = 0;
+					$totalMessages = 0;
+					$order = new stdClass();
+					$order->conversation_order = $idListMenu;
+					$order->products_order = "";
+					$order->contact_order = $phone_message;
+					$order->status_order = "Pendiente";
+					$order->date_created_order = date("Y-m-d");
 
-                if($bot == "confirmation"){
+					$url = "messages?linkTo=id_conversation_message,type_message&equalTo=".$idListMenu.",client";
+					$method = "GET";
+					$fields = array();
 
-                    $getBot->body_text_bot = "";
-                    $totalOrder = 0;
-                    $totalMessages = 0;
-                    $order = new stdClass();
-                    $order->conversation_order = $idListMenu;
-                    $order->products_order = "";
-                    $order->contact_order = $phone_message;
-                    $order->status_order = "Pendiente";
-                    $order->date_created_order = date("Y-m-d");
+					$getMessages = CurlController::request($url,$method,$fields);
 
-                    $url = "messages?linkTo=id_conversation_message,type_message&equalTo=".$idListMenu.",client";
-                    $method = "GET";
-                    $fields = array();
+					if($getMessages->status == 200){
+						
+						$messages = $getMessages->results;
 
-                    $getMessages = CurlController::request($url,$method,$fields);
+						foreach ($messages as $key => $value) {
 
-                    // echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
-                    // return;
+							$totalMessages++;
 
-                    if($getMessages->status == 200){
+							/*=============================================
+                  			Encontrar coincidencia de Código de productos
+                  			=============================================*/
+							
+							if(str_contains($value->client_message, 'sku')){
+								
+								/*=============================================
+								Buscamos productos con sus respectivos precios
+								=============================================*/
 
-                        // echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
-                        // return;
+								$url = "products?linkTo=code_product&equalTo=".json_decode($value->client_message)->id;
 
-                        $messages = $getMessages->results;
+								$getProduct = CurlController::request($url,$method,$fields);
+								
+								if($getProduct->status == 200){
 
-                        foreach ($messages as $key => $value) {
+									$totalOrder += $getProduct->results[0]->price_product;
 
-                            $totalMessages++;
+									$getBot->body_text_bot .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
 
-                            /*=============================================
-                              Encontrar coincidencia de Código de productos
-                              =============================================*/
+									$order->products_order .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
+								}	
+
+							}
 
-                            if(str_contains($value->client_message, 'sku')){
+							/*=============================================
+                  			Datos del nombre
+                  			=============================================*/
 
-                                // echo '<pre>$value->client_message '; print_r($value->client_message); echo '</pre>';
+                  			if($value->template_message == '{"type":"bot","title":"name"}'){
+
+                  				$getBot->body_text_bot .= "\n*Nombre:* ".$value->client_message."\n";
+                  				$order->name_order = $value->client_message;
 
-                                /*=============================================
-                                Buscamos productos con sus respectivos precios
-                                =============================================*/
+                  			
+                  			}
 
-                                $url = "products?linkTo=code_product&equalTo=".json_decode($value->client_message)->id;
+                  			/*=============================================
+                  			Datos del celular
+                  			=============================================*/
+
+                  			if($value->template_message == '{"type":"bot","title":"phone"}'){
+
+                  				$getBot->body_text_bot .= "*Celular:* ".$value->client_message."\n";
+                  				$order->phone_order = $value->client_message;
+                  			
+                  			}
 
-                                $getProduct = CurlController::request($url,$method,$fields);
+                  			/*=============================================
+                  			Datos del correo electrónico
+                  			=============================================*/
 
-                                // echo '<pre>$getProduct '; print_r($getProduct); echo '</pre>';
-                                // return;
+                  			if($value->template_message == '{"type":"bot","title":"email"}'){
 
-                                if($getProduct->status == 200){
+                  				$getBot->body_text_bot .= "*Email:* ".$value->client_message."\n";
+                  				$order->email_order = $value->client_message;
+                  			
+                  			}
+
+                  			/*=============================================
+                  			Datos de dirección
+                  			=============================================*/
+
+                  			if($value->template_message == '{"type":"bot","title":"address"}'){
 
-                                    $totalOrder += $getProduct->results[0]->price_product;
+                  				$getBot->body_text_bot .= "*Dirección:* ".$value->client_message."\n";
+                  				$order->address_order = $value->client_message;
+                  			
+                  			}
+
+                  			if($totalMessages == count($messages)){
+
+                  				$getBot->body_text_bot .= "\n*Total Pedido: \$".$totalOrder." USD*\n";
+                  				$order->total_order = $totalOrder;
+                  			}
+						}
+
+					}
+
+					/*=============================================
+					Guardar orden en base de datos
+					=============================================*/
+
+					$url = "orders?token=no&except=id_order";
+					$method = "POST";
+
+					$createOrder = CurlController::request($url,$method,(array)$order);
+					// echo '<pre>$createOrder '; print_r($createOrder); echo '</pre>';
+		
+				}
+
+				/*=============================================
+				Creamos el JSON para WhatsApp
+				=============================================*/
+
+				$json = '{
+						  "messaging_product": "whatsapp",
+						  "recipient_type": "individual",
+						  "to": "'.$phone_message.'",
+						  "type": "interactive",
+						  "interactive": {
+						    "type": "'.$interactive_bot.'",';
+
+				$header = '';
+
+				if(!empty($getBot->header_text_bot)){
+
+					$header = '"header": {
+								  "type": "text",
+								  "text": "'.mb_substr(trim(urldecode($getBot->header_text_bot)),0,60).'"
+								},';
+				}
+
+				if(!empty($getBot->header_image_bot)){
+
+					$header = '"header": {
+								  "type": "image",
+								  "image": {
+								    "link": "'.urldecode($getBot->header_image_bot).'"
+								  }
+								},';
+				}
 
-                                    $getBot->body_text_bot .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
+				if(!empty($getBot->header_video_bot)){
 
-                                    $order->products_order .= urldecode($getProduct->results[0]->title_product)." - \$".$getProduct->results[0]->price_product." USD\n";
-                                }
-                            }
+					$header = '"header": {
+								  "type": "video",
+								  "video": {
+								    "link": "'.urldecode($getBot->header_video_bot).'"
+								  }
+								},';
+				}
 
-                            /*=============================================
-                            Datos del nombre
-                            =============================================*/
 
-                            if($value->template_message == '{"type":"bot","title":"name"}'){
+				$json .= $header.'
+						    "body": {
+						      "text": "'.str_replace(["\r", "\n"], '\n', trim(urldecode($getBot->body_text_bot))).'"
+						    },
+						    "footer": {
+						      "text": "'.mb_substr(trim(urldecode($getBot->footer_text_bot)),0,60).'"
+						    },';
 
-                                $getBot->body_text_bot .= "\n*Nombre:* ".$value->client_message."\n";
-                                $order->name_order = $value->client_message;
-                            }
+				if($getBot->interactive_bot == "button"){
 
-                            /*=============================================
-                            Datos del celular
-                            =============================================*/
+					$json .= '"action": {
+						      "buttons": [';
 
-                            if($value->template_message == '{"type":"bot","title":"phone"}'){
+					// echo '<pre>$getBot->buttons_bot '; print_r(json_decode(urldecode($getBot->buttons_bot))); echo '</pre>';
 
-                                $getBot->body_text_bot .= "*Celular:* ".$value->client_message."\n";
-                                $order->phone_order = $value->client_message;
-                            }
+					if(!empty($getBot->buttons_bot)){
 
-                            /*=============================================
-                            Datos del correo electrónico
-                            =============================================*/
+						foreach (json_decode(urldecode($getBot->buttons_bot)) as $key => $value) {
+							
+							$json .= '{
+						          "type": "reply",
+						          "reply": {
+						            "id": "'.$key.'",
+						            "title": "'.mb_substr($value,0,24).'"
+						          }
+						        },';
+						}
 
-                            if($value->template_message == '{"type":"bot","title":"email"}'){
+					}
 
-                                $getBot->body_text_bot .= "*Email:* ".$value->client_message."\n";
-                                $order->email_order = $value->client_message;
-                            }
+					$json = mb_substr($json,0,-1);		
+	     
+					$json .= ']
+						    }
+						  }
+						}';
+
+				}
 
-                            /*=============================================
-                            Datos de dirección
-                            =============================================*/
+				if($getBot->interactive_bot == "list"){
+						    
+					$json .= '"action": {
+						      "button":"Ver opciones",
+						      "sections": [
+						        {
+						          "title": "'.$getBot->title_list_bot.'",
+						          "rows": [';
 
-                            if($value->template_message == '{"type":"bot","title":"address"}'){
+					          if(!empty($getBot->list_bot)){
 
-                                $getBot->body_text_bot .= "*Dirección:* ".$value->client_message."\n";
-                                $order->address_order = $value->client_message;
-                            }
+									foreach (json_decode(urldecode($getBot->list_bot)) as $key => $value) {
+										
+										$json .= '{
+								              "id": "'.$value->id.'",
+								              "title": "'.$value->title.'",
+								              "description": "'.$value->description.'"
+								            },';
+									}
 
-                            if($totalMessages == count($messages)){
+								}
 
-                                $getBot->body_text_bot .= "\n*Total Pedido: \$".$totalOrder." USD*\n";
-                                $order->total_order = $totalOrder;
-                            }
-                        }
-                    }
+								$json = mb_substr($json,0,-1);		
+	     
+								$json .= ']
+						            
+						        }
+						      ]
+						    }
+						  }
+						}';
 
-                    /*=============================================
-                    Guardar orden en base de datos
-                    =============================================*/
+				}
 
-                    $url = "orders?token=no&except=id_order";
-                    $method = "POST";
+				if($getBot->interactive_bot == "none"){
 
-                    $createOrder = CurlController::request($url,$method,(array)$order);
-                    // echo '<pre>$createOrder '; print_r($createOrder); echo '</pre>';
-                }
+					$json .= $action;
 
-                // echo '<pre>$Order '; print_r((array)$order); echo '</pre>';
-                // echo '<pre>$totalOrder '; print_r($totalOrder); echo '</pre>';
-                // echo '<pre>$getBot->body_text_bot '; print_r($getBot->body_text_bot); echo '</pre>';
+				}
 
-                // return;
+				$business_message = urldecode($getBot->body_text_bot);
+				$template_message = '{"type":"bot","title":"'.$bot.'"}';
 
 
-                /*=============================================
-                Creamos el JSON para WhatsApp
-                =============================================*/
+			}
 
-                $json = '{
-                          "messaging_product": "whatsapp",
-                          "recipient_type": "individual",
-                          "to": "'.$phone_message.'",
-                          "type": "interactive",
-                          "interactive": {
-                            "type": "'.$interactive_bot.'",';
 
-                $header = '';
+			// echo '<pre>$json '; print_r($json); echo '</pre>';
 
-                if(!empty($getBot->header_text_bot)){
+			// return;
+      	
+      	}
 
-                    $header = '"header": {
-                                  "type": "text",
-                                  "text": "'.mb_substr(trim(urldecode($getBot->header_text_bot)),0,60).'"
-                                },';
-                }
+      	/*=============================================
+		Llevar el orden de los mensajes
+		=============================================*/
 
-                if(!empty($getBot->header_image_bot)){
+		$url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
+		$method = "GET";
+		$fields = array();
 
-                    $header = '"header": {
-                                  "type": "image",
-                                  "image": {
-                                    "link": "'.urldecode($getBot->header_image_bot).'"
-                                  }
-                                },';
-                }
+		$getMessages = CurlController::request($url,$method,$fields);
+		
+		if($getMessages->status == 200){
 
-                if(!empty($getBot->header_video_bot)){
+			$order_message = $getMessages->results[0]->order_message + 1;
+		
+		}
 
-                    $header = '"header": {
-                                  "type": "video",
-                                  "video": {
-                                    "link": "'.urldecode($getBot->header_video_bot).'"
-                                  }
-                                },';
-                }
+	 	/*=============================================
+      	Guardamos la respuesta del negocio
+      	=============================================*/
 
+		$url = "messages?token=no&except=id_message";
+		$method = "POST";
+		$fields = array(
+			"type_message" => "business",
+			"id_whatsapp_message" => $getApiWS->id_whatsapp,
+			"business_message" => $business_message,
+			"phone_message" => $phone_message,
+			"order_message" => $order_message,
+			"template_message" => $template_message,
+			"date_created_message" => date("Y-m-d")
+		);
 
-                $json .= $header.'
-                            "body": {
-                              "text": "'.str_replace(["\r", "\n"], '\n', trim(urldecode($getBot->body_text_bot))).'"
-                            },
-                            "footer": {
-                              "text": "'.mb_substr(trim(urldecode($getBot->footer_text_bot)),0,60).'"
-                            },';
+		$saveMessage = CurlController::request($url,$method,$fields);
 
-                if($getBot->interactive_bot == "button"){
+		if($saveMessage->status == 200){
 
-                    $json .= '"action": {
-                              "buttons": [';
+			/*=============================================
+      		Enviamos datos JSON a la API de WhatsApp
+      		=============================================*/
 
-                    // echo '<pre>$getBot->buttons_bot '; print_r(json_decode(urldecode($getBot->buttons_bot))); echo '</pre>';
+      		$apiWS = CurlController::apiWS($getApiWS,$json);
+      		echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
+		
+		}
 
-                    if(!empty($getBot->buttons_bot)){
+	}
 
-                        foreach (json_decode(urldecode($getBot->buttons_bot)) as $key => $value) {
-
-                            $json .= '{
-                                  "type": "reply",
-                                  "reply": {
-                                    "id": "'.$key.'",
-                                    "title": "'.mb_substr($value,0,24).'"
-                                  }
-                                },';
-                        }
-                    }
-
-                    $json = mb_substr($json,0,-1);
-
-                    $json .= ']
-                            }
-                          }
-                        }';
-                }
-
-                if($getBot->interactive_bot == "list"){
-
-                    $json .= '"action": {
-                              "button":"Ver opciones",
-                              "sections": [
-                                {
-                                  "title": "'.$getBot->title_list_bot.'",
-                                  "rows": [';
-
-                              if(!empty($getBot->list_bot)){
-
-                                    foreach (json_decode(urldecode($getBot->list_bot)) as $key => $value) {
-
-                                        $json .= '{
-                                              "id": "'.$value->id.'",
-                                              "title": "'.$value->title.'",
-                                              "description": "'.$value->description.'"
-                                            },';
-                                    }
-                                }
-
-                                $json = mb_substr($json,0,-1);
-
-                                $json .= ']
-
-                                }
-                              ]
-                            }
-                          }
-                        }';
-                }
-
-                if($getBot->interactive_bot == "none"){
-
-                    $json .= $action;
-                }
-
-                $business_message = urldecode($getBot->body_text_bot);
-                $template_message = '{"type":"bot","title":"'.$bot.'"}';
-            }
-
-
-            // echo '<pre>$json '; print_r($json); echo '</pre>';
-
-            // return;
-        }
-
-        /*=============================================
-        Llevar el orden de los mensajes
-        =============================================*/
-
-        $url = "messages?linkTo=phone_message&equalTo=".$phone_message."&startAt=0&endAt=1&orderBy=id_message&orderMode=DESC";
-        $method = "GET";
-        $fields = array();
-
-        $getMessages = CurlController::request($url,$method,$fields);
-
-        // echo '<pre>$json '; print_r($json); echo '</pre>';
-        // echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
-
-        // return;
-
-        if($getMessages->status == 200){
-
-            $order_message = $getMessages->results[0]->order_message + 1;
-        }
-
-//####################################################  MODIFIED BLOCK BEGINS  ##########################################################
-
-        /*=============================================
-        Guardamos la respuesta del negocio
-        =============================================*/
-
-        $url = "messages?token=no&except=id_message";
-        $method = "POST";
-
-        $fields = array(
-            "type_message" => "business",
-            "id_whatsapp_message" => $getApiWS->id_whatsapp,
-            "business_message" => $business_message,
-            "phone_message" => $phone_message,
-            "order_message" => $order_message,
-            "template_message" => $template_message,
-            "initial_message" => 1,
-            "date_created_message" => date("Y-m-d")
-        );
-
-        // echo '<pre>$json '; print_r($json); echo '</pre>';
-        // echo '<pre>$fields '; print_r($fields); echo '</pre>';
-
-        // return;
-
-//####################################################  MODIFIED BLOCK ENDS  ##########################################################
-
-        $saveMessage = CurlController::request($url,$method,$fields);
-
-        // echo '<pre>$saveMessage '; print_r($saveMessage); echo '</pre>';
-
-        // return;
-
-        if($saveMessage->status == 200){
-
-            /*=============================================
-            Enviamos datos JSON a la API de WhatsApp
-            =============================================*/
-
-            $apiWS = CurlController::apiWS($getApiWS,$json);
-            // echo '<pre>$apiWS '; print_r($apiWS); echo '</pre>';
-
-            // return;
-        }
-    }
 }
 
 ?>

@@ -1,16 +1,17 @@
-<?php
+<?php 
 
 Class ClientsController{
 
-	static public function responseClients($getApiWS, $phone_message, $order_message, $type_conversation, $client_message){
+	static public function responseClients($getApiWS,$phone_message,$order_message,$type_conversation,$client_message){
 
         $idListMenu = null;
-
+		
 		/*=============================================
 		Orden de la conversación
 		=============================================*/
 
-		if ($order_message == 0) {
+		if($order_message == 0){
+
 			/*=============================================
             Buscamos el contacto
             =============================================*/
@@ -21,7 +22,8 @@ Class ClientsController{
 
             $getContact = CurlController::request($url,$method,$fields);
 
-            if ($getContact->status != 200) {
+            if($getContact->status != 200){
+
             	/*=============================================
             	Creamos el contacto
             	=============================================*/
@@ -35,13 +37,12 @@ Class ClientsController{
             	);
 
             	$createContact = CurlController::request($url,$method,$fields);
+            
+            }else{
 
-            }
-            else {
-            	/*=============================================================
+            	/*=============================================
             	Actualizamos la fecha de la última conversación con el contacto
-            	=============================================================*/
-
+            	=============================================*/
             	$url = "contacts?id=".$getContact->results[0]->id_contact."&nameId=id_contact&token=no&except=id_contact";
             	$method = "PUT";
             	$fields = array(
@@ -51,31 +52,35 @@ Class ClientsController{
             	$fields = http_build_query($fields);
 
             	$updateContact = CurlController::request($url,$method,$fields);
+
             }
 
             /*=============================================
             Respuesta con el chatbot
             =============================================*/
 
-            if ($getApiWS->ai_whatsapp == 0) {
+            if($getApiWS->ai_whatsapp == 0){
+
             	/*=============================================
             	Respuesta con Plantilla Bot
             	=============================================*/
 
             	$responseBots = BotsController::responseBots("welcome",$getApiWS,$phone_message,$order_message,$idListMenu);
             	echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-            }
-            else {
+            
+            }else{
+
                 /*=============================================
-            	Respuesta con Asistecia IA
-            	=============================================*/
+                Respuesta con Asistente IA
+                =============================================*/
 
-                $responseIA = IAController::responseIA($client_message, $getApiWS, $phone_message, $order_message);
+                $responseIA = IAController::responseIA($client_message,$getApiWS,$phone_message,$order_message);
                 echo '<pre>$responseIA '; print_r($responseIA); echo '</pre>';
-            }
 
-        }
-        else {
+            }
+		
+        }else{
+
             /*=============================================
             Buscamos el contacto
             =============================================*/
@@ -89,7 +94,6 @@ Class ClientsController{
             /*=============================================
             Actualizamos la fecha de la última conversación con el contacto
             =============================================*/
-
             $url = "contacts?id=".$getContact->results[0]->id_contact."&nameId=id_contact&token=no&except=id_contact";
             $method = "PUT";
             $fields = array(
@@ -110,27 +114,31 @@ Class ClientsController{
 
             $getMessage = CurlController::request($url,$method,$fields);
 
-            if ($getMessage->status == 200) {
-                $message = $getMessage->results[0];
+            if($getMessage->status == 200){
 
+                $message = $getMessage->results[0];    
+                
                 /*=============================================
                 Si se envió la plantilla "welcome"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"welcome"}') {
+                if($message->template_message == '{"type":"bot","title":"welcome"}'){
+
                     /*=============================================
                     Si la respuesta es interactiva
                     =============================================*/
 
-                    if ($type_conversation == "interactive") {
+                    if($type_conversation == "interactive"){
+
                         /*=============================================
                          Si la respuesta es 1: Realizar pedido
                         =============================================*/
 
-                        if (json_decode($message->client_message)->id == 1) {
+                        if(json_decode($message->client_message)->id == 1){
 
                             $responseBots = BotsController::responseBots("menu",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+                        
                         }
 
 
@@ -138,32 +146,38 @@ Class ClientsController{
                          Si la respuesta es 2: Reservar Mesa
                         =============================================*/
 
-                        if (json_decode($message->client_message)->id == 2) {
+                        if(json_decode($message->client_message)->id == 2){
+
                             $responseBots = BotsController::responseBots("reservation",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+                        
                         }
 
                         /*=============================================
                          Si la respuesta es 3: Atención al cliente
                         =============================================*/
 
-                        if (json_decode($message->client_message)->id == 3) {
+                        if(json_decode($message->client_message)->id == 3){
+
                             $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+                        
                         }
 
-                    }
-                    else {
+                    }else{
+
                         $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
-                        echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+                            echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
                     }
+                
                 }
 
                 /*=============================================
                 Si se envió la plantilla "reservation"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"reservation"}') {
+                if($message->template_message == '{"type":"bot","title":"reservation"}'){
+
                     $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
                     echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
                 }
@@ -172,153 +186,185 @@ Class ClientsController{
                 Si se envió la plantilla "menu"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"menu"}' ||
-                   $message->template_message == '{"type":"bot","title":"reset"}') {
+                if($message->template_message == '{"type":"bot","title":"menu"}' ||
+                   $message->template_message == '{"type":"bot","title":"reset"}'){
+
                     /*=============================================
                     Si la respuesta es interactiva
                     =============================================*/
 
-                    if ($type_conversation == "interactive") {
-                        if (is_numeric(json_decode($message->client_message)->id)) {
+                    if($type_conversation == "interactive"){
+
+                        if(is_numeric(json_decode($message->client_message)->id)){
+
                             $idListMenu = json_decode($message->client_message)->id;
 
                             $responseBots = BotsController::responseBots("listMenu",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
 
-                            // CHECK LINE 191. $idListMenu is getting its value as a string and not as a number
-                        }
-                        else {
-                            if (json_decode($message->client_message)->id == "domicilio") {
+                        }else{
+
+                            if(json_decode($message->client_message)->id == "domicilio"){
+
                                 $responseBots = BotsController::responseBots("delivery",$getApiWS,$phone_message,$order_message,$idListMenu);
                                 echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-                            }
-                            else {
+
+                            }else{
+
                                 $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
                                 echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+
                             }
+     
                         }
-                    }
-                    else {
-                        $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
+
+                    }else{
+
+                      $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
                         echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+
                     }
+
                 }
 
                 /*=============================================
                 Si se envió la plantilla "lista de menu"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"listMenu"}') {
+                if($message->template_message == '{"type":"bot","title":"listMenu"}'){
+
                     /*=============================================
                     Si la respuesta es interactiva
                     =============================================*/
 
-                    if ($type_conversation == "interactive") {
+                    if($type_conversation == "interactive"){
+
                         $responseBots = BotsController::responseBots("reset",$getApiWS,$phone_message,$order_message,$idListMenu);
                         echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-                    }
-                    else {
-                        // if($message->client_message == "Menú" ||
-                        //    $message->client_message == "menú" ||
-                        //    $message->client_message == "Menu" ||
-                        //    $message->client_message == "MENÚ" ||
-                        //    $message->client_message == "MENU" ||
-                        //    $message->client_message == "menu"){
-                        if (mb_strtolower(trim($message->client_message)) == "menú" ||
-                           mb_strtolower(trim($message->client_message)) == "menu") {
+
+                    }else{
+
+                        if($message->client_message == "Menú" || 
+                           $message->client_message == "menú" ||
+                           $message->client_message == "Menu" ||
+                           $message->client_message == "MENÚ" ||
+                           $message->client_message == "MENU" ||
+                           $message->client_message == "menu"){
+
                             $responseBots = BotsController::responseBots("menu",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-                        }
-                        else {
+
+                        }else{
+
                             $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
                         }
                     }
+
                 }
 
                 /*=============================================
                 Si se envió la plantilla "name"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"name"}') {
+                if($message->template_message == '{"type":"bot","title":"name"}'){
+
                     $responseBots = BotsController::responseBots("phone",$getApiWS,$phone_message,$order_message,$idListMenu);
                     echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+
                 }
 
                 /*=============================================
                 Si se envió la plantilla "phone"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"phone"}') {
+                if($message->template_message == '{"type":"bot","title":"phone"}'){
+
                     $responseBots = BotsController::responseBots("email",$getApiWS,$phone_message,$order_message,$idListMenu);
                     echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+
                 }
 
                 /*=============================================
                 Si se envió la plantilla "email"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"email"}') {
+                if($message->template_message == '{"type":"bot","title":"email"}'){
+
                     $responseBots = BotsController::responseBots("address",$getApiWS,$phone_message,$order_message,$idListMenu);
                     echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+
                 }
 
                 /*=============================================
                 Si se envió la plantilla "address"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"address"}') {
+                if($message->template_message == '{"type":"bot","title":"address"}'){
+
                     $responseBots = BotsController::responseBots("process",$getApiWS,$phone_message,$order_message,$idListMenu);
                     echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+
                 }
 
                 /*=============================================
                 Si se envió la plantilla "confirmation"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"confirmation"}') {
+                if($message->template_message == '{"type":"bot","title":"confirmation"}'){
+                   
                     /*=============================================
                     Si la respuesta es interactiva
                     =============================================*/
 
-                    if ($type_conversation == "interactive") {
-                        if (json_decode($message->client_message)->id == 1) {
+                    if($type_conversation == "interactive"){
+
+                        if(json_decode($message->client_message)->id == 1){
+
                             $responseBots = BotsController::responseBots("checkout",$getApiWS,$phone_message,$order_message,$message->id_conversation_message);
                             echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-                        }
-                        else {
+
+                        }else{
+
                             $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
-                            echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+                            echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>'; 
                         }
+
+                    }else{
+
+                      $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
+                            echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+
                     }
-                    else {
-                        $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
-                        echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
-                    }
+
                 }
 
                 /*=============================================
                 Si se envió la plantilla "checkout"
                 =============================================*/
 
-                if ($message->template_message == '{"type":"bot","title":"checkout"}') {
+                if($message->template_message == '{"type":"bot","title":"checkout"}'){
+
                     $responseBots = BotsController::responseBots("conversation",$getApiWS,$phone_message,$order_message,$idListMenu);
                     echo '<pre>$responseBots '; print_r($responseBots); echo '</pre>';
+
                 }
 
                 /*=============================================
                 Si se envió la plantilla "ia"
                 =============================================*/
+                
+                if($message->template_message == '{"type":"ia","title":""}' && $getApiWS->ai_whatsapp == 1){
 
-                if ($message->template_message == '{"type":"ia","title":""}' && $getApiWS->ai_whatsapp == 1) {
                     /*=============================================
-                    Respuesta con Asistecia IA
+                    Respuesta con Asistente IA
                     =============================================*/
 
-                    $responseIA = IAController::responseIA($client_message, $getApiWS, $phone_message, $order_message);
+                    $responseIA = IAController::responseIA($client_message,$getApiWS,$phone_message,$order_message);
                     echo '<pre>$responseIA '; print_r($responseIA); echo '</pre>';
                 }
             }
+
         }
-    }
+	}
 }

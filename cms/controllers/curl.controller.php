@@ -2,169 +2,172 @@
 
 class CurlController{
 
-    /*=============================================
-    Peticiones a la API
-    =============================================*/
+	/*=============================================
+	Peticiones a la API
+	=============================================*/
 
-    static public function request($url,$method,$fields){
+	static public function request($url,$method,$fields){
 
-        $curl = curl_init();
+		$curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://api-chatcenter.com/'.$url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => $method,
-            CURLOPT_POSTFIELDS => $fields,
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: gsdfgdfhdsfhsdfgh4332465dfhdfgh34sdgsdfg345AFSGFghdrfh4'
-            ),
-        ));
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => 'http://api-chatcenter.com/'.$url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => $method,
+			CURLOPT_POSTFIELDS => $fields,
+			CURLOPT_HTTPHEADER => array(
+				'Authorization: gsdfgdfhdsfhsdfgh4332465dfhdfgh34sdgsdfg345AFSGFghdrfh4'
+			),
+		));
 
-        $response = curl_exec($curl);
+		$response = curl_exec($curl);
 
-        curl_close($curl);
-        $response = json_decode($response);
-        return $response;
-    }
+		curl_close($curl);
+		$response = json_decode($response);
+		return $response;
 
-    /*=============================================
-    Peticiones a la API de ChatGPT
-    =============================================*/
+	}
 
-    static public function chatGPT($messages,$token,$org){
+	/*=============================================
+	Peticiones a la API de ChatGPT
+	=============================================*/
 
-        $curl = curl_init();
+	static public function chatGPT($messages,$token,$org){
 
-        curl_setopt_array($curl, array(
-          CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
-          CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_ENCODING => '',
-          CURLOPT_MAXREDIRS => 10,
-          CURLOPT_TIMEOUT => 0,
-          CURLOPT_FOLLOWLOCATION => true,
-          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-          CURLOPT_CUSTOMREQUEST => 'POST',
-          CURLOPT_POSTFIELDS =>'{
-            "model": "gpt-5",
-            "messages": '.$messages.'}',
-          CURLOPT_HTTPHEADER => array(
-            'Authorization: Bearer '.$token,
-            'OpenAI-Organization: '.$org,
-            'Content-Type: application/json'
-          ),
-        ));
+		// echo '<pre>$messages '; print_r($messages); echo '</pre>';
 
-        // echo '<pre>curl_setopt_array($curl, $array) '; print_r(curl_setopt_array($curl, $array)); echo '</pre>';
+		// return;
 
-        $response = curl_exec($curl);
+		$curl = curl_init();
 
-        // echo '<pre>$response '; print_r($response); echo '</pre>';
-        // return;
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => '',
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 0,
+		  CURLOPT_FOLLOWLOCATION => true,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => 'POST',
+		  CURLOPT_POSTFIELDS =>'{
+		    "model": "gpt-5",
+		    "messages":'.$messages.'
+		}',
+		  CURLOPT_HTTPHEADER => array(
+		    'Authorization: Bearer '.$token,
+		    'OpenAI-Organization: '.$org,
+		    'Content-Type: application/json'
+		  ),
+		));
 
-        curl_close($curl);
-        $response = json_decode($response);
+		$response = curl_exec($curl);
 
-        // echo '<pre>$response '; print_r($response); echo '</pre>';
-        // return;
+		curl_close($curl);
+		$response = json_decode($response);
+		// echo '<pre>$response '; print_r($response); echo '</pre>';
+		// return;
+		return $response->choices[0]->message->content;
 
-        return $response->choices[0]->message->content;
-    }
+	}
 
-    /*=============================================
-    Peticiones a la API de WS
-    =============================================*/
+	/*=============================================
+	Peticiones a la API de WS
+	=============================================*/
 
-    static public function apiWS($getApiWS,$json){
+	static public function apiWS($getApiWS,$json){
 
-        if(str_contains($json,'{')){
+		if(str_contains($json,'{')){
 
-            $json = $json;
-            $endpoint = 'https://graph.facebook.com/v22.0/'.$getApiWS->id_number_whatsapp.'/messages';
-            $method = 'POST';
+			$json = $json;
+			$endpoint = 'https://graph.facebook.com/v22.0/'.$getApiWS->id_number_whatsapp.'/messages';
+			$method = 'POST';
 
-        }
-        else {
+		}else{
 
-            $endpoint = 'https://graph.facebook.com/v22.0/'.explode("_",$json)[0];
-            $idArchive = explode("_",$json)[0];
+			$endpoint = 'https://graph.facebook.com/v22.0/'.explode("_",$json)[0];
+			$idArchive = explode("_",$json)[0];
 
-            if(count(explode("_",$json)) > 1){
+			if(count(explode("_",$json)) > 1){
 
-                $ajax = "../";
-            }
-            else {
+				$ajax = "../";
 
-                $ajax = "";
-            }
+			}else{
 
-            $json = array();
-            $method = 'GET';
-        }
+				$ajax = "";
+			}
 
-        $curl = curl_init();
+			$json = array();
+			$method = 'GET';
+		}
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $endpoint,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => $method,
-            CURLOPT_POSTFIELDS =>$json,
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer '.$getApiWS->token_whatsapp,
-                'Content-Type: application/json'
-            ),
-        ));
+		$curl = curl_init();
 
-        $response = curl_exec($curl);
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => $endpoint,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => $method,
+			CURLOPT_POSTFIELDS =>$json,
+			CURLOPT_HTTPHEADER => array(
+				'Authorization: Bearer '.$getApiWS->token_whatsapp,
+				'Content-Type: application/json'
+			),
+		));
 
-        curl_close($curl);
+		$response = curl_exec($curl);
 
-        $response = json_decode($response);
+		curl_close($curl);
 
-        if($method == 'POST'){
+		$response = json_decode($response);
 
-            return $response;
-        }
-        else {
+		if($method == 'POST'){
 
-            $curl = curl_init();
+			return $response;
 
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => $response->url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Bearer '.$getApiWS->token_whatsapp,
-                    'Content-Type: application/json'
-                ),
-            ));
+		}else{
 
-            $response = curl_exec($curl);
-            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            $contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
+			$curl = curl_init();
 
-            if($httpcode == 200){
+			curl_setopt_array($curl, array(
+				CURLOPT_URL => $response->url,
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_ENCODING => '',
+				CURLOPT_MAXREDIRS => 10,
+				CURLOPT_TIMEOUT => 0,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				CURLOPT_CUSTOMREQUEST => 'GET',
+				CURLOPT_HTTPHEADER => array(
+					'Authorization: Bearer '.$getApiWS->token_whatsapp,
+					'Content-Type: application/json'
+				),
+			));
 
-                $filename = $ajax.'views/assets/ws/'.$idArchive.'.'.explode("/",$contentType)[1];
+			$response = curl_exec($curl);
+			$httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+			$contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
 
-                file_put_contents($filename, $response);
+			if($httpcode == 200){
 
-                return $filename;
-            }
-        }
-    }
+				$filename = $ajax.'views/assets/ws/'.$idArchive.'.'.explode("/",$contentType)[1];
+
+				file_put_contents($filename, $response);
+
+				return $filename;
+
+			}
+
+		}
+
+	}
+
 }
