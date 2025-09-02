@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*=============================================
 Traemos la info API WS
@@ -12,12 +12,12 @@ $getApiWS = CurlController::request($url,$method,$fields);
 
 if($getApiWS->status == 200){
 
-  $getApiWS = $getApiWS->results[0];
+	$getApiWS = $getApiWS->results[0];
 
 }
 
 /*=============================================
-preguntamos si viene una respuesta interactivas
+Preguntamos si viene una respuesta interactivas
 =============================================*/
 
 if(isset(json_decode($value->client_message)->id) && isset(json_decode($value->client_message)->text)){
@@ -25,7 +25,7 @@ if(isset(json_decode($value->client_message)->id) && isset(json_decode($value->c
 	$value->client_message = json_decode($value->client_message)->text;
 
 /*=============================================
-preguntamos si viene una respuesta de imagen
+Preguntamos si viene una respuesta de imagen
 =============================================*/
 
 }else if(isset(json_decode($value->client_message)->type) && json_decode($value->client_message)->type == "image"){
@@ -35,7 +35,7 @@ preguntamos si viene una respuesta de imagen
 	=============================================*/
 
 	$archive = CurlController::apiWS($getApiWS,json_decode($value->client_message)->id);
-	
+
 	$value->client_message = '<a href="'.$archive.'" target="_blank"><img src="'.$archive.'" class="img-fluid rounded"></a><br>'.urldecode(json_decode($value->client_message)->caption);
 
 }else{
@@ -48,6 +48,6 @@ preguntamos si viene una respuesta de imagen
 <div class="msg user">
 	<div class="pt-2" style="max-width:300px"><?php echo $value->client_message ?></div> <br>
 	<span class="small text-muted float-end">
-		<?php echo TemplateController::formatDate(6,$value->date_updated_message) ?>	
+		<?php echo TemplateController::formatDate(6,$value->date_updated_message) ?>
 	</span>
 </div>

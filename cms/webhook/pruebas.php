@@ -28,8 +28,7 @@ date_default_timezone_set("America/Bogota");
 Simulación del contenido JSON
 =============================================*/
 
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"963763899281770","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556473933","phone_number_id":"609724448890981"},"contacts":[{"profile":{"name":"Tutoriales a tu Alcance"},"wa_id":"573022258002"}],"messages":[{"from":"573022258002","id":"wamid.HBgMNTczMDIyMjU4MDAyFQIAEhgUM0EyNTE2MTZDMzI3Rjk5MDE3MUIA","timestamp":"1747169885","text":{"body":"Gracias pero qu\u00e9 piensas del sistema solar"},"type":"text"}]},"field":"messages"}]}]}
-';
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"statuses":[{"id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAERgSMjk1RkIyQUFGNDU0OUEyNENBAA==","status":"sent","timestamp":"1756417616","recipient_id":"573014115327","conversation":{"id":"3e94d39c24b8be5277dffbbe9babd851","expiration_timestamp":"1756417616","origin":{"type":"service"}},"pricing":{"billable":false,"pricing_model":"PMP","category":"service","type":"free_customer_service"}}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo
@@ -62,15 +61,12 @@ Tipo de mensajes
 if(isset($data->entry[0]->changes[0]->value->messages)){
 
 	$type_message = "client";
-
 }
 
 if(isset($data->entry[0]->changes[0]->value->statuses)){
 
 	$type_message = "business";
 	$status_message = $data->entry[0]->changes[0]->value->statuses[0]->status;
-
-
 }
 
 // echo '<pre>$status_message '; print_r($status_message); echo '</pre>';
@@ -92,7 +88,6 @@ if($getApiWS->status == 200){
 
 	$getApiWS = $getApiWS->results[0];
 	$id_whatsapp_message = $getApiWS->id_whatsapp;
-
 }
 
 echo '<pre>$id_whatsapp_message '; print_r($id_whatsapp_message); echo '</pre>';
@@ -125,8 +120,8 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->image->caption)){
 
 			$caption = $data->entry[0]->changes[0]->value->messages[0]->image->caption;
-
-		}else{
+		}
+		else {
 
 			$caption = "";
 		}
@@ -145,8 +140,8 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->video->caption)){
 
 			$caption = $data->entry[0]->changes[0]->value->messages[0]->video->caption;
-
-		}else{
+		}
+		else {
 
 			$caption = "";
 		}
@@ -165,7 +160,6 @@ if($type_message == "client"){
 		$client_message = '{"type":"audio","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->id.'"}';
 
 		$type_conversation = "audio";
-
 	}
 
 	/*=============================================
@@ -177,8 +171,8 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->document->caption)){
 
 			$caption = $data->entry[0]->changes[0]->value->messages[0]->document->caption;
-
-		}else{
+		}
+		else {
 
 			$caption = "";
 		}
@@ -203,7 +197,6 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply)){
 
 			$client_message = '{"id":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->id.'","text":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->title.'"}';
-
 		}
 
 		/*=============================================
@@ -213,15 +206,12 @@ if($type_message == "client"){
 		if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply)){
 
 			$client_message = '{"id":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply->id.'","text":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply->title.'"}';
-
 		}
 	}
 
-
-
-
 	echo '<pre>$client_message '; print_r($client_message); echo '</pre>';
 	echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
+
 
 //####################################################  MODIFIED BLOCK BEGINS  ##########################################################
 
@@ -290,11 +280,9 @@ if($type_message == "client"){
 		Responder al cliente
 		=============================================*/
 
-		$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation,$client_message);
+		$responseClients = ClientsController::responseClients($getApiWS,$phone_message,$order_message,$type_conversation, $client_message);
 		echo '<pre>$responseClients '; print_r($responseClients); echo '</pre>';
-
 	}
-
 }
 
 /*=============================================
@@ -310,21 +298,51 @@ if($type_message == "business" && $status_message == "sent"){
 	$phone_message = $data->entry[0]->changes[0]->value->statuses[0]->recipient_id;
 	echo '<pre>$phone_message '; print_r($phone_message); echo '</pre>';
 
-	/*=============================================
-	Capturar id conversación
-	=============================================*/
+//####################################################  MODIFIED BLOCK BEGINS  ##########################################################
 
-	$idConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->id;
-	echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+		/*=============================================
+		Capturar id conversación y fecha de expiración
+		=============================================*/
 
-	/*=============================================
-	Capturar fecha de vencimiento
-	=============================================*/
+		$url = "messages?linkTo=phone_message,type_message&equalTo=" . $phone_message . ",client&select=id_conversation_message,expiration_message&orderBy=id_message&orderMode=DESC";
+		$method = "GET";
+		$fields = array();
 
-	$expireConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->expiration_timestamp;
-	$expireConversation = new DateTime("@$expireConversation");
-	$expireConversation = $expireConversation->format('Y-m-d H:i:s');
-	echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+		$getIdConversation = CurlController::request($url,$method,$fields);
+
+		if ($getIdConversation->status == 200) {
+
+			$getIdConversation = $getIdConversation->results[0];
+
+			if ($getIdConversation->id_conversation_message == null) {
+
+				/*=============================================
+				Capturar id de la conversación
+				=============================================*/
+
+				$idConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->id;
+				echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+
+				/*=============================================
+				Capturar fecha de vencimiento
+				=============================================*/
+
+				$expireConversation = $data->entry[0]->changes[0]->value->statuses[0]->conversation->expiration_timestamp;
+				$expireConversation = new DateTime("@$expireConversation");
+				$expireConversation = $expireConversation->format('Y-m-d H:i:s');
+				echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+			}
+			else {
+
+				$idConversation = $getIdConversation->id_conversation_message;
+				$expireConversation = $getIdConversation->expiration_message;
+
+				echo '<pre>$idConversation '; print_r($idConversation); echo '</pre>';
+				echo '<pre>$expireConversation '; print_r($expireConversation); echo '</pre>';
+			}
+		}
+
+//####################################################  MODIFIED BLOCK ENDS  ##########################################################
 
 	/*=============================================
 	Traer la última respuesta del negocio
@@ -365,18 +383,4 @@ if($type_message == "business" && $status_message == "sent"){
 			echo '<pre>$responseBusiness '; print_r($responseBusiness); echo '</pre>';
         }
 	}
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
