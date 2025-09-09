@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     file_put_contents("webhook_log.txt", $input."\n\n", FILE_APPEND);
 
-      /*=============================================
+    /*=============================================
     Convierte el JSON a array asociativo
     =============================================*/
 

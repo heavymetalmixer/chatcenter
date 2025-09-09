@@ -60,11 +60,6 @@
             "serverReadyAction": {
                 "action": "openExternally"
             }
-        },
-        {
-            "name": "Listen for Xdebug",
-            "type": "php",
-            "request": "launch"
         }
     ]
 }

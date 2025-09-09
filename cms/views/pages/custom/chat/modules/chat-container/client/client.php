@@ -10,44 +10,90 @@ $fields = array();
 
 $getApiWS = CurlController::request($url,$method,$fields);
 
-if($getApiWS->status == 200){
+if ($getApiWS->status == 200) {
 
-	$getApiWS = $getApiWS->results[0];
-
+    $getApiWS = $getApiWS->results[0];
 }
 
 /*=============================================
 Preguntamos si viene una respuesta interactivas
 =============================================*/
 
-if(isset(json_decode($value->client_message)->id) && isset(json_decode($value->client_message)->text)){
+if (isset(json_decode($value->client_message)->id) && isset(json_decode($value->client_message)->text)) {
 
-	$value->client_message = json_decode($value->client_message)->text;
+    $value->client_message = json_decode($value->client_message)->text;
 
 /*=============================================
 Preguntamos si viene una respuesta de imagen
 =============================================*/
 
-}else if(isset(json_decode($value->client_message)->type) && json_decode($value->client_message)->type == "image"){
+}
+else if (isset(json_decode($value->client_message)->type) && json_decode($value->client_message)->type == "image") {
 
-	/*=============================================
-	Traer foto con ID a través de la API de WS
-	=============================================*/
+    /*=============================================
+    Traer foto con ID a través de la API de WS
+    =============================================*/
 
-	$archive = CurlController::apiWS($getApiWS,json_decode($value->client_message)->id);
+    $archive = CurlController::apiWS($getApiWS,json_decode($value->client_message)->id);
 
-	$value->client_message = '<a href="'.$archive.'" target="_blank"><img src="'.$archive.'" class="img-fluid rounded"></a><br>'.urldecode(json_decode($value->client_message)->caption);
+    $value->client_message = '<a href="'.$archive.'" target="_blank"><img src="'.$archive.'" class="img-fluid rounded"></a><br>'.urldecode(json_decode($value->client_message)->caption);
+}
 
-}else{
+/*=============================================
+Preguntamos si viene una respuesta de video
+=============================================*/
 
-	$value->client_message = $value->client_message;
+else if (isset(json_decode($value->client_message)->type) && json_decode($value->client_message)->type == "video") {
+
+    /*=============================================
+    Traer video con ID a través de la API de WS
+    =============================================*/
+
+    $archive = CurlController::apiWS($getApiWS,json_decode($value->client_message)->id);
+
+    $value->client_message = '<a href="'.$archive.'" target="_blank"><video src="'.$archive.'" controls class="img-fluid rounded"></video></a><br>'.urldecode(json_decode($value->client_message)->caption);
+}
+
+/*=============================================
+Preguntamos si viene una respuesta de audio
+=============================================*/
+
+else if (isset(json_decode($value->client_message)->type) && json_decode($value->client_message)->type == "audio") {
+
+    /*=============================================
+    Traer audio con ID a través de la API de WS
+    =============================================*/
+
+    $archive = CurlController::apiWS($getApiWS,json_decode($value->client_message)->id);
+
+    $value->client_message = '<a href="'.$archive.'" target="_blank"><video src="'.$archive.'" controls class="img-fluid rounded"></video></a>';
+}
+
+/*=============================================
+Preguntamos si viene una respuesta de documento
+=============================================*/
+
+else if (isset(json_decode($value->client_message)->type) && json_decode($value->client_message)->type == "document") {
+
+    /*=============================================
+    Traer documento con ID a través de la API de WS
+    =============================================*/
+
+    $archive = CurlController::apiWS($getApiWS,json_decode($value->client_message)->id);
+
+    $value->client_message = '<a href="'.$archive.'" target="_blank"><img src="'.$archive.'" target="_blank"><img src="/views/assets/img/pdf.jpeg" class="img-fluid rounded"></a><br>'.urldecode(json_decode($value->client_message)->caption);
+}
+
+else {
+
+    $value->client_message = $value->client_message;
 }
 
 ?>
 
 <div class="msg user">
-	<div class="pt-2" style="max-width:300px"><?php echo $value->client_message ?></div> <br>
-	<span class="small text-muted float-end">
-		<?php echo TemplateController::formatDate(6,$value->date_updated_message) ?>
-	</span>
+    <div class="pt-2" style="max-width:300px"><?php echo $value->client_message ?></div> <br>
+    <span class="small text-muted float-end">
+        <?php echo TemplateController::formatDate(6,$value->date_updated_message) ?>
+    </span>
 </div>
