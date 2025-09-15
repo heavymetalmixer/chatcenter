@@ -39,6 +39,85 @@ $data = json_decode($input);
 
 // return;
 
+
+$hostname='dpartes.com';
+$username='dpartes_horus';
+$password='HorusPartes2024#';
+$dbname='dpartes_horus';
+$port = 3306;
+$usertable='test';
+$yourfield = 'lat';
+$table = 'partes';
+$column = 'idPart';
+$row = '1';
+
+// try{
+
+//     $pdo_connection = new pdo_connection(
+//         "mysql:host='.$hostname.';dbname'.$dbname.'",
+//         $username,
+//         $password);
+
+//     // $pdo_connection->exec("set names utf8mb4");
+// }
+// catch (pdo_connectionException $e) {
+
+//     die("Error: ".$e->getMessage());
+// }
+
+// $pdo_connection = new PDO("mysql:host=".$hostname.";dbname".$dbname."", $username, $password) OR DIE ('Unable to connect to database! Please try again later.');
+
+// if ($pdo_connection) {
+
+//     echo "Connection successful!<br>";
+// }
+// else {
+
+//     echo "Connection failed!<br>";
+// }
+
+
+try {
+
+    $pdo = new PDO("mysql:host=".$hostname.";dbname".$dbname."", $username, $password);
+
+    // Set the PDO error mode to exception
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Print host information
+    echo "Connect Successfully. Host info: ".$pdo->getAttribute(constant("PDO::ATTR_CONNECTION_STATUS")); echo '<br>';
+
+    // $query = $pdo->prepare("SELECT ".$column." FROM ".$dbname.".".$table.";");
+    $query = $pdo->prepare("SELECT * FROM ".$dbname.".".$table." WHERE ".$column."='".$row."';");
+    print_r($query);
+    $query->execute();
+    $result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($result) {
+
+        foreach ($result as $key => $value) {
+
+            print_r($value);
+            echo '<br>';
+        }
+    }
+    else {
+
+        $formMessage = "Invalid column or row<br>";
+    }
+
+    $query->closeCursor();
+}
+catch(PDOException $e) {
+
+    die("ERROR: " . $e->getMessage());
+}
+
+$pdo_connection = null; // Cierra la conexión
+
+return;
+
+
 /*=============================================
 Variables iniciales
 =============================================*/
