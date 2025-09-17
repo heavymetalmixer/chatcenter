@@ -40,16 +40,16 @@ $data = json_decode($input);
 // return;
 
 
-$hostname='dpartes.com';
-$username='dpartes_horus';
-$password='HorusPartes2024#';
-$dbname='dpartes_horus';
-$port = 3306;
-$usertable='test';
-$yourfield = 'lat';
-$table = 'partes';
-$column = 'idPart';
-$row = '1';
+$hostname = null;
+$username = null;
+$password = null;
+$dbname = null;
+$port = null;
+$usertable = null;
+$yourfield = null;
+$table = null;
+$column = null;
+$row = null;
 
 // try{
 

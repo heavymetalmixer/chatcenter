@@ -7,10 +7,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":paisCompany", $paisCompany, PDO::PARAM_STR);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloMarcaTyping($marca) {
@@ -31,10 +31,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloMarcas($idCompany, $companies) {
@@ -51,10 +51,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloCreaMarca($marca) {
@@ -64,15 +64,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     static public function modeloLineas($idMarca, $idCompany, $companies) {
@@ -99,10 +98,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloCreaLinea($marca, $nombreLinea, $tipoLinea) {
@@ -114,15 +113,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     static public function modeloModelos($idLinea, $idCompany, $companies) {
@@ -141,10 +139,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloVersionesListas($marca, $linea, $modelo, $idCompany, $version, $companies) {
@@ -156,10 +154,10 @@ class modeloCatalogos {
 
             $stmt -> execute();
 
-            return $stmt -> fetchAll();
+            $result = $stmt -> fetchAll();
 
-            $stmt-> close();
             $stmt = null;
+            return $result;
         }
         else {
 
@@ -182,10 +180,10 @@ class modeloCatalogos {
 
             $stmt -> execute();
 
-            return $stmt -> fetchAll();
+            $result = $stmt -> fetchAll();
 
-            $stmt-> close();
             $stmt = null;
+            return $result;
         }
     }
 
@@ -248,10 +246,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     //Verifica asociaciones de conjuntos con vehiculo
@@ -260,13 +258,11 @@ class modeloCatalogos {
         $stmt = Conexion::conectarHorus()->prepare("SELECT partesassy.idConjunto FROM versionassy, partesassy WHERE versionassy.idVersion = :idVersion AND partesassy.idAsociacion = versionassy.idAsociacion GROUP BY partesassy.idConjunto");
         $stmt -> bindParam(":idVersion", $idVersion, PDO::PARAM_INT);
         $stmt -> execute();
-// ############### ESTO QUÉ?!#####################
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-// ###############################################
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     //Ingresa relacion de conjuntos con vehiculo
@@ -278,15 +274,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     //Verifica asociaciones de conjuntos con vehiculo
@@ -296,10 +291,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idVersion", $idVersion, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     //Elimina relacion de conjuntos NO asociados con vehiculo
@@ -311,15 +306,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     //Valida asociacion con vehiculo
@@ -330,10 +324,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idAsociacion", $idAsociacion, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetch();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     //Ingresa asociacion con vehiculo
@@ -345,15 +339,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     //Elimina asociacion con vehiculo
@@ -365,15 +358,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     static public function modeloColoresModelos($version, $idColor, $color) {
@@ -385,11 +377,10 @@ class modeloCatalogos {
 
             $stmt -> execute();
 
-            return $stmt -> fetch();
+            $result = $stmt -> fetchAll();
 
-            $stmt-> close();
             $stmt = null;
-
+            return $result;
         }
         else {
 
@@ -400,11 +391,10 @@ class modeloCatalogos {
 
                 $stmt -> execute();
 
-                return $stmt -> fetchAll();
+                $result = $stmt -> fetchAll();
 
-                $stmt-> close();
                 $stmt = null;
-
+                return $result;
             }
             else {
 
@@ -414,10 +404,10 @@ class modeloCatalogos {
 
                 $stmt -> execute();
 
-                return $stmt -> fetch();
+                $result = $stmt -> fetchAll();
 
-                $stmt-> close();
                 $stmt = null;
+                return $result;
             }
         }
     }
@@ -439,10 +429,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloValidaAsociacionColor($idAsociacion, $idColor) {
@@ -452,10 +442,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idAsociacion", $idAsociacion, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetch();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     //Ingresa asociacion color con vehiculo
@@ -467,15 +457,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     //Elimina asociacion color con vehiculo
@@ -487,15 +476,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     static public function modeloVehCompatible($idVersionVehiculoCompatible, $partNoCompatibleVeh) {
@@ -506,10 +494,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":MfgPartNo", $partNoCompatibleVeh, PDO::PARAM_STR);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloColorCompatible($idColorVehiculoCompatible, $partNoCompatibleVeh) {
@@ -520,10 +508,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":MfgPartNo", $partNoCompatibleVeh, PDO::PARAM_STR);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloConjuntosModelos($version, $color) {
@@ -532,9 +520,11 @@ class modeloCatalogos {
 
             $stmt = Conexion::conectarHorus()->prepare("SELECT * FROM conjuntos");
             $stmt -> execute();
-            return $stmt -> fetchAll();
-            $stmt-> close();
+
+            $result = $stmt -> fetchAll();
+
             $stmt = null;
+            return $result;
         }
         else {
 
@@ -545,10 +535,10 @@ class modeloCatalogos {
 
                 $stmt -> execute();
 
-                return $stmt -> fetchAll();
+                $result = $stmt -> fetchAll();
 
-                $stmt-> close();
                 $stmt = null;
+                return $result;
             }
             else {
 
@@ -558,10 +548,10 @@ class modeloCatalogos {
                 $stmt -> bindParam(":idColor", $color, PDO::PARAM_STR);
                 $stmt -> execute();
 
-                return $stmt -> fetchAll();
+                $result = $stmt -> fetchAll();
 
-                $stmt-> close();
                 $stmt = null;
+                return $result;
             }
         }
     }
@@ -572,10 +562,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idConjunto", $idConjunto, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloConteoModelosConjuntos($idConjunto) {
@@ -584,10 +574,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idConjunto", $idConjunto, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetch();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloCrearConjunto($nombreConjuntoCrear, $nameAssyCreate, $originalNameAssyCreate) {
@@ -599,15 +589,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
 
@@ -617,10 +606,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idConjunto", $idConjunto, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloParteAssyDetalle($idAsociacion) {
@@ -629,10 +618,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idAsociacion", $idAsociacion, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetch();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloListaConjuntos($partNo, $idVersion, $idColor) {
@@ -644,10 +633,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idColor", $idColor, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloActualizaCoordenadas($idAsociacion, $figBOM, $posX, $posY, $auxBOMs) {
@@ -661,15 +650,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     static public function modeloEliminaParteAssy($idAsociacion) {
@@ -679,15 +667,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     static public function modeloActualizaParteAssy($idAsociacionActualiza, $BOMConjunto, $varianteBOM, $cantBOM, $notasBOM) {
@@ -702,15 +689,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
     static public function modeloCargaPartesAssy($idConjunto, $BOM, $variante, $idPart, $cant, $notas) {
@@ -726,15 +712,14 @@ class modeloCatalogos {
 
         if ($stmt -> execute()) {
 
+            $stmt = null;
             return true;
         }
         else {
 
+            $stmt = null;
             return false;
         }
-
-        $stmt-> close();
-        $stmt = null;
     }
 
 
@@ -847,7 +832,7 @@ class modeloCatalogos {
                 foreach ($busqueda as $key => $value) {
 
                     if (mb_strtolower($value)=="de" OR mb_strtolower($value)=="con" OR mb_strtolower($value)=="y" OR mb_strtolower($value)=="sin" OR mb_strtolower($value)=="o" OR mb_strtolower($value)=="en" OR mb_strtolower($value)=="para" OR mb_strtolower($value)=="por") {
-
+                        //
                     }
                     else {
 
@@ -932,10 +917,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloDetalleParte($partNo, $idPart) {
@@ -953,10 +938,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetch();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloPriceDetail($idPartesTienda) {
@@ -965,10 +950,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idPartesTienda", $idPartesTienda, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloPartesRecomendadosEcommerce($idCompany, $companies) {
@@ -985,10 +970,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloParteTienda($idNo) {
@@ -997,10 +982,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idPartesTienda", $idNo, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetch();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloModelosAplica($partNo) {
@@ -1009,10 +994,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":partNo", $partNo, PDO::PARAM_STR);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloVINVersionModelo($VINModelo) {
@@ -1021,10 +1006,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":vin", $VINModelo, PDO::PARAM_STR);
         $stmt -> execute();
 
-        return $stmt -> fetch();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloVINGrupos($idCompany, $WMI, $codigoModelo, $serie) {
@@ -1037,10 +1022,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idCompany", $idCompany, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     /*Revisar desde aqui
@@ -1052,10 +1037,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idCompany", $idCompany, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloFichaParte($idConjunto, $idVersion, $bom) {
@@ -1066,10 +1051,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":idVersion", $idVersion, PDO::PARAM_INT);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloPartesSustitutos($partNo) {
@@ -1078,10 +1063,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":partNo", $partNo, PDO::PARAM_STR);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloSustitutos($partNo) {
@@ -1090,10 +1075,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":partNo", $partNo, PDO::PARAM_STR);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloCambiosIngenieria($partNo) {
@@ -1102,10 +1087,10 @@ class modeloCatalogos {
         $stmt -> bindParam(":partNo", $partNo, PDO::PARAM_STR);
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
 
     static public function modeloPartesBusq($criterio, $descr, $partNoFabricante, $partNoDistribuidor, $idVersion) {
@@ -1140,10 +1125,10 @@ class modeloCatalogos {
 
         $stmt -> execute();
 
-        return $stmt -> fetchAll();
+        $result = $stmt -> fetchAll();
 
-        $stmt-> close();
         $stmt = null;
+        return $result;
     }
     */
 }
