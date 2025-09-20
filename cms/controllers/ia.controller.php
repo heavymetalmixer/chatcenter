@@ -1,6 +1,7 @@
 <?php
 
 Class IAController {
+
     static public function responseIA($client_message, $getApiWS, $phone_message, $order_message) {
 
         /*=============================================

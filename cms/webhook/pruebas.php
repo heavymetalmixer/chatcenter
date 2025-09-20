@@ -22,6 +22,8 @@ require_once "../controllers/business.controller.php";
 require_once "../controllers/bots.controller.php";
 require_once "../controllers/ia.controller.php";
 
+require_once "parts_extraction.php";
+
 date_default_timezone_set("America/Bogota");
 
 /*=============================================
@@ -40,171 +42,11 @@ $data = json_decode($input);
 // return;
 
 
-// $hostname = null;
-// $username = null;
-// $password = null;
-// $dbname = null;
-// $port = null;
-// $table = null;
-// $column = null;
-// $row = null;
-
-// **************************************************************************************
-//
-// Extract each of the variables needed to connecto to the dpartes db from chatcenter db
-//
-// **************************************************************************************
-
-$hostname = 'localhost';
-$username = 'root';
-$password = '';
-$dbname = 'chatcenter';
-$port = 80;
-$table = 'dpartes';
-$column = 'id_dpart';
-$row = null;
-$result = null;
-
-// HOST NAME
-try {
-
-    $pdo = new PDO("mysql:host=".$hostname.";dbname".$dbname."", $username, $password);
-
-    // Set the PDO error mode to exception
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // Print host information
-    echo "Connect Successfully. Host info: ".$pdo->getAttribute(constant("PDO::ATTR_CONNECTION_STATUS")); echo '<br>';
-
-    // $query = $pdo->prepare("SELECT * FROM ".$dbname.".".$table." WHERE ".$column."='".$row."';");
-    $query = $pdo->prepare("SELECT * FROM ".$dbname.".".$table." WHERE ".$column."='1';");
-    // $query = $pdo->prepare("SELECT * FROM ".$dbname.".".$table.";");
-    print_r($query);
-    echo '<br><br>';
-    $query->execute();
-    $result = $query->fetchAll(PDO::FETCH_ASSOC);
-
-    if ($result) {
-
-        foreach ($result as $key => $value) {
-
-            echo '<br>';
-            print_r($value);
-            echo '<br>';
-        }
-    }
-    else {
-
-        $formMessage = "Invalid column or row<br>";
-    }
-
-    $query->closeCursor();
-}
-catch(PDOException $e) {
-
-    die("ERROR: " . $e->getMessage());
-}
-
-
-$result = $result[0]; // Get the associative array inside $results[0]
-
-// Host name variable
-echo '<br>';
-$dpartes_host_name = $result["host_dpart"];
-print_r($dpartes_host_name);
-
-// User name variable
-echo '<br>';
-$dpartes_user_name = $result["user_dpart"];
-print_r($dpartes_user_name);
-
-// Password variable
-echo '<br>';
-$dpartes_password = $result["password_dpart"];
-print_r($dpartes_password);
-
-// Database variable
-echo '<br>';
-$dpartes_database = $result["database_dpart"];
-print_r($dpartes_database);
-
-// Port variable
-echo '<br>';
-$dpartes_port = $result["port_dpart"];
-print_r($dpartes_port);
-echo '<br><br><br>';
-
-$pdo_connection = null; // Cierra la conexión
-
-$result = null;
-
-
-// **************************************************************************************
-//
-// Extract product links from the bussiness database and write them to dpartes_public db
-//
-// **************************************************************************************
-
-$table = 'slugs';
-$column = 'tipo';
-$column_slug = 'slug';
-$row = null;
-
-try {
-
-    $pdo = new PDO("mysql:host=".$dpartes_host_name.";dbname".$dpartes_database."", $dpartes_user_name, $dpartes_password);
-
-    // Set the PDO error mode to exception
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // Print host information
-    echo "Connect Successfully. Host info: ".$pdo->getAttribute(constant("PDO::ATTR_CONNECTION_STATUS")); echo '<br>';
-
-    // $query = $pdo->prepare("SELECT * FROM ".$dbname.".".$table." WHERE ".$column."='".$row."';");
-    // $query = $pdo->prepare("SELECT * FROM ".$dpartes_database.".".$table.";");
-    $query = $pdo->prepare("SELECT ".$column_slug." FROM ".$dpartes_database.".".$table." WHERE ".$column."='RPTO';");
-    print_r($query);
-    echo '<br><br>';
-    $query->execute();
-    $result = $query->fetchAll(PDO::FETCH_ASSOC);
-
-    if ($result) {
-
-        // foreach ($result as $key => $value) {
-
-        //     echo '<br>';
-        //     print_r($value);
-        //     echo '<br>';
-        // }
-
-        // print_r($result);
-        // echo "<br><br>";
-        // print_r(count($result));
-
-        for ($index = 0; $index < count($result); $index++) {
-
-            // print_r($result[$index]["slug"]);
-            print_r($result[$index]);
-            echo "<br><br>";
-        }
-    }
-    else {
-
-        $formMessage = "Invalid column or row<br>";
-    }
-
-    $query->closeCursor();
-}
-catch(PDOException $e) {
-
-    die("ERROR: " . $e->getMessage());
-}
-
-$pdo_connection = null; // Cierra la conexión
-
-
-return;
-
+// Call this only when you want to get all the current parts links from the bussiness database
+// as it is a slow process.
+// Make sure to delete all the registers in the chatcenter.parts table before doing it
+// PartsExtraction::copy_products_links();
+// return;
 
 /*=============================================
 Variables iniciales
