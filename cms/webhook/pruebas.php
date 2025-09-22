@@ -23,6 +23,7 @@ require_once "../controllers/bots.controller.php";
 require_once "../controllers/ia.controller.php";
 
 require_once "parts_extraction.php";
+require_once "web_download.php";
 
 date_default_timezone_set("America/Bogota");
 
@@ -47,6 +48,20 @@ $data = json_decode($input);
 // Make sure to delete all the registers in the chatcenter.parts table before doing it
 // PartsExtraction::copy_products_links();
 // return;
+
+
+// $originalUrl = "https://drive.google.com/file/d/1ZCtA6ZXc1RlRp6GxfdLluGUDuzrw-9yC/view?usp=sharing";
+
+// $downloadUrl = WebDownload::get_direct_download_url($originalUrl);
+
+// echo "Enlace original: $originalUrl<br>";
+// echo "Enlace directo:  $downloadUrl<br>";
+
+
+// Test for extraction of documents and web pages data, to send it to OpenAI
+WebDownload::copy_web();
+
+return;
 
 /*=============================================
 Variables iniciales
