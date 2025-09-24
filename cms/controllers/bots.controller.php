@@ -1,8 +1,8 @@
 <?php
 
-Class BotsController{
+Class BotsController {
 
-    static public function responseBots($bot,$getApiWS,$phone_message,$order_message,$idListMenu){
+    static public function responseBots($bot,$getApiWS,$phone_message,$order_message,$idListMenu) {
 
         /*=============================================
         Traemos la plantilla Bot
@@ -14,7 +14,7 @@ Class BotsController{
 
         $getBot = CurlController::request($url,$method,$fields);
 
-        if($getBot->status == 200){
+        if ($getBot->status == 200) {
 
             $getBot = $getBot->results[0];
 
@@ -22,13 +22,13 @@ Class BotsController{
             Plantilla de tipo texto
             =============================================*/
 
-              if($getBot->type_bot == "text"){
+            if ($getBot->type_bot == "text") {
 
                 /*=============================================
                 Enviamos el checkout
                 =============================================*/
 
-                if($bot == "checkout"){
+                if ($bot == "checkout") {
 
                     $url = "orders?linkTo=conversation_order&equalTo=".$idListMenu."&select=total_order";
                     $method = "GET";
@@ -36,7 +36,7 @@ Class BotsController{
 
                     $getOrder = CurlController::request($url,$method,$fields);
 
-                    if($getOrder->status == 200){
+                    if ($getOrder->status == 200) {
 
                         // echo '<pre>$getOrder '; print_r($getOrder); echo '</pre>';
                         // return;
@@ -65,7 +65,7 @@ Class BotsController{
             Plantilla de tipo interactivo
             =============================================*/
 
-            if($getBot->type_bot == "interactive"){
+            if ($getBot->type_bot == "interactive") {
 
                 $interactive_bot = $getBot->interactive_bot;
 
@@ -73,7 +73,7 @@ Class BotsController{
                 Cuando construimos la lista del menú
                 =============================================*/
 
-                if($getBot->interactive_bot == "none"){
+                if ($getBot->interactive_bot == "none") {
 
                     $interactive_bot = "list";
 
@@ -87,7 +87,7 @@ Class BotsController{
 
                     $getMenu = CurlController::request($url,$method,$fields);
 
-                    if($getMenu->status == 200){
+                    if ($getMenu->status == 200) {
 
                         $menu = $getMenu->results;
                         // echo '<pre>'; print_r($menu); echo '</pre>';
@@ -127,7 +127,7 @@ Class BotsController{
                 Cuando construimos la órden
                 =============================================*/
 
-                if($bot == "confirmation"){
+                if ($bot == "confirmation") {
 
                     $getBot->body_text_bot = "";
                     $totalOrder = 0;
@@ -148,7 +148,7 @@ Class BotsController{
                     // echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
                     // return;
 
-                    if($getMessages->status == 200){
+                    if ($getMessages->status == 200) {
 
                         // echo '<pre>$getMessages '; print_r($getMessages); echo '</pre>';
                         // return;
@@ -160,10 +160,10 @@ Class BotsController{
                             $totalMessages++;
 
                             /*=============================================
-                              Encontrar coincidencia de Código de productos
-                              =============================================*/
+                            Encontrar coincidencia de Código de productos
+                            =============================================*/
 
-                            if(str_contains($value->client_message, 'sku')){
+                            if( str_contains($value->client_message, 'sku')) {
 
                                 // echo '<pre>$value->client_message '; print_r($value->client_message); echo '</pre>';
 
@@ -178,7 +178,7 @@ Class BotsController{
                                 // echo '<pre>$getProduct '; print_r($getProduct); echo '</pre>';
                                 // return;
 
-                                if($getProduct->status == 200){
+                                if ($getProduct->status == 200) {
 
                                     $totalOrder += $getProduct->results[0]->price_product;
 
@@ -192,7 +192,7 @@ Class BotsController{
                             Datos del nombre
                             =============================================*/
 
-                            if($value->template_message == '{"type":"bot","title":"name"}'){
+                            if ($value->template_message == '{"type":"bot","title":"name"}') {
 
                                 $getBot->body_text_bot .= "\n*Nombre:* ".$value->client_message."\n";
                                 $order->name_order = $value->client_message;
@@ -202,7 +202,7 @@ Class BotsController{
                             Datos del celular
                             =============================================*/
 
-                            if($value->template_message == '{"type":"bot","title":"phone"}'){
+                            if ($value->template_message == '{"type":"bot","title":"phone"}') {
 
                                 $getBot->body_text_bot .= "*Celular:* ".$value->client_message."\n";
                                 $order->phone_order = $value->client_message;
@@ -212,7 +212,7 @@ Class BotsController{
                             Datos del correo electrónico
                             =============================================*/
 
-                            if($value->template_message == '{"type":"bot","title":"email"}'){
+                            if ($value->template_message == '{"type":"bot","title":"email"}') {
 
                                 $getBot->body_text_bot .= "*Email:* ".$value->client_message."\n";
                                 $order->email_order = $value->client_message;
@@ -222,13 +222,13 @@ Class BotsController{
                             Datos de dirección
                             =============================================*/
 
-                            if($value->template_message == '{"type":"bot","title":"address"}'){
+                            if ($value->template_message == '{"type":"bot","title":"address"}') {
 
                                 $getBot->body_text_bot .= "*Dirección:* ".$value->client_message."\n";
                                 $order->address_order = $value->client_message;
                             }
 
-                            if($totalMessages == count($messages)){
+                            if ($totalMessages == count($messages)) {
 
                                 $getBot->body_text_bot .= "\n*Total Pedido: \$".$totalOrder." USD*\n";
                                 $order->total_order = $totalOrder;
@@ -268,7 +268,7 @@ Class BotsController{
 
                 $header = '';
 
-                if(!empty($getBot->header_text_bot)){
+                if (!empty($getBot->header_text_bot)) {
 
                     $header = '"header": {
                                   "type": "text",
@@ -276,7 +276,7 @@ Class BotsController{
                                 },';
                 }
 
-                if(!empty($getBot->header_image_bot)){
+                if (!empty($getBot->header_image_bot)) {
 
                     $header = '"header": {
                                   "type": "image",
@@ -286,7 +286,7 @@ Class BotsController{
                                 },';
                 }
 
-                if(!empty($getBot->header_video_bot)){
+                if (!empty($getBot->header_video_bot)) {
 
                     $header = '"header": {
                                   "type": "video",
@@ -305,14 +305,14 @@ Class BotsController{
                               "text": "'.mb_substr(trim(urldecode($getBot->footer_text_bot)),0,60).'"
                             },';
 
-                if($getBot->interactive_bot == "button"){
+                if ($getBot->interactive_bot == "button") {
 
                     $json .= '"action": {
                               "buttons": [';
 
                     // echo '<pre>$getBot->buttons_bot '; print_r(json_decode(urldecode($getBot->buttons_bot))); echo '</pre>';
 
-                    if(!empty($getBot->buttons_bot)){
+                    if (!empty($getBot->buttons_bot)) {
 
                         foreach (json_decode(urldecode($getBot->buttons_bot)) as $key => $value) {
 
@@ -334,7 +334,7 @@ Class BotsController{
                         }';
                 }
 
-                if($getBot->interactive_bot == "list"){
+                if ($getBot->interactive_bot == "list") {
 
                     $json .= '"action": {
                               "button":"Ver opciones",
@@ -343,7 +343,7 @@ Class BotsController{
                                   "title": "'.$getBot->title_list_bot.'",
                                   "rows": [';
 
-                              if(!empty($getBot->list_bot)){
+                              if (!empty($getBot->list_bot)) {
 
                                     foreach (json_decode(urldecode($getBot->list_bot)) as $key => $value) {
 
@@ -366,7 +366,7 @@ Class BotsController{
                         }';
                 }
 
-                if($getBot->interactive_bot == "none"){
+                if ($getBot->interactive_bot == "none") {
 
                     $json .= $action;
                 }
@@ -374,7 +374,6 @@ Class BotsController{
                 $business_message = urldecode($getBot->body_text_bot);
                 $template_message = '{"type":"bot","title":"'.$bot.'"}';
             }
-
 
             // echo '<pre>$json '; print_r($json); echo '</pre>';
 
@@ -396,7 +395,7 @@ Class BotsController{
 
         // return;
 
-        if($getMessages->status == 200){
+        if ($getMessages->status == 200) {
 
             $order_message = $getMessages->results[0]->order_message + 1;
         }
@@ -434,7 +433,7 @@ Class BotsController{
 
         // return;
 
-        if($saveMessage->status == 200){
+        if ($saveMessage->status == 200) {
 
             /*=============================================
             Enviamos datos JSON a la API de WhatsApp

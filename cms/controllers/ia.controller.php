@@ -61,7 +61,7 @@ Class IAController {
 
                 $getMessages = CurlController::request($url,$method,$fields);
 
-                if($getMessages->status = 200) {
+                if ($getMessages->status = 200) {
 
                     // $messages = '[{
                     //     "role": "system",
@@ -129,7 +129,9 @@ Class IAController {
                 $token = json_decode($admin->chatgpt_admin)->token;
                 $org = json_decode($admin->chatgpt_admin)->org;
 
+                // Respuesta de la IA para que el negocio envíe a Whatsapp
                 $chatGPT = CurlController::chatGPT($messages, $token, $org);
+
                 // echo '<pre>$chatGPT '; print_r($chatGPT); echo '</pre>';
                 // return;
 

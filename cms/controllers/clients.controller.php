@@ -1,8 +1,8 @@
 <?php
 
-Class ClientsController{
+Class ClientsController {
 
-	static public function responseClients($getApiWS, $phone_message, $order_message, $type_conversation, $client_message){
+	static public function responseClients($getApiWS, $phone_message, $order_message, $type_conversation, $client_message) {
 
         $idListMenu = null;
 

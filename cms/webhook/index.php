@@ -26,9 +26,9 @@ TOKEN que configuras en la plataforma de Meta
 
 $token = "1234abcd";
 
-if($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["hub_verify_token"])){
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["hub_verify_token"])) {
 
-    if($_GET["hub_verify_token"] == $token){
+    if ($_GET["hub_verify_token"] == $token) {
 
         echo $_GET["hub_challenge"];
 
@@ -61,8 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Si PHP-FPM, esto termina respuesta al cliente pero permite seguir procesando.
     if (function_exists('fastcgi_finish_request')) {
+
         fastcgi_finish_request();
-    } else {
+    }
+    else {
+
         // fallback
         ob_flush();
         flush();
@@ -80,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     =========================== */
     $wa_message_id = null;
     if (isset($data->entry[0]->changes[0]->value->messages[0]->id)) {
+
         $wa_message_id = $data->entry[0]->changes[0]->value->messages[0]->id;
     }
 
@@ -88,10 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     (usa el endpoint que ya tienes: messages?linkTo=wa_message_id&equalTo=...)
     =========================== */
     if ($wa_message_id) {
+
         $checkUrl = "messages?linkTo=wa_message_id&equalTo=".$wa_message_id."&startAt=0&endAt=1";
         $check = CurlController::request($checkUrl, "GET", array());
 
         if ($check->status == 200 && !empty($check->results)) {
+
             // Ya existe: ignorar este webhook
             file_put_contents("duplicates.log", date('c')." Ignored duplicate wa_id: ".$wa_message_id."\n\n", FILE_APPEND);
             return;
@@ -136,12 +142,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Tipo de mensajes
     =============================================*/
 
-    if(isset($data->entry[0]->changes[0]->value->messages)){
+    if (isset($data->entry[0]->changes[0]->value->messages)) {
 
         $type_message = "client";
     }
 
-    if(isset($data->entry[0]->changes[0]->value->statuses)){
+    if (isset($data->entry[0]->changes[0]->value->statuses)) {
 
         $type_message = "business";
         $status_message = $data->entry[0]->changes[0]->value->statuses[0]->status;
@@ -162,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $getApiWS = CurlController::request($url,$method,$fields);
 
-    if($getApiWS->status == 200){
+    if ($getApiWS->status == 200) {
 
         $getApiWS = $getApiWS->results[0];
         $id_whatsapp_message = $getApiWS->id_whatsapp;
@@ -174,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Capturar mensaje del cliente
     =============================================*/
 
-    if($type_message == "client"){
+    if ($type_message == "client") {
 
         $phone_message = $data->entry[0]->changes[0]->value->messages[0]->from;
 
@@ -182,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Cuando capturamos un texto
         =============================================*/
 
-        if(isset($data->entry[0]->changes[0]->value->messages[0]->text)){
+        if (isset($data->entry[0]->changes[0]->value->messages[0]->text)) {
 
             $client_message = $data->entry[0]->changes[0]->value->messages[0]->text->body;
 
@@ -193,9 +199,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Capturando una imagen
         =============================================*/
 
-        if(isset($data->entry[0]->changes[0]->value->messages[0]->image)){
+        if (isset($data->entry[0]->changes[0]->value->messages[0]->image)) {
 
-            if(isset($data->entry[0]->changes[0]->value->messages[0]->image->caption)){
+            if (isset($data->entry[0]->changes[0]->value->messages[0]->image->caption)) {
 
                 $caption = $data->entry[0]->changes[0]->value->messages[0]->image->caption;
             }
@@ -213,9 +219,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Capturando un video
         =============================================*/
 
-        if(isset($data->entry[0]->changes[0]->value->messages[0]->video)){
+        if (isset($data->entry[0]->changes[0]->value->messages[0]->video)) {
 
-            if(isset($data->entry[0]->changes[0]->value->messages[0]->video->caption)){
+            if (isset($data->entry[0]->changes[0]->value->messages[0]->video->caption)) {
 
                 $caption = $data->entry[0]->changes[0]->value->messages[0]->video->caption;
             }
@@ -233,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Capturando un audio
         =============================================*/
 
-        if(isset($data->entry[0]->changes[0]->value->messages[0]->audio)){
+        if (isset($data->entry[0]->changes[0]->value->messages[0]->audio)) {
 
             $client_message = '{"type":"audio","mime":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->mime_type.'","id":"'.$data->entry[0]->changes[0]->value->messages[0]->audio->id.'"}';
 
@@ -244,9 +250,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Capturando un documento
         =============================================*/
 
-        if(isset($data->entry[0]->changes[0]->value->messages[0]->document)){
+        if (isset($data->entry[0]->changes[0]->value->messages[0]->document)) {
 
-            if(isset($data->entry[0]->changes[0]->value->messages[0]->document->caption)){
+            if (isset($data->entry[0]->changes[0]->value->messages[0]->document->caption)) {
 
                 $caption = $data->entry[0]->changes[0]->value->messages[0]->document->caption;
             }
@@ -264,7 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Capturando respuesta interactiva
         =============================================*/
 
-        if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive)){
+        if (isset($data->entry[0]->changes[0]->value->messages[0]->interactive)) {
 
             $type_conversation = "interactive";
 
@@ -272,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Respuesta interacción de botón
             =============================================*/
 
-            if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply)){
+            if (isset($data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply)) {
 
                 $client_message = '{"id":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->id.'","text":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->button_reply->title.'"}';
             }
@@ -281,7 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Respuesta interacción de lista
             =============================================*/
 
-            if(isset($data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply)){
+            if (isset($data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply)) {
 
                 $client_message = '{"id":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply->id.'","text":"'.$data->entry[0]->changes[0]->value->messages[0]->interactive->list_reply->title.'"}';
             }
@@ -392,7 +398,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Capturar mensaje del negocio
     =============================================*/
 
-    if($type_message == "business" && $status_message == "sent"){
+    if ($type_message == "business" && $status_message == "sent") {
 
         /*=============================================
         Capturar el número de teléfono
@@ -457,7 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $getMessage = CurlController::request($url,$method,$fields);
 
-        if($getMessage->status == 200){
+        if ($getMessage->status == 200) {
 
             $getMessage = $getMessage->results[0];
 
@@ -476,7 +482,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $updateMessage = CurlController::request($url,$method,$fields);
 
-            if($updateMessage->status == 200){
+            if ($updateMessage->status == 200) {
 
                 /*=============================================
                 Respuestas del negocio
