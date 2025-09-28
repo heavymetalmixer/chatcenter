@@ -59,9 +59,13 @@ $data = json_decode($input);
 
 
 // Test for extraction of documents and web pages data, to send it to OpenAI
-// WebDownload::copy_web();
+$apiKey = ""; // Pon tu API Key aquí
+$model  = "gpt-5"; // o "gpt-5" si lo tienes disponible
+$url    = "https://drive.google.com/file/d/1ZCtA6ZXc1RlRp6GxfdLluGUDuzrw-9yC/view?usp=sharing";
 
-// return;
+WebDownload::copy_web($apiKey, $model, $url);
+
+return;
 
 /*=============================================
 Variables iniciales

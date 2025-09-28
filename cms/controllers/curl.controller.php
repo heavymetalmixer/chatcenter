@@ -29,6 +29,7 @@ class CurlController{
 
         curl_close($curl);
         $response = json_decode($response);
+
         return $response;
 
 

@@ -2,9 +2,9 @@
 
 Class WebDownload {
 
-    /* Convierte enlaces de Google Drive a enlaces de descarga directa
-    * Si no es un link de Drive, devuelve el original.
-    */
+    // =======================================================
+    // Si no es un link de Google Drive, devuelve el original.
+    // =======================================================
     static public function get_direct_download_url($url) {
 
         // Caso: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
@@ -32,26 +32,25 @@ Class WebDownload {
         return $url;
     }
 
-    static public function copy_web() {
+    static public function copy_web($apiKey, $model, $url) {
 
-
-        // 1. Configuración
+        // Configuración
         $apiKey = ""; // Pon tu API Key aquí
         $model  = "gpt-5"; // o "gpt-5" si lo tienes disponible
         $url    = "https://drive.google.com/file/d/1ZCtA6ZXc1RlRp6GxfdLluGUDuzrw-9yC/view?usp=sharing";
-        // https://drive.google.com/uc?export=download&id=1ZCtA6ZXc1RlRp6GxfdLluGUDuzrw-9yC Este es el link directo que debe entregar la función
+        https://drive.google.com/uc?export=download&id=1ZCtA6ZXc1RlRp6GxfdLluGUDuzrw-9yC Este es el link directo que debe entregar la función
         $url = WebDownload::get_direct_download_url($url);
 
-        // 2. Descargar archivo a temporal
+        // Descargar archivo a temporal
         $tempFile = tempnam(sys_get_temp_dir(), 'download_');
         file_put_contents($tempFile, file_get_contents($url));
 
-        // 3. Detectar MIME
+        // Detectar MIME
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime  = finfo_file($finfo, $tempFile);
         finfo_close($finfo);
 
-        // 4. Extraer texto básico sin librerías
+        // Extraer texto básico sin librerías
         $text = "";
 
         if (strpos($mime, "html") !== false) {
@@ -59,21 +58,19 @@ Class WebDownload {
             // HTML
             $html = file_get_contents($url);
             $text = strip_tags($html);
-
         }
         elseif (strpos($mime, "plain") !== false) {
 
             // TXT
             $text = file_get_contents($tempFile);
-
         }
         elseif (strpos($mime, "pdf") !== false) {
 
             // PDF simple (solo texto plano, no imágenes)
             $pdfContent = file_get_contents($tempFile);
+
             // Eliminar caracteres binarios
             $text = preg_replace('/[^(\x20-\x7F)\x0A\x0D]/','', $pdfContent);
-
         }
         elseif (strpos($mime, "word") !== false || strpos($mime, "officedocument") !== false) {
 
@@ -92,7 +89,7 @@ Class WebDownload {
             $text = "[Tipo de archivo no soportado nativamente]";
         }
 
-        // 5. Recortar si es muy largo
+        // Recortar si es muy largo
         // $maxLength = 5000;
 
         // if (strlen($text) > $maxLength) {
@@ -100,7 +97,7 @@ Class WebDownload {
         //     $text = substr($text, 0, $maxLength) . "... [contenido truncado]";
         // }
 
-        // 6. Preparar payload para OpenAI
+        // Preparar payload para OpenAI
         $payload = [
             "model" => $model,
             "messages" => [
@@ -109,7 +106,7 @@ Class WebDownload {
             ]
         ];
 
-        // 7. Hacer petición con cURL
+        // Hacer petición con cURL
         $ch = curl_init("https://api.openai.com/v1/chat/completions");
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -124,10 +121,10 @@ Class WebDownload {
         $response = curl_exec($ch);
         curl_close($ch);
 
-        // 8. Decodificar respuesta
+        // Decodificar respuesta
         $data = json_decode($response, true);
 
-        // 9. Mostrar la salida de OpenAI
+        // Mostrar la salida de OpenAI
         if (isset($data['choices'][0]['message']['content'])) {
 
             echo "Respuesta del modelo:\n\n";
@@ -139,7 +136,7 @@ Class WebDownload {
             print_r($data);
         }
 
-        // 10. Limpiar temporal
+        // Limpiar temporal
         unlink($tempFile);
     }
 }

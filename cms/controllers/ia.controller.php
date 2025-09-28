@@ -129,6 +129,8 @@ Class IAController {
                 $token = json_decode($admin->chatgpt_admin)->token;
                 $org = json_decode($admin->chatgpt_admin)->org;
 
+
+
                 // Respuesta de la IA para que el negocio envíe a Whatsapp
                 $chatGPT = CurlController::chatGPT($messages, $token, $org);
 
