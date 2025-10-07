@@ -4,11 +4,26 @@
 Depurar Errores
 =============================================*/
 
+
 define('DIR',__DIR__);
 
 ini_set("display_errors", 1);
 ini_set("log_errors", 1);
 ini_set("error_log", DIR."/php_error_log");
+
+
+/*=============================================
+Librerías de terceros
+=============================================*/
+
+require_once "../../vendor/autoload.php";
+
+use Dotenv\Dotenv;
+
+
+$test_env = Dotenv::createImmutable("../../");
+$test_env->load();
+// $test_env->required("CHATCENTER_URL_API")->notEmpty();
 
 
 
@@ -24,14 +39,32 @@ require_once "../controllers/ia.controller.php";
 
 require_once "parts_extraction.php";
 require_once "web_download.php";
+require_once "product_parsing.php";
 
 date_default_timezone_set("America/Bogota");
+// date_default_timezone_set("-5:00");
 
 /*=============================================
 Simulación del contenido JSON
 =============================================*/
 
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMEUzNzQ0RkFCREVFQjI5QkZBOAA=","timestamp":"1758727955","text":{"body":"Hola, c\u00f3mo le va?"},"type":"text"}]},"field":"messages"}]}]}';
+// Call this only when you want to get all the current parts links from the bussiness database as it is a slow process.
+// Make sure to delete all the registers in the chatcenter.parts table before doing it
+// PartsExtraction::copy_products_links();
+// return;
+
+//ProductParsing::create_embeddings();
+// ProductParsing::pase_with_embeddings();
+// return;
+
+// $arr = array("pierna" => "izquierda", "hombro" => "derecho", "cabeza" => "hueca");
+
+// echo end($arr);
+// echo "<br>"; print_r($arr);
+// return;
+
+
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMENBRUM2QjcwQzJCQTE4QzQ3MAA=","timestamp":"1759792820","text":{"body":"Ustedes venden pasteles?"},"type":"text"}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo
@@ -41,31 +74,6 @@ $data = json_decode($input);
 // echo '<pre>$data '; print_r($data); echo '</pre>';
 
 // return;
-
-
-// Call this only when you want to get all the current parts links from the bussiness database
-// as it is a slow process.
-// Make sure to delete all the registers in the chatcenter.parts table before doing it
-// PartsExtraction::copy_products_links();
-// return;
-
-
-// $originalUrl = "https://drive.google.com/file/d/1ZCtA6ZXc1RlRp6GxfdLluGUDuzrw-9yC/view?usp=sharing";
-
-// $downloadUrl = WebDownload::get_direct_download_url($originalUrl);
-
-// echo "Enlace original: $originalUrl<br>";
-// echo "Enlace directo:  $downloadUrl<br>";
-
-
-// Test for extraction of documents and web pages data, to send it to OpenAI
-$apiKey = ""; // Pon tu API Key aquí
-$model  = "gpt-5"; // o "gpt-5" si lo tienes disponible
-$url    = "https://drive.google.com/file/d/1ZCtA6ZXc1RlRp6GxfdLluGUDuzrw-9yC/view?usp=sharing";
-
-WebDownload::copy_web($apiKey, $model, $url);
-
-return;
 
 /*=============================================
 Variables iniciales

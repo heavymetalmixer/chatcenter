@@ -26,9 +26,11 @@ class CurlController{
         ));
 
         $response = curl_exec($curl);
+        // echo '<br>$response'; print_r($response); echo '<br>';
 
         curl_close($curl);
         $response = json_decode($response);
+        // echo '<br>$response'; print_r($response); echo '<br>';
 
         return $response;
 

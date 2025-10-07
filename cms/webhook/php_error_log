@@ -1,0 +1,5 @@
+[06-Oct-2025 19:10:54 America/Bogota] PHP Warning:  Undefined property: stdClass::$choices in C:\laragon\www\chatcenter\cms\controllers\curl.controller.php on line 111
+[06-Oct-2025 19:10:54 America/Bogota] PHP Warning:  Trying to access array offset on null in C:\laragon\www\chatcenter\cms\controllers\curl.controller.php on line 111
+[06-Oct-2025 19:10:54 America/Bogota] PHP Warning:  Attempt to read property "message" on null in C:\laragon\www\chatcenter\cms\controllers\curl.controller.php on line 111
+[06-Oct-2025 19:10:54 America/Bogota] PHP Warning:  Attempt to read property "content" on null in C:\laragon\www\chatcenter\cms\controllers\curl.controller.php on line 111
+[06-Oct-2025 19:10:54 America/Bogota] PHP Deprecated:  urldecode(): Passing null to parameter #1 ($string) of type string is deprecated in C:\laragon\www\chatcenter\cms\controllers\ia.controller.php on line 179

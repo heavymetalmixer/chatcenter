@@ -34,7 +34,7 @@ class Connection{
 	/*=============================================
 	Acceso público
 	=============================================*/
-	
+
 	static public function publicAccess(){
 
 		$tables = [""];
@@ -54,7 +54,7 @@ class Connection{
 
 			$link = new PDO(
 				"mysql:host=localhost;dbname=".Connection::infoDatabase()["database"],
-				Connection::infoDatabase()["user"], 
+				Connection::infoDatabase()["user"],
 				Connection::infoDatabase()["pass"]
 			);
 
@@ -105,7 +105,7 @@ class Connection{
 			=============================================*/
 
 			if($columns[0] == "*"){
-				
+
 				array_shift($columns);
 
 			}
@@ -115,20 +115,20 @@ class Connection{
 			=============================================*/
 
 			$sum = 0;
-				
+
 			foreach ($validate as $key => $value) {
 
-				$sum += in_array($value->item, $columns);	
-				
-						
+				$sum += in_array($value->item, $columns);
+
+
 			}
 
 
 
 			return $sum == count($columns) ? $validate : null;
-			
-			
-			
+
+
+
 		}
 
 	}
@@ -166,12 +166,12 @@ class Connection{
 		Traemos el usuario de acuerdo al token
 		=============================================*/
 		$user = GetModel::getDataFilter($table, "token_exp_".$suffix, "token_".$suffix, $token, null,null,null,null);
-		
+
 		if(!empty($user)){
 
 			/*=============================================
 			Validamos que el token no haya expirado
-			=============================================*/	
+			=============================================*/
 
 			$time = time();
 

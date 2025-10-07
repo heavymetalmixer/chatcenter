@@ -4,11 +4,26 @@
 Depurar Errores
 =============================================*/
 
+
 define('DIR',__DIR__);
 
 ini_set("display_errors", 1);
 ini_set("log_errors", 1);
 ini_set("error_log", DIR."/php_error_log");
+
+
+/*=============================================
+Librerías de terceros
+=============================================*/
+
+require_once "../../vendor/autoload.php";
+
+use Dotenv\Dotenv;
+
+
+$env_vars = Dotenv::createImmutable("../../");
+$env_vars->load();
+// $env_vars->required("CHATCENTER_URL_API")->notEmpty();
 
 /*=============================================
 Controladores

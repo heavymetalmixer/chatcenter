@@ -2,15 +2,12 @@
 
 Class PartsExtraction {
 
-    /* Extracts all the product links from the bussines database and puts them inside the project's */
+    /**
+     * Extrae todos los links de productos d la base de datos del negocio y los pone dentro de la base de datos del proyecto
+     */
     static public function copy_products_links() {
 
-        // ******************************************************************************************
-        //
-        // Extract each of the variables needed to connect to the dpartes db from chatcenter db
-        //
-        // ******************************************************************************************
-
+        // Extrae las variables necesarias para conectar ambas bases de datos
         $chatcenter_host_name = 'localhost';
         $chatcenter_user_name = 'root';
         $chatcenter_password = '';
@@ -66,41 +63,29 @@ Class PartsExtraction {
         // Host name variable
         echo '<br>';
         $dpartes_host_name = $result["host_dpart"];
-        // print_r($dpartes_host_name);
 
         // User name variable
         echo '<br>';
         $dpartes_user_name = $result["user_dpart"];
-        // print_r($dpartes_user_name);
 
         // Password variable
         echo '<br>';
         $dpartes_password = $result["password_dpart"];
-        // print_r($dpartes_password);
 
         // Database variable
         echo '<br>';
         $dpartes_database = $result["database_dpart"];
-        // print_r($dpartes_database);
 
         // Port variable
         echo '<br>';
         $dpartes_port = $result["port_dpart"];
-        // print_r($dpartes_port);
         echo '<br><br><br>';
 
         $pdo_connection = null; // Cierra la conexión
 
         $result = null;
 
-
-        // ******************************************************************************************
-        //
-        // Extract product links from the bussiness database and add "https://dpartes.com/repuesto/"
-        // to the beginning of each link
-        //
-        // ******************************************************************************************
-
+        // Extrae los links de los productos de la base de datos del negocio y añade "https://dpartes.com/repuesto/" antes del inicio de cada link
         $dpartes_table = 'slugs';
         $dpartes_column = 'tipo';
         $dpartes_column_slug = 'slug';

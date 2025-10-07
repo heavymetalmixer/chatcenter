@@ -1,5 +1,7 @@
 <?php
 
+require_once "../webhook/product_parsing.php";
+
 Class IAController {
 
     static public function responseIA($client_message, $getApiWS, $phone_message, $order_message) {
@@ -14,15 +16,19 @@ Class IAController {
 
         $getPrompt = CurlController::request($url, $method, $fields);
 
+        $messages = null;
+
         if ($getPrompt->status == 200) {
 
             $prompt = $getPrompt->results[0];
 
-            /*==============================================
-            Los archivos JSON no admiten strings multilínea,
-            por lo que hay que convertir los \r y \n en
-            espacios
-            ==============================================*/
+            // Variable en la que se guardará la respuesta a una petición de un producto específico
+            $parsed_last_message = null;
+
+            /*===================================================
+            Los archivos JSON no admiten strings multilínea, por
+            lo que hay que convertir los \r y \n en espacios
+            ===================================================*/
 
             if ($order_message == 0) {
 
@@ -103,13 +109,36 @@ Class IAController {
                     }
 
                     $messages = substr($messages, 0, -1);
-
                     $messages .= ']';
+
+                    // Se pregunta si el último mensaje fue del cliente. De ser así, se analiza si el cliente preguntó
+                    // por un producto específico y se añade la respuesta como mensaje por parte del negocio
+                    // if (end($getMessages["results"])["type_message"] == "client") {
+
+                    //     $last_client_message = end($getMessages["results"])["client_message"];
+                    if (end($getMessages->results)->type_message == "client") {
+
+                        $last_client_message = end($getMessages->results)->client_message;
+                        $parsed_last_message = ProductParsing::pase_with_embeddings($last_client_message);
+
+                        if ($parsed_last_message != null) {
+
+                            $messages .= '{
+                                "role": "system",
+                                "content": "'.str_replace(["\r", "\n"], ' ', trim($parsed_last_message)).'"
+                            },';
+                        }
+                    }
+
+                    // print_r(end($getMessages["results"])["client_message"]);
+                    // print_r(end($getMessages->results)->client_message);
+                    echo '<pre>$messages'; print_r($messages); echo '</pre>';
                 }
             }
 
             // echo '<pre>$messages '; print_r($messages); echo '</pre>';
 		    // return;
+
 
 
             /*=============================================
@@ -128,8 +157,6 @@ Class IAController {
 
                 $token = json_decode($admin->chatgpt_admin)->token;
                 $org = json_decode($admin->chatgpt_admin)->org;
-
-
 
                 // Respuesta de la IA para que el negocio envíe a Whatsapp
                 $chatGPT = CurlController::chatGPT($messages, $token, $org);
