@@ -64,7 +64,7 @@ Simulación del contenido JSON
 // return;
 
 
-$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMENBRUM2QjcwQzJCQTE4QzQ3MAA=","timestamp":"1759792820","text":{"body":"Ustedes venden pasteles?"},"type":"text"}]},"field":"messages"}]}]}';
+$input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMDM3OURGNjIyQkMyMEM4M0M4QgA=","timestamp":"1759847240","text":{"body":"Venden v\u00e1lvulas de escape tvs?"},"type":"text"}]},"field":"messages"}]}]}';
 
 /*=============================================
 Convierte el JSON a array asociativo

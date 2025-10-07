@@ -108,6 +108,7 @@ Class IAController {
                         }
                     }
 
+                    // Quita la última coma y luego añade el corchete de cierre para terminar el array/objeto de JSON
                     $messages = substr($messages, 0, -1);
                     $messages .= ']';
 
@@ -120,19 +121,21 @@ Class IAController {
 
                         $last_client_message = end($getMessages->results)->client_message;
                         $parsed_last_message = ProductParsing::pase_with_embeddings($last_client_message);
+                        $parsed_last_message = (string) $parsed_last_message;
 
                         if ($parsed_last_message != null) {
 
-                            $messages .= '{
+                            // Se quita el corchete de cierre, se agrega una coma y el nuevo mensaje de respuesta,
+                            // y se agrega corchete de cierre otra vez
+                            $messages = substr($messages, 0, -1);
+                            $messages .= ',{
                                 "role": "system",
                                 "content": "'.str_replace(["\r", "\n"], ' ', trim($parsed_last_message)).'"
-                            },';
+                            }]';
                         }
                     }
 
-                    // print_r(end($getMessages["results"])["client_message"]);
-                    // print_r(end($getMessages->results)->client_message);
-                    echo '<pre>$messages'; print_r($messages); echo '</pre>';
+                    // echo '<pre>$messages'; print_r($messages); echo '</pre>';
                 }
             }
 

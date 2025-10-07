@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once "connection.php";
 
@@ -14,11 +14,11 @@ class PostModel{
 		$params = "";
 
 		foreach ($data as $key => $value) {
-			
+
 			$columns .= $key.",";
-			
+
 			$params .= ":".$key.",";
-			
+
 		}
 
 		$columns = substr($columns, 0, -1);
@@ -33,7 +33,7 @@ class PostModel{
 		foreach ($data as $key => $value) {
 
 			$stmt->bindParam(":".$key, $data[$key], PDO::PARAM_STR);
-		
+
 		}
 
 		if($stmt -> execute()){
@@ -45,7 +45,7 @@ class PostModel{
 			);
 
 			return $response;
-		
+
 		}else{
 
 			return $link->errorInfo();
