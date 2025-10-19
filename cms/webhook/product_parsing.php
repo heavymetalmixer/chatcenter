@@ -363,7 +363,7 @@ Class ProductParsing {
     }
 
     /**
-     * Otra funcionó para hacer parsing, pero esta puede "leer e interpretar" si el cliente
+     * Otra funciona para hacer parsing, pero esta puede "leer e interpretar" si el cliente
      * menciona algo similar a un producto, pero no exactamente lo que hay en la base de datos.
      * Cabe mencionar que crea un embedding nuevo para cada mensaje del cliente, pero no
      * lo introduce en la base de datos, solo se usa para ese momento
