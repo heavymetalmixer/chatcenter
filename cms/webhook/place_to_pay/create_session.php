@@ -61,6 +61,9 @@ Class PlaceToPayGateway {
 
         // Esta será toda la información que se enviará a PlacetoPay
         // locale contiene el idioma y país. Por defecto se pone Español y Colombia como es_CO
+        // returnUrl es la URL a la que se redirige al usuario una vez termina la sesión. Ocurre cuando el usuario da click en Volver al comercio.
+        // userAgent: User Agent del navegador del usuario que realizará el proceso. Por ejemplo "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        // TODO: Checar si "buyer" es necesario
         $request_body = [
             "locale" => $locale,
             "auth" => $auth,
@@ -71,6 +74,58 @@ Class PlaceToPayGateway {
             "userAgent" => $_SERVER['HTTP_USER_AGENT'],
             "notifyUrl" => $notify_url
         ];
+
+        $create_session_curl = curl_init($create_url);
+
+        curl_setopt($create_session_curl, CURLOPT_POST, true);
+        curl_setopt($create_session_curl, CURLOPT_POSTFIELDS, json_encode($request_body));
+        curl_setopt($create_session_curl, CURLOPT_HEADER, ["Content-Type: application/json"]);
+        curl_setopt($create_session_curl, CURLOPT_RETURNTRANSFER, true);
+
+        $raw_response = curl_exec($create_session_curl);
+        curl_close($create_session_curl);
+
+        $decoded_response = json_decode($raw_response, true);
+
+        /*
+        Ejemplo de una respuesta exitosa en JSON:
+            {
+                "status": {
+                    "status": "OK",
+                    "reason": "PC",
+                    "message": "La petición se ha procesado correctamente",
+                    "date": "2021-11-30T15:08:27-05:00"
+                },
+                "requestId": 1,
+                "processUrl": "https://checkout-co.placetopay.com/session/1/cc9b8690b1f7228c78b759ce27d7e80a",
+            }
+
+        Ejemplo de respuesta fallida:
+            {
+                "status": {
+                    "status": "FAILED",
+                    "reason": 401,
+                    "message": "Autenticación fallida 102",
+                    "date": "2021-11-30T15:12:25-05:00"
+                },
+            }
+        */
+
+        if (isset($res['status']) && isset($res['processUrl']) && isset($res['requestId'])) {
+
+            $process_url = $res['processUrl'];
+            $request_id = $res['requestId'];
+            // TODO: Guardar en la base de datos $reference, $request_id, y "status", con implementación dependiendo del proyecto
+            // Tal vez como static public void save_session_state(string $reference, int $request_id, string $status)
+
+            header("Location: $process_url");
+            exit;
+        }
+        else {
+
+            echo "<h3>Error creando sesión de pago</h3>";
+            echo "<pre>" . htmlspecialchars($decoded_response) . "</pre>";
+        }
     }
 }
 

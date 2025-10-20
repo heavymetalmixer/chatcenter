@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <title>Pagar con PlacetoPay Checkout</title>
 </head>
+
 <body>
     <h2>Pagar con PlacetoPay</h2>
-    <form method="post" action="../src/placetopay_create.php">
+    <form method="post" action="create_session.php">
         <label>Referencia:</label><br>
         <input type="text" name="reference" value="ORD-<?php echo time(); ?>"><br><br>
 
