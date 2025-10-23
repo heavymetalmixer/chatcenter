@@ -4,7 +4,7 @@ require_once "../../../vendor/autoload.php";
 
 Class PlaceToPayGateway {
 
-    static public function placetopay_payment(string $currency = "COP", string $locale = "es_CO") {
+    static public function create_session(string $currency = "COP", string $locale = "es_CO") {
 
         $login = $_ENV['PLACETOPAY_LOGIN'];
         $secret_key = $_ENV['PLACETOPAY_SECRET_KEY'];
@@ -111,20 +111,63 @@ Class PlaceToPayGateway {
             }
         */
 
-        if (isset($res['status']) && isset($res['processUrl']) && isset($res['requestId'])) {
+        if (isset($decoded_response['status']) && isset($decoded_response['processUrl']) && isset($decoded_response['requestId'])) {
 
-            $process_url = $res['processUrl'];
-            $request_id = $res['requestId'];
-            // TODO: Guardar en la base de datos $reference, $request_id, y "status", con implementación dependiendo del proyecto
+            $process_url = $decoded_response['processUrl'];
+            $request_id = $decoded_response['requestId'];
+            $status = $decoded_response['status'];
+            // TODO: Guardar $reference, $request_id y $status en la base de datos, con implementación dependiendo del proyecto
             // Tal vez como static public void save_session_state(string $reference, int $request_id, string $status)
 
-            header("Location: $process_url");
+            header("Location: '.$process_url.'");
             exit;
         }
         else {
 
             echo "<h3>Error creando sesión de pago</h3>";
             echo "<pre>" . htmlspecialchars($decoded_response) . "</pre>";
+        }
+    }
+
+    static public function notify_session($data) {
+
+        /*
+        Ejemplo de notificación de pago básico:
+            {
+                "status": {
+                    "status": "APPROVED",
+                    "reason": "00",
+                    "message": "Transacción aprobada",
+                    "date": "2019-01-01T12:00:00-05:00"
+                },
+                "requestId": 1234,
+                "reference": "TEST_123424",
+                "signature": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s"
+            }
+        */
+
+        // TODO: Extraer de la base de datos
+        $secret_key = $_ENV['PLACETOPAY_SECRET_KEY'];
+        $reference = $data['reference'];
+        $request_id = $data['requestId'];
+        $status = $data['status']['status'];
+        $date = $data['status']['date'];
+
+        // SHA-1(requestId + status.status + status.date + secretKey)
+        $signature = sha1($request_id.$status.$date.$secret_key);
+
+        if ($signature == $data['signature']) {
+
+            // Actualizar en BD el registro con $request_id: cambiar estado a $status (“APPROVED”, “REJECTED”, etc.)
+            http_response_code(200);
+            echo "<br>OK<br>";
+            exit;
+        }
+        else {
+
+            http_response_code(400);
+            echo "Bad request";
+            exit;
         }
     }
 }
