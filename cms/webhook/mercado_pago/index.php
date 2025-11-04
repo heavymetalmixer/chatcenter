@@ -19,11 +19,14 @@ MercadoPagoConfig::setRuntimeEnviroment(MercadoPagoConfig::LOCAL);
 
 $client = new PreferenceClient();
 
+// Para que las diferentes opciones de pago funcionen correctamente
+// se debe poner un cierto monto mínimo que Mercado Pago no especifica.
+// Por ser de Colombia yo puse 30.000 y funciona bien
 $item = [
     "id" => "DEP-0001",
     "title" => "Balón de Fútbol",
     "quantity" => 1,
-    "unit_price" => 550,
+    "unit_price" => 30000,
     "currency_id" => "COP"
 ];
 
