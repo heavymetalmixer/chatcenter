@@ -14,42 +14,47 @@ Respuesta:
 200 - OK
 
 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Integración con Checkout Pro</title>
 
-require_once "../../../vendor/autoload.php";
 
-use Dotenv\Dotenv;
-$test_env = Dotenv::createImmutable("../../../");
-$test_env->load();
+</head>
+<body>
 
-use MercadoPago\MercadoPagoConfig;
-use MercadoPago\Client\Payment\PaymentClient;
+    <!-- Contenido de tu página -->
 
-MercadoPagoConfig::getAccessToken($_ENV['MERCADOPAGO_TEST_ACCESS_TOKEN']);
+    <h3>Mercado Pago</h3>
 
-$notification = file_get_contents("php://input");
-$data = json_decode($notification, true);
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
 
-if(isset($data['type']) && $data['type'] == 'payment') {
+    <script>
+        // Tu código JavaScript irá aquí
 
-    $payment_id = $data['data']['id'];
-    $payment_client = new PaymentClient();
+        const publicKey = "<?php echo $public_key; ?>";
+        const preferenceId = "<?php echo $preference_id; ?>";
 
-    try {
+        // Inicializa el SDK de Mercado Pago
+        const mp = new MercadoPago(publicKey);
 
-        $payment = $payment_client->get($payment_id);
+        const bricksBuilder = mp.bricks();
 
-        $file_path = "pagos.txt";
-        $file = fopen($file_path, 'a');
-        fwrite($file, "NOTIFICACIÓN: ".json_encode($data, JSON_PRETTY_PRINT).PHP_EOL);
-        fwrite($file, "PAGO: ".json_encode($payment, JSON_PRETTY_PRINT).PHP_EOL);
-        fclose($file);
-    }
-    catch(Exception $e) {
+        const renderWalletBrick = async (bricksBuilder) => {
+            await bricksBuilder.create("wallet", "walletBrick_container", {
+                initialization: {
+                    preferenceId: "<PREFERENCE_ID>",
+                }
+            });
+        };
 
-        error_log($e->getMessage());
-    }
-}
-else {
+        renderWalletBrick(bricksBuilder);
+    </script>
+    <div id="walletBrick_container"></div>
 
-    echo "There's no notification type or it's not of type payment";
-}
+    </script>
+
+</body>
+</html>

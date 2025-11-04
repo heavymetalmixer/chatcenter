@@ -13,3 +13,18 @@ In case you get the error "Class "IntlDateFormatter" not found. . ." follow thes
 6) Save the changes and start XAMP and its services again.
 
 7) Update the CMS page and the error should dissapear.
+
+
+
+
+To make HTTPS possible:
+
+1) Go to https://curl.se/docs/caextract.html and dowload the "cacert.pem" file at the top of the website.
+
+2) Generally speaking you must paste this file in xx/php/extras/ssl/, but specifically for Laragon you must also do paste it inside xx/laragon/etc/ssl/.
+
+3) In the php.ini file (inside xx/php/) enable the "curl.cainfo" line and make sure the path points to the cacert.pem file.
+
+4) Make sure that "extension=curl" and "extension=openssl" are enabled.
+
+5) Save the php.ini file.
