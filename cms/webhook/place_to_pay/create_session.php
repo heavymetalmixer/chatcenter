@@ -15,7 +15,7 @@ Class PlaceToPayGateway {
 
         // DATE_ATOM es el formato para fechas bajo ISO-8601
         // También se podría usar simplemente $seed = date('c') pero
-        // como es una metdología más antigua podría ser más propensa a bugs
+        // como es una metodología más antigua podría ser más propensa a bugs
         $seed = $date_time->format(DATE_ATOM);
 
         // Número al azar y codificado en Base 64
@@ -48,7 +48,7 @@ Class PlaceToPayGateway {
             ]
         ];
 
-        // Se le añaden $expiration_minutes minutos a $date_time para obtener la fecha de expiration
+        // Se le añaden $expiration_minutes minutos a $date_time para obtener la fecha de expiración
         // que se pone en $expiration_date y se formatea como ISO-8601
         // Cabe aclarar que $expiration_minutes cómo mínimo debe ser 5 minutos, por defecto son 30
         $expiration_minutes = 30;
