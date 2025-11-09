@@ -1,0 +1,14 @@
+<h2>Pagar un producto de ejemplo</h2>
+    <button id="payBtn">Pagar $50.000 COP</button>
+
+    <form action="https://checkout.wompi.co/p/" method="GET">
+        <!-- OBLIGATORIOS -->
+        <input type="hidden" name="public-key" value="<?php echo $transaction['public_key']; ?>" />
+        <input type="hidden" name="currency" value="<?php echo $transaction['currency']; ?>" />
+        <input type="hidden" name="amount-in-cents" value="<?php echo $transaction['amount_in_cents']; ?>" />
+        <input type="hidden" name="reference" value="<?php echo $transaction['reference']; ?>" />
+        <input type="hidden" name="signature:integrity" value="<?php echo $transaction['signature']; ?>" />
+        <!-- OPCIONALES -->
+        <input type="hidden" name="redirect-url" value="<?php echo $transaction['redirect_url']; ?>" />
+        <input type="hidden" name="expiration-time" value="<?php echo $transaction['expiration_time']; ?>" />
+    </form>
