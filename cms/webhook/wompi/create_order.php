@@ -9,9 +9,21 @@ $test_env = Dotenv::createImmutable("../../../");
 $test_env->load();
 
 $wompi_environment = $_ENV['WOMPI_SANDBOX_ENVIRONMENT'];
-$public_key = $_ENV['WOMPI_TEST_PUBLIC_KEY'];
-$integrity_secret = $_ENV['WOMPI_TEST_INTEGRITY_SECRET'];
 
+if ($wompi_environment == $_ENV['WOMPI_SANDBOX_ENVIRONMENT']) {
+
+    $public_key = $_ENV['WOMPI_TEST_PUBLIC_KEY'];
+}
+elseif ($wompi_environment == $_ENV['WOMPI_PRODUCTION_ENVIRONMENT']) {
+
+    $public_key = $_ENV['WOMPI_PROD_PUBLIC_KEY'];
+}
+else {
+
+    throw new Exception("INVALID WOMPI KEY! Please, check the .env file to choose the wright one.\n", 1);
+}
+
+$integrity_secret = $_ENV['WOMPI_TEST_INTEGRITY_SECRET'];
 $folder_path = $_ENV['WOMPI_FOLDER_PATH'];
 $redirection_url = $folder_path."webhook.php";
 

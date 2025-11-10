@@ -1,4 +1,4 @@
-In case you get the error "Class "IntlDateFormatter" not found. . ." follow these steps:
+In case you get the error "Class "IntlDateFormatter" not found when using XAMPP (I recommend Laragon 6 instead). . ." follow these steps:
 
 1) End the XAMP services and close XAMPP.
 
