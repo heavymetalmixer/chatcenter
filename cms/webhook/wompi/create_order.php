@@ -25,7 +25,7 @@ else {
 
 $integrity_secret = $_ENV['WOMPI_TEST_INTEGRITY_SECRET'];
 $folder_path = $_ENV['WOMPI_FOLDER_PATH'];
-$redirection_url = $folder_path."webhook.php";
+$redirection_url = $folder_path."confirmation.php";
 
 // Al crear un objeto DateTimeInmutable sin argumentos se usa la fecha y hora local
 // con la respetiva zona horaria, en el caso de Colombia esta es -05:00
