@@ -1,0 +1,4 @@
+2025-11-24T20:19:39+00:00 INPUT: {"resource":"https://api.mercadolibre.com/merchant_orders/35819792547","topic":"merchant_order"}
+2025-11-24T20:19:40+00:00 INPUT: {"resource":"134486832675","topic":"payment"}
+2025-11-24T20:19:40+00:00 INPUT: {"action":"payment.created","api_version":"v1","data":{"id":"134486832675"},"date_created":"2025-11-24T20:19:08Z","id":126579653129,"live_mode":true,"type":"payment","user_id":"2952635054"}
+2025-11-24T20:19:40+00:00 INPUT: {"resource":"https://api.mercadolibre.com/merchant_orders/35819792547","topic":"merchant_order"}

@@ -1,0 +1,328 @@
+2025-11-24T20:19:40+00:00 INFO: 
+{
+    "resource": "134486832675",
+    "topic": "payment"
+}
+
+2025-11-24T20:19:40+00:00 INFO: 
+{
+    "action": "payment.created",
+    "api_version": "v1",
+    "data": {
+        "id": "134486832675"
+    },
+    "date_created": "2025-11-24T20:19:08Z",
+    "id": 126579653129,
+    "live_mode": true,
+    "type": "payment",
+    "user_id": "2952635054"
+}
+
+2025-11-24T20:19:40+00:00 PAGO: 
+{
+    "id": 134486832675,
+    "acquirer_reconciliation": [],
+    "sponsor_id": null,
+    "operation_type": "regular_payment",
+    "order": {
+        "id": 35819792547,
+        "type": "mercadopago"
+    },
+    "brand_id": null,
+    "build_version": "3.130.1-hotfix-27",
+    "binary_mode": false,
+    "external_reference": "CDP001",
+    "financing_group": null,
+    "status": "approved",
+    "status_detail": "accredited",
+    "store_id": null,
+    "taxes_amount": 0,
+    "date_created": "2025-11-24T16:19:08.000-04:00",
+    "live_mode": true,
+    "date_last_updated": "2025-11-24T16:19:09.000-04:00",
+    "date_of_expiration": "2025-11-27T16:19:08.000-04:00",
+    "deduction_schema": null,
+    "date_approved": "2025-11-24T16:19:09.000-04:00",
+    "money_release_date": "2025-11-24T16:19:09.000-04:00",
+    "money_release_schema": null,
+    "money_release_status": "released",
+    "currency_id": "COP",
+    "transaction_amount": 60000,
+    "transaction_amount_refunded": 0,
+    "payer": {
+        "type": null,
+        "id": "2952635034",
+        "email": "test_user_5789377756834442263@testuser.com",
+        "identification": {
+            "type": "C.C.",
+            "number": "11111111"
+        },
+        "first_name": null,
+        "last_name": null,
+        "entity_type": null,
+        "phone": {
+            "area_code": null,
+            "number": null,
+            "extension": null
+        },
+        "operator_id": null
+    },
+    "collector_id": 2952635054,
+    "counter_currency": null,
+    "payment_method_id": "master",
+    "payment_method": {
+        "data": {},
+        "id": "master",
+        "type": "credit_card",
+        "issuer_id": "12843"
+    },
+    "payment_type_id": "credit_card",
+    "pos_id": null,
+    "transaction_details": {
+        "financial_institution": null,
+        "net_received_amount": 60255.9,
+        "total_paid_amount": 65000,
+        "installment_amount": 65000,
+        "overpaid_amount": 0,
+        "external_resource_url": null,
+        "payment_method_reference_id": null,
+        "acquirer_reference": null,
+        "payable_deferral_period": null
+    },
+    "fee_details": [
+        {
+            "type": "mercadopago_fee",
+            "fee_payer": "collector",
+            "amount": 3500
+        }
+    ],
+    "differential_pricing_id": null,
+    "authorization_code": "301299",
+    "captured": true,
+    "card": {
+        "id": "9706905604",
+        "last_four_digits": "3866",
+        "first_six_digits": "510979",
+        "expiration_year": 2044,
+        "expiration_month": 4,
+        "date_created": "2025-11-24T16:19:08.000-04:00",
+        "date_last_updated": "2025-11-24T16:19:08.000-04:00",
+        "country": "COL",
+        "cardholder": {
+            "name": "APRO"
+        },
+        "bin": "51097900"
+    },
+    "call_for_authorize_id": null,
+    "statement_descriptor": "Mercadopago*fake",
+    "shipping_amount": 5000,
+    "additional_info": {
+        "ip_address": "152.202.53.223",
+        "tracking_id": "platform:v1-blacklabel,so:ALL,type:N\/A,security:none",
+        "items": [
+            {
+                "id": "DEP-0001",
+                "title": "Bal\u00f3n de F\u00fatbol",
+                "description": "Bal\u00f3n de Futbol cl\u00e1sico, marca Golty",
+                "category_id": "Deportes",
+                "quantity": 1,
+                "unit_price": 30000,
+                "map": {
+                    "category_descriptor": "MercadoPago\\Resources\\Preference\\CategoryDescriptor"
+                }
+            },
+            {
+                "id": "DEP-0002",
+                "title": "Tenis deportivos",
+                "quantity": 1,
+                "unit_price": 30000,
+                "map": {
+                    "category_descriptor": "MercadoPago\\Resources\\Preference\\CategoryDescriptor"
+                }
+            }
+        ]
+    },
+    "coupon_amount": 0,
+    "installments": 1,
+    "description": "Bal\u00f3n de F\u00fatbol",
+    "notification_url": "https:\/\/59d2a6f86fcb.ngrok-free.app\/chatcenter\/cms\/webhook\/mercado_pago\/notifications.php",
+    "issuer_id": "12843",
+    "processing_mode": "aggregator",
+    "merchant_account_id": null,
+    "merchant_number": null,
+    "metadata": [],
+    "release_info": null,
+    "marketplace_owner": null,
+    "integrator_id": null,
+    "corporation_id": null,
+    "platform_id": null,
+    "net_amount": 65000,
+    "point_of_interaction": {
+        "type": "CHECKOUT",
+        "application_data": {
+            "name": "checkout-off",
+            "version": "v2"
+        },
+        "transaction_data": {
+            "e2e_id": null
+        }
+    },
+    "accounts_info": null,
+    "tags": null,
+    "refunds": []
+}
+
+2025-11-24T20:19:40+00:00 PAGO: 
+{
+    "id": 134486832675,
+    "acquirer_reconciliation": [],
+    "sponsor_id": null,
+    "operation_type": "regular_payment",
+    "order": {
+        "id": 35819792547,
+        "type": "mercadopago"
+    },
+    "brand_id": null,
+    "build_version": "3.130.1-hotfix-27",
+    "binary_mode": false,
+    "external_reference": "CDP001",
+    "financing_group": null,
+    "status": "approved",
+    "status_detail": "accredited",
+    "store_id": null,
+    "taxes_amount": 0,
+    "date_created": "2025-11-24T16:19:08.000-04:00",
+    "live_mode": true,
+    "date_last_updated": "2025-11-24T16:19:09.000-04:00",
+    "date_of_expiration": "2025-11-27T16:19:08.000-04:00",
+    "deduction_schema": null,
+    "date_approved": "2025-11-24T16:19:09.000-04:00",
+    "money_release_date": "2025-11-24T16:19:09.000-04:00",
+    "money_release_schema": null,
+    "money_release_status": "released",
+    "currency_id": "COP",
+    "transaction_amount": 60000,
+    "transaction_amount_refunded": 0,
+    "payer": {
+        "type": null,
+        "id": "2952635034",
+        "email": "test_user_5789377756834442263@testuser.com",
+        "identification": {
+            "type": "C.C.",
+            "number": "11111111"
+        },
+        "first_name": null,
+        "last_name": null,
+        "entity_type": null,
+        "phone": {
+            "area_code": null,
+            "number": null,
+            "extension": null
+        },
+        "operator_id": null
+    },
+    "collector_id": 2952635054,
+    "counter_currency": null,
+    "payment_method_id": "master",
+    "payment_method": {
+        "data": {},
+        "id": "master",
+        "type": "credit_card",
+        "issuer_id": "12843"
+    },
+    "payment_type_id": "credit_card",
+    "pos_id": null,
+    "transaction_details": {
+        "financial_institution": null,
+        "net_received_amount": 60255.9,
+        "total_paid_amount": 65000,
+        "installment_amount": 65000,
+        "overpaid_amount": 0,
+        "external_resource_url": null,
+        "payment_method_reference_id": null,
+        "acquirer_reference": null,
+        "payable_deferral_period": null
+    },
+    "fee_details": [
+        {
+            "type": "mercadopago_fee",
+            "fee_payer": "collector",
+            "amount": 3500
+        }
+    ],
+    "differential_pricing_id": null,
+    "authorization_code": "301299",
+    "captured": true,
+    "card": {
+        "id": "9706905604",
+        "last_four_digits": "3866",
+        "first_six_digits": "510979",
+        "expiration_year": 2044,
+        "expiration_month": 4,
+        "date_created": "2025-11-24T16:19:08.000-04:00",
+        "date_last_updated": "2025-11-24T16:19:08.000-04:00",
+        "country": "COL",
+        "cardholder": {
+            "name": "APRO"
+        },
+        "bin": "51097900"
+    },
+    "call_for_authorize_id": null,
+    "statement_descriptor": "Mercadopago*fake",
+    "shipping_amount": 5000,
+    "additional_info": {
+        "ip_address": "152.202.53.223",
+        "tracking_id": "platform:v1-blacklabel,so:ALL,type:N\/A,security:none",
+        "items": [
+            {
+                "id": "DEP-0001",
+                "title": "Bal\u00f3n de F\u00fatbol",
+                "description": "Bal\u00f3n de Futbol cl\u00e1sico, marca Golty",
+                "category_id": "Deportes",
+                "quantity": 1,
+                "unit_price": 30000,
+                "map": {
+                    "category_descriptor": "MercadoPago\\Resources\\Preference\\CategoryDescriptor"
+                }
+            },
+            {
+                "id": "DEP-0002",
+                "title": "Tenis deportivos",
+                "quantity": 1,
+                "unit_price": 30000,
+                "map": {
+                    "category_descriptor": "MercadoPago\\Resources\\Preference\\CategoryDescriptor"
+                }
+            }
+        ]
+    },
+    "coupon_amount": 0,
+    "installments": 1,
+    "description": "Bal\u00f3n de F\u00fatbol",
+    "notification_url": "https:\/\/59d2a6f86fcb.ngrok-free.app\/chatcenter\/cms\/webhook\/mercado_pago\/notifications.php",
+    "issuer_id": "12843",
+    "processing_mode": "aggregator",
+    "merchant_account_id": null,
+    "merchant_number": null,
+    "metadata": [],
+    "release_info": null,
+    "marketplace_owner": null,
+    "integrator_id": null,
+    "corporation_id": null,
+    "platform_id": null,
+    "net_amount": 65000,
+    "point_of_interaction": {
+        "type": "CHECKOUT",
+        "application_data": {
+            "name": "checkout-off",
+            "version": "v2"
+        },
+        "transaction_data": {
+            "e2e_id": null
+        }
+    },
+    "accounts_info": null,
+    "tags": null,
+    "refunds": []
+}
+

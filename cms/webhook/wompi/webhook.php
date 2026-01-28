@@ -30,7 +30,7 @@ if ($method !== 'POST') {
 
 $event = null;
 
-// Guardar el JSON obtenido en un array
+// Guarda el JSON obtenido en un array
 try {
 
     $event = json_decode($input, true, 512, JSON_THROW_ON_ERROR);

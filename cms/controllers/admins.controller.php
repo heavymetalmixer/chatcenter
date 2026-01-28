@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 class AdminsController{
 
 	/*=============================================
 	Login de adminstradores
-	=============================================*/	
+	=============================================*/
 
 	public function login(){
 
@@ -20,13 +20,13 @@ class AdminsController{
 			$url = "admins?login=true&suffix=admin";
 			$method = "POST";
 			$fields = array(
-			
+
 				"email_admin" => $_POST["email_admin"],
 				"password_admin" => $_POST["password_admin"]
 			);
 
 			$login = CurlController::request($url,$method,$fields);
-			
+
 			if($login->status == 200){
 
 				/*=============================================
@@ -75,7 +75,7 @@ class AdminsController{
 
 				$updateAdmin = CurlController::request($url,$method,$fields);
 
-				if($updateAdmin->status == 200){	
+				if($updateAdmin->status == 200){
 
 					$subject = "Códido de seguridad para ingresar";
 					$email = $login->results[0]->email_admin;
@@ -91,7 +91,7 @@ class AdminsController{
 
 								fncFormatInputs();
 								fncMatPreloader("off");
-								fncSweetAlert("success", 
+								fncSweetAlert("success",
 								"Se ha enviado un código de seguridad para ingresar al sistema, por favor revise su correo electrónico o bandeja SPAM",
 								setTimeout(()=>window.location="'.$_SERVER["REQUEST_SCHEME"].'://'.$_SERVER["SERVER_NAME"].'?scode='.base64_encode($login->results[0]->email_admin).'",2000));
 
@@ -164,7 +164,7 @@ class AdminsController{
 			$fields = array();
 
 			$admin = CurlController::request($url,$method,$fields);
-			
+
 			if($admin->status == 200){
 
 				/*=============================================
@@ -227,7 +227,7 @@ class AdminsController{
 			$fields = array();
 
 			$admin = CurlController::request($url,$method,$fields);
-			
+
 			if($admin->status == 200){
 
 				/*=============================================
@@ -241,14 +241,14 @@ class AdminsController{
 				}else{
 
 					$crypt = $admin->results[0]->password_admin;
-					
+
 				}
 
 				/*=============================================
 				Subir cambios a base de datos
 				=============================================*/
 
-				$url = "admins?id=".$admin->results[0]->id_admin."&nameId=id_admin&token=".$_SESSION["admin"]->token_admin."&table=admins&suffix=admin";	
+				$url = "admins?id=".$admin->results[0]->id_admin."&nameId=id_admin&token=".$_SESSION["admin"]->token_admin."&table=admins&suffix=admin";
 				$method = "PUT";
 
 				if($admin->results[0]->rol_admin == "superadmin"){
@@ -273,7 +273,7 @@ class AdminsController{
 						fncMatPreloader("off");
 						fncFormatInputs();
 					    fncSweetAlert("success","El registro ha sido actualizado con éxito",setTimeout(()=>location.reload(),1250));
-						
+
 					</script>
 
 					';
@@ -318,14 +318,14 @@ class AdminsController{
 
 			/*=============================================
 			Preguntamos primero si el usuario está registrado
-			=============================================*/	
+			=============================================*/
 
 			$url = "admins?linkTo=email_admin&equalTo=".$_POST["resetPassword"]."&select=id_admin";
 			$method = "GET";
 			$fields = array();
 
 			$admin = CurlController::request($url,$method,$fields);
-			
+
 			if($admin->status == 200){
 
 				$newPassword = TemplateController::genPassword(11);
@@ -375,7 +375,7 @@ class AdminsController{
 				}
 
 			}else{
-				
+
 				echo '<script>
 
 						fncFormatInputs();

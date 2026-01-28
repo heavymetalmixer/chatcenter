@@ -2,10 +2,10 @@
 
 require_once "../webhook/product_parsing.php";
 
-Class IAController {
-
-    static public function responseIA($client_message, $getApiWS, $phone_message, $order_message) {
-
+Class IAController
+{
+    static public function responseIA($client_message, $getApiWS, $phone_message, $order_message)
+    {
         /*=============================================
         Buscamos el prompt
         =============================================*/
@@ -30,8 +30,8 @@ Class IAController {
             lo que hay que convertir los \r y \n en espacios
             ===================================================*/
 
-            if ($order_message == 0) {
-
+            if ($order_message == 0)
+            {
                 // strip_tags quita tags de HTML dentro de un texto
                 // $messages = '[
                 //     {
@@ -55,8 +55,8 @@ Class IAController {
                     }
                 ]';
             }
-            else {
-
+            else
+            {
                 /*=============================================
                 Traer conversaciones anteriores
                 =============================================*/
@@ -67,8 +67,8 @@ Class IAController {
 
                 $getMessages = CurlController::request($url,$method,$fields);
 
-                if ($getMessages->status = 200) {
-
+                if ($getMessages->status = 200)
+                {
                     // $messages = '[{
                     //     "role": "system",
                     //     "content": "'.str_replace(["\r", "\n"], '\n', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
@@ -79,10 +79,10 @@ Class IAController {
                         "content": "'.str_replace(["\r", "\n"], ' ', trim(strip_tags(urldecode($prompt->content_prompt)))).'"
                     },';
 
-                    foreach ($getMessages->results as $key => $value) {
-
-                        if ($value->type_message == "client") {
-
+                    foreach ($getMessages->results as $key => $value)
+                    {
+                        if ($value->type_message == "client")
+                        {
                             // $messages .= '{
                             //     "role": "user",
                             //     "content": "'.str_replace(["\r", "\n"], '\n', trim($value->client_message)).'"
@@ -94,8 +94,8 @@ Class IAController {
                             },';
                         }
 
-                        if ($value->type_message == "business") {
-
+                        if ($value->type_message == "business")
+                        {
                             // $messages .= '{
                             //     "role": "system",
                             //     "content": "'.str_replace(["\r", "\n"], '\n', trim($value->business_message)).'"
@@ -114,17 +114,14 @@ Class IAController {
 
                     // Se pregunta si el último mensaje fue del cliente. De ser así, se analiza si el cliente preguntó
                     // por un producto específico y se añade la respuesta como mensaje por parte del negocio
-                    // if (end($getMessages["results"])["type_message"] == "client") {
-
-                    //     $last_client_message = end($getMessages["results"])["client_message"];
-                    if (end($getMessages->results)->type_message == "client") {
-
+                    if (end($getMessages->results)->type_message == "client")
+                    {
                         $last_client_message = end($getMessages->results)->client_message;
-                        $parsed_last_message = ProductParsing::pase_with_embeddings($last_client_message);
+                        $parsed_last_message = ProductParsing\pase_with_embeddings($last_client_message);
                         $parsed_last_message = (string) $parsed_last_message;
 
-                        if ($parsed_last_message != null) {
-
+                        if ($parsed_last_message != null)
+                        {
                             // Se quita el corchete de cierre, se agrega una coma y el nuevo mensaje de respuesta,
                             // y se agrega corchete de cierre otra vez
                             $messages = substr($messages, 0, -1);
@@ -154,8 +151,8 @@ Class IAController {
 
             $getAdmin = CurlController::request($url, $method, $fields);
 
-            if ($getAdmin->status == 200) {
-
+            if ($getAdmin->status == 200)
+            {
                 $admin = $getAdmin->results[0];
 
                 $token = json_decode($admin->chatgpt_admin)->token;
@@ -202,39 +199,40 @@ Class IAController {
 
                 // return;
 
-                if($getMessages->status == 200){
+                if($getMessages->status == 200)
+                {
                     $order_message = $getMessages->results[0]->order_message + 1;
                 }
 
 
-// Esta sección de código comentada crea un bug que provoca repetición infinita de los mensajes de ChatGPT dentro del CMS, aunque solo se envían
-// una vez por Whatsapp como es debido
-// //####################################################  MODIFIED BLOCK BEGINS  ##########################################################
+                // Esta sección de código comentada crea un bug que provoca repetición infinita de los mensajes de ChatGPT dentro del CMS, aunque solo se envían
+                // una vez por Whatsapp como es debido
+                // //####################################################  MODIFIED BLOCK BEGINS  ##########################################################
 
-//                 /*=============================================
-//                 Guardamos la respuesta del negocio
-//                 =============================================*/
+                // /*=============================================
+                // Guardamos la respuesta del negocio
+                // =============================================*/
 
-//                 $url = "messages?token=no&except=id_message";
-//                 $method = "POST";
+                // $url = "messages?token=no&except=id_message";
+                // $method = "POST";
 
-//                 $fields = array(
-//                     "type_message" => "business",
-//                     "id_whatsapp_message" => $getApiWS->id_whatsapp,
-//                     "business_message" => $business_message,
-//                     "phone_message" => $phone_message,
-//                     "order_message" => $order_message,
-//                     "template_message" => $template_message,
-//                     "initial_message" => 1,
-//                     "date_created_message" => date("Y-m-d")
-//                 );
+                // $fields = array(
+                //     "type_message" => "business",
+                //     "id_whatsapp_message" => $getApiWS->id_whatsapp,
+                //     "business_message" => $business_message,
+                //     "phone_message" => $phone_message,
+                //     "order_message" => $order_message,
+                //     "template_message" => $template_message,
+                //     "initial_message" => 1,
+                //     "date_created_message" => date("Y-m-d")
+                // );
 
-//                 // echo '<pre>$json '; print_r($json); echo '</pre>';
-//                 // echo '<pre>$fields '; print_r($fields); echo '</pre>';
+                // // echo '<pre>$json '; print_r($json); echo '</pre>';
+                // // echo '<pre>$fields '; print_r($fields); echo '</pre>';
 
-//                 // return;
+                // // return;
 
-// //####################################################  MODIFIED BLOCK ENDS  ##########################################################
+                // //####################################################  MODIFIED BLOCK ENDS  ##########################################################
 
                 /*=============================================
                 Guardamos la respuesta del negocio
@@ -269,8 +267,8 @@ Class IAController {
                 // echo '<pre>$saveMessage '; print_r($saveMessage); echo '</pre>';
                 // return;
 
-                if($saveMessage->status == 200) {
-
+                if($saveMessage->status == 200)
+                {
                     /*=============================================
                     Enviamos datos JSON a la API de WhatsApp
                     =============================================*/
@@ -281,6 +279,7 @@ Class IAController {
                 }
             }
         }
+        // else { return null; }
     }
 }
 

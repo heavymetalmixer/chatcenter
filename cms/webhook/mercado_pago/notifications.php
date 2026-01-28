@@ -3,73 +3,115 @@
 require_once "../../../vendor/autoload.php";
 
 use Dotenv\Dotenv;
+use MercadoPago\Client\Payment\PaymentClient;
+use MercadoPago\MercadoPagoConfig;
+
 $test_env = Dotenv::createImmutable("../../../");
 $test_env->load();
 
-// Obtain the x-signature value from the header
-$x_signature = $_SERVER['HTTP_X_SIGNATURE'];
-$x_request_id = $_SERVER['HTTP_X_REQUEST_ID'];
+$environment = $_ENV['MERCADOPAGO_SANDBOX_ENVIRONMENT'];
 
-// Obtain Query params related to the request URL
-$query_params = $_GET;
+if ($environment == $_ENV['MERCADOPAGO_SANDBOX_ENVIRONMENT'])
+{
+    $access_token = $_ENV['MERCADOPAGO_TEST_ACCESS_TOKEN'];
+}
+elseif ($environment == $_ENV['MERCADOPAGO_PRODUCTION_ENVIRONMENT'])
+{
+    $access_token = $_ENV['MERCADOPAGO_PROD_ACCESS_TOKEN'];
+}
+else
+{
+    throw new Exception("INVALID MERCADO PAGO KEY! Please, check the .env file to choose the wright one.", 1);
+}
 
-// Extract the "data.id" from the query params
-$data_id = isset($query_params['data.id']) ? $query_params['data.id'] : '';
+MercadoPagoConfig::setAccessToken($access_token);
+$date_time = new DateTimeImmutable();
+$seed = $date_time->format(DATE_ATOM);
 
-// Separating the x-signature into parts
-$parts = explode(',', $x_signature);
+$notification = file_get_contents("php://input");
+$log_err = 'notifications_error.log';
+file_put_contents("notifications_raw.log", $seed." INPUT: ".$notification."\n", FILE_APPEND);
 
-// Initializing variables to store ts and hash
-$ts = null;
-$hash = null;
+// Se intenta decodificar la notificación entrante, y si falla, se lanza una excepción
+try
+{
+    $data = json_decode($notification, true, 512, JSON_THROW_ON_ERROR);
+}
+catch(JsonException $e)
+{
+    file_put_contents(
+        $log_err,
+        $seed." Invalid JSON: ".$e->getMessage()."\nInput: ".$notification."\n\n",
+        FILE_APPEND
+    );
 
-// Iterate over the values to obtain ts and v1
-foreach ($parts as $part) {
+    http_response_code(400);
+    echo "Invalid JSON: ".$e->getMessage();
+    exit;
+}
 
-    // Split each part into key and value
-    $keyValue = explode('=', $part, 2);
+http_response_code(200);
 
-    if (count($keyValue) == 2) {
 
-        $key = trim($keyValue[0]);
-        $value = trim($keyValue[1]);
+$payment_id = null;
 
-        if ($key === "ts") {
+// Formato nuevo: { type: "payment.created", data: { id: XXX } }
+if (isset($data['type']) && $data['type'] === 'payment')
+{
+    try
+    {
+        $payment_id = $data['data']['id'];
+        file_put_contents("pagos.txt",
+            $seed." INFO: \n".json_encode($data, JSON_PRETTY_PRINT)."\n\n",
+            FILE_APPEND
+        );
 
-            $ts = $value;
-        }
-        elseif ($key === "v1") {
+        $payment_client = new PaymentClient();
+        $payment = $payment_client->get($payment_id);
+        file_put_contents("pagos.txt",
+            $seed." PAGO: \n".json_encode($payment, JSON_PRETTY_PRINT)."\n\n",
+            FILE_APPEND
+        );
+    }
+    catch(Exception $e)
+    {
+        file_put_contents($log_err,
+            $seed." ERROR: \n".$e->getMessage()."\n\n",
+            FILE_APPEND
+        );
 
-            $hash = $value;
-        }
+        error_log($e->getMessage());
     }
 }
 
-// Obtain the secret key for the user/application from Mercadopago developers site
-$secret = $_ENV['MERCADOPAGO_SECRET_KEY'];
+// Formato antiguo (topic=payment): resource = payment_id
+elseif (isset($data['topic']) && $data['topic'] === 'payment' && !empty($data['resource']))
+{
+    try
+    {
+        $payment_id = $data['resource'];
+        file_put_contents("pagos.txt",
+            $seed." INFO: \n".json_encode($data, JSON_PRETTY_PRINT)."\n\n",
+            FILE_APPEND
+        );
 
-// Generate the manifest string
-$manifest = "id:'.$data_id.';request-id:'.$x_request_id.';ts:'.$ts.';";
+        $payment_client = new PaymentClient();
+        $payment = $payment_client->get($payment_id);
+        file_put_contents("pagos.txt",
+            $seed." PAGO: \n".json_encode($payment, JSON_PRETTY_PRINT)."\n\n",
+            FILE_APPEND
+        );
+    }
+    catch(Exception $e)
+    {
+        file_put_contents($log_err,
+            $seed." ERROR: \n".$e->getMessage()."\n\n",
+            FILE_APPEND
+        );
 
-// Create an HMAC signature defining the hash type and the key as a byte array
-$sha = hash_hmac('sha256', $manifest, $secret);
-
-if ($sha === $hash) {
-
-    // HMAC verification passed
-    echo "HMAC verification passed<br>";
+        error_log($e->getMessage());
+    }
 }
-else {
-
-    // HMAC verification failed
-    echo "HMAC verification failed<br>";
-}
-
-$url = "https://api.example.com/data";
-$response = file_get_contents($url);
-echo $response;
-
-http_response_code(200);
 
 ?>
 

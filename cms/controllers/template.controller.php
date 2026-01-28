@@ -1,111 +1,98 @@
-<?php 
+<?php
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-class TemplateController{
-
+class TemplateController
+{
 	/*=============================================
 	Traemos la vista principal de la plantilla
 	=============================================*/
-
-	public function index(){
-
-		include "views/template.php";
-	
+	public function index()
+    {
+        include "views/template.php";
 	}
 
 	/*=============================================
 	Identificar el tipo de columna
 	=============================================*/
+	static public function typeColumn($value)
+    {
+		if ($value == "text" ||
+		    $value == "textarea" ||
+		    $value == "image" ||
+		    $value == "video" ||
+		    $value == "file" ||
+		    $value == "link" ||
+		    $value == "select" ||
+		    $value == "array" ||
+		    $value == "color" ||
+		    $value == "password" ||
+		    $value == "email"){
 
-	static public function typeColumn($value){
-
-		if($value == "text" || 
-		   $value == "textarea" ||
-		   $value == "image" || 
-		   $value == "video" ||
-		   $value == "file" ||
-		   $value == "link" ||
-		   $value == "select" ||
-		   $value == "array" ||
-		   $value == "color" ||
-		   $value == "password" || 
-		   $value == "email"){
-
-			$type = "TEXT NULL DEFAULT NULL";
+		    $type = "TEXT NULL DEFAULT NULL";
 		}
 
-		if($value == "object"){
-
+		if($value == "object")
+        {
 			$type = "TEXT NULL DEFAULT '{}'";
 		}
 
-		if($value == "json"){
-
+		if($value == "json")
+        {
 			$type = "TEXT NULL DEFAULT '[]'";
-
 		}
 
-		if($value == "int" || $value == "relations" || $value == "order"){
-	       
+		if($value == "int" || $value == "relations" || $value == "order")
+        {
 	       	$type = "INT NULL DEFAULT '0'";
-		
 		}
 
-		if($value == "boolean"){
-	       
+		if($value == "boolean")
+        {
 	       	$type = "INT NULL DEFAULT '1'";
-		
 		}
 
-		if($value == "double" || $value == "money"){
-	       
+		if($value == "double" || $value == "money")
+        {
 	       	$type = "DOUBLE NULL DEFAULT '0'";
-		
 		}
 
-		if($value == "date"){
-	       	
+		if($value == "date")
+        {
 	       	$type = "DATE NULL DEFAULT NULL";
-	    
 	    }
 
-	    if($value == "time"){
-	       	
+	    if($value == "time")
+        {
 	       	$type = "TIME NULL DEFAULT NULL";
-	    
 	    }
 
-	    if($value == "datetime"){
-	      	
+	    if($value == "datetime")
+        {
 	      	$type = "DATETIME NULL DEFAULT NULL";
-	    
 	    }
 
-	    if($value == "timestamp"){
-	      	
-	      	$type = "TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP";
+	    if($value == "timestamp")
+        {
+	        $type = "TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP";
 	    }
 
-	    if($value == "code" || $value == "chatgpt"){
-
+	    if($value == "code" || $value == "chatgpt")
+        {
 	       	$type = "LONGTEXT NULL DEFAULT NULL";
-	    
 	    }
 
 	    return $type;
-
 	}
 
 	/*=============================================
 	Función Reducir texto
 	=============================================*/
-
-	static public function reduceText($value, $limit){
-
-		if(strlen($value) > $limit){
-
+	static public function reduceText($value, $limit)
+    {
+		if(strlen($value) > $limit)
+        {
 			$value = substr($value, 0, $limit)."...";
 		}
 
@@ -115,69 +102,59 @@ class TemplateController{
 	/*=============================================
 	Devuelva la miniatura de la lista
 	=============================================*/
-
-	static public function returnThumbnailList($value){
-
+	static public function returnThumbnailList($value)
+    {
 		/*=============================================
 		Capturar miniatura imagen
 		=============================================*/
-
-		if(explode("/",$value->type_file)[0] == "image"){
-
+		if(explode("/",$value->type_file)[0] == "image")
+        {
 			$path = '<img src="'.$value->link_file.'" class="rounded" style="width:100px; height:100px; object-fit: cover; object-position: center;">';
-
 		}
 
 		/*=============================================
 		Capturar miniatura video
 		=============================================*/
-
-		if(explode("/",$value->type_file)[0] == "video" && $value->id_folder_file != 4){
-
-			if(explode("/",$value->type_file)[1] == "mp4"){
-
+		if(explode("/",$value->type_file)[0] == "video" && $value->id_folder_file != 4)
+        {
+			if(explode("/",$value->type_file)[1] == "mp4")
+            {
 				$path = '<video class="rounded" style="width:100px; height:100px; object-fit: cover; object-position: center;">
 				<source src="'.$value->link_file.'" type="'.$value->type_file.'">
 				</video>';
-
-			}else{
-
+			}
+            else
+            {
 				$path = '<img src="/views/assets/img/multimedia.png" class="rounded" style="width:100px; height:100px; object-fit: cover; object-position: center;">';
 			}
-
 		}
 
-		if(explode("/",$value->type_file)[0] == "video" && $value->id_folder_file == 4){
-
+		if(explode("/",$value->type_file)[0] == "video" && $value->id_folder_file == 4)
+        {
 			$path = '<img src="'.$value->thumbnail_vimeo_file.'" class="rounded" style="width:100px; height:100px; object-fit: cover; object-position: center;">';
-
 		}
 
 		/*=============================================
 		Capturar miniatura audio
 		=============================================*/
-
-		if(explode("/",$value->type_file)[0] == "audio"){
-
+		if(explode("/",$value->type_file)[0] == "audio")
+        {
 			$path = '<img src="/views/assets/img/multimedia.png" class="rounded" style="width:100px; height:100px; object-fit: cover; object-position: center;">';
-
 		}
 
 		/*=============================================
 		Capturar miniatura pdf
 		=============================================*/
-
-		if(explode("/",$value->type_file)[1] == "pdf"){
-
+		if(explode("/",$value->type_file)[1] == "pdf")
+        {
 			$path = '<img src="/views/assets/img/pdf.jpeg" class="rounded" style="width:100px; height:100px; object-fit: cover; object-position: center;">';
 		}
 
 		/*=============================================
 		Capturar miniatura zip
 		=============================================*/
-
-		if(explode("/",$value->type_file)[1] == "zip"){
-
+		if(explode("/",$value->type_file)[1] == "zip")
+        {
 			$path = '<img src="/views/assets/img/zip.jpg" class="rounded" style="width:100px; height:100px; object-fit: cover; object-position: center;">';
 		}
 
@@ -187,120 +164,100 @@ class TemplateController{
 	/*=============================================
 	Devuelva la miniatura de la cuadrícula
 	=============================================*/
-
-	static public function returnThumbnailGrid($value){
-
+	static public function returnThumbnailGrid($value)
+    {
 		/*=============================================
 		Capturar miniatura imagen
 		=============================================*/
-
-		if(explode("/",$value->type_file)[0] == "image"){
-
+		if(explode("/",$value->type_file)[0] == "image")
+        {
 			$path = '<img src="'.$value->link_file.'" class="rounded card-img-top w-100">';
-
 		}
 
 		/*=============================================
 		Capturar miniatura video
 		=============================================*/
-
-		if(explode("/",$value->type_file)[0] == "video" && $value->id_folder_file != 4){
-
-			if(explode("/",$value->type_file)[1] == "mp4"){
-
+		if(explode("/",$value->type_file)[0] == "video" && $value->id_folder_file != 4)
+        {
+			if(explode("/",$value->type_file)[1] == "mp4")
+            {
 				$path = '<video class="rounded card-img-top w-100">
 					<source src="'.$value->link_file.'" type="'.$value->type_file.'">
 				</video>';
-
-			}else{
-
+			}
+            else
+            {
 				$path = '<img src="/views/assets/img/multimedia.png" class="rounded card-img-top w-100">';
 			}
-
 		}
 
-		if(explode("/",$value->type_file)[0] == "video" && $value->id_folder_file == 4){
-
+		if(explode("/",$value->type_file)[0] == "video" && $value->id_folder_file == 4)
+        {
 			$path = '<img src="'.$value->thumbnail_vimeo_file.'" class="rounded card-img-top w-100">';
-			
 		}
 
 		/*=============================================
 		Capturar miniatura audio
 		=============================================*/
-
-		if(explode("/",$value->type_file)[0] == "audio"){
-
+		if(explode("/",$value->type_file)[0] == "audio")
+        {
 			$path = '<img src="/views/assets/img/multimedia.png" class="rounded card-img-top w-100">';
-
 		}
 
 		/*=============================================
 		Capturar miniatura pdf
 		=============================================*/
-
- 		if(explode("/",$value->type_file)[1] == "pdf"){
-
+ 		if(explode("/",$value->type_file)[1] == "pdf")
+        {
  			$path = '<img src="/views/assets/img/pdf.jpeg" class="rounded card-img-top w-100">';
  		}
 
  		/*=============================================
 		Capturar miniatura zip
 		=============================================*/
-
- 		if(explode("/",$value->type_file)[1] == "zip"){
-
+ 		if(explode("/",$value->type_file)[1] == "zip")
+        {
  			$path = '<img src="/views/assets/img/zip.jpg" class="rounded card-img-top w-100">';
  		}
-	 		
+
 		return $path;
 	}
 
-	/*=============================================
+	/*===================================================
 	Función para generar códigos alfanuméricos aleatorios
-	=============================================*/
-
-	static public function genPassword($length){
-
+	===================================================*/
+	static public function genPassword($length)
+    {
 		$password = "";
 		$chain = "0123456789abcdefghijklmnopqrstuvwxyz";
-
 		$password = substr(str_shuffle($chain),0,$length);
-
 		return $password;
 	}
 
 	/*=============================================
 	Función para enviar correos electrónicos
 	=============================================*/
-
-	static public function sendEmail($subject, $email, $title, $message, $link){
-
+	static public function sendEmail($subject, $email, $title, $message, $link)
+    {
 		date_default_timezone_set("America/Bogota");
-
 		$mail = new PHPMailer;
-
 		$mail->CharSet = 'utf-8';
 		//$mail->Encoding = 'base64'; //Habilitar al subir el sistema a un hosting
 
 		$mail->isMail();
-
 		$mail->UseSendmailOptions = 0;
-
 		$mail->setFrom("noreply@dashboard.com","CMS-BUILDER");
-
 		$mail->Subject = $subject;
-
 		$mail->addAddress($email);
 
 		$mail->msgHTML('
 
 			<div style="width:100%; background:#eee; position:relative; font-family:sans-serif; padding-top:40px; padding-bottom: 40px;">
-	
+
 				<div style="position:relative; margin:auto; width:600px; background:white; padding:20px">
-					
+
 					<center>
-						
+
 						<h3 style="font-weight:100; color:#999">'.$title.'</h3>
 
 						<hr style="border:1px solid #ccc; width:80%">
@@ -321,73 +278,69 @@ class TemplateController{
 
 				</div>
 
-			</div>	
+			</div>
 
 		 ');
 
 		$send = $mail->Send();
 
-		if(!$send){
-
-			return $mail->ErrorInfo;	
-		
-		}else{
-
-			return "ok";
-
+		if(!$send)
+        {
+			return $mail->ErrorInfo;
 		}
-
+        else
+        {
+			return "ok";
+		}
 	}
 
 	/*=============================================
 	Función para dar formato a las fechas
 	=============================================*/
-
-	static public function formatDate($type, $value){
-
+	static public function formatDate($type, $value)
+    {
 		// Crear un objeto DateTime con la fecha
 		$fecha = new DateTime($value, new DateTimeZone('America/Bogota'));
 
-		if($type == 1){
-
+		if($type == 1)
+        {
 			$format = "d 'de' MMMM, yyyy";
 		}
 
-		if($type == 2){
-
+		if($type == 2)
+        {
 			$format = "MMM yyyy";
 		}
 
-		if($type == 3){
-
+		if($type == 3)
+        {
 			$format = "d - MM - yyyy";
 		}
 
-		if($type == 4){
-
+		if($type == 4)
+        {
 			$format = "EEEE d 'de' MMMM yyyy 'a las' h a";
 		}
 
-		if($type == 5){
-
+		if($type == 5)
+        {
 			$format = "d/MM/yyyy";
 		}
 
-		if($type == 6){
-
+		if($type == 6)
+        {
 			$format = "h':'mm a";
 		}
 
-		if($type == 7){
-
+		if($type == 7)
+        {
 			$format = "EEEE d 'de' MMMM, yyyy";
 		}
 
-		if($type == 8){
-
+		if($type == 8)
+        {
 			$format = "yyyy-MM-dd";
 		}
-
 
 		// Crear el formateador de fecha en español
 		$formatter = new IntlDateFormatter(
@@ -404,9 +357,7 @@ class TemplateController{
 		// echo '<pre>$fecha_formateada '; print_r($fecha_formateada); echo '</pre>';
 
 		return $fecha_formateada;
-
 	}
-
 }
 
 ?>

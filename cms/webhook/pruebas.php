@@ -40,6 +40,7 @@ require_once "../controllers/ia.controller.php";
 require_once "parts_extraction.php";
 require_once "web_download.php";
 require_once "product_parsing.php";
+require_once "estimates.php";
 
 date_default_timezone_set("America/Bogota");
 // date_default_timezone_set("-5:00");
@@ -53,8 +54,8 @@ Simulación del contenido JSON
 // PartsExtraction::copy_products_links();
 // return;
 
-//ProductParsing::create_embeddings();
-// ProductParsing::pase_with_embeddings();
+// ProductParsing\create_embeddings();
+// ProductParsing\pase_with_embeddings();
 // return;
 
 // $arr = array("pierna" => "izquierda", "hombro" => "derecho", "cabeza" => "hueca");
@@ -66,6 +67,31 @@ Simulación del contenido JSON
 $date_time = new DateTimeImmutable();
 print_r($date_time->format(DATE_ATOM));
 // print_r(date('c'));
+
+// use const estimates\TEST;
+$TEST2 = 1;
+
+$test_array=
+[
+    "first" => 1,
+    "second" => 2,
+    "third" => 3
+];
+
+estimates\test_function($test_array);
+
+// echo "<br>"; echo $TEST2;
+echo "The original array is: <br>"; print_r($test_array); echo "<br><br>";
+
+$url = "admins";
+$method = "GET";
+$fields = [];
+
+$return = CurlController::request($url, $method, $fields);
+
+if ($return === null) { echo "The return value of the curl request is NULL<br>"; }
+else { print_r($return); }
+
 return;
 
 $input = '{"object":"whatsapp_business_account","entry":[{"id":"1435203277506567","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"15556588621","phone_number_id":"661536270384648"},"contacts":[{"profile":{"name":"John Caro Molina"},"wa_id":"573014115327"}],"messages":[{"from":"573014115327","id":"wamid.HBgMNTczMDE0MTE1MzI3FQIAEhgWM0VCMDM3OURGNjIyQkMyMEM4M0M4QgA=","timestamp":"1759847240","text":{"body":"Venden v\u00e1lvulas de escape tvs?"},"type":"text"}]},"field":"messages"}]}]}';

@@ -25,5 +25,8 @@ Requerimientos
 
 require_once "controllers/routes.controller.php";
 
+// echo "Hello there";
+// return;
+
 $index = new RoutesController();
 $index -> index();

@@ -3,106 +3,92 @@
 /*=============================================
 Iniciar variables de sesión
 =============================================*/
-
 ob_start();
 session_start();
 
 /*=============================================
 Capturar parámetros de la url
 =============================================*/
-
+$server_uri = $_SERVER["REQUEST_URI"];
 $routesArray = explode("/", $_SERVER["REQUEST_URI"]);
-
 array_shift($routesArray);
 
-foreach ($routesArray as $key => $value) {
-
-	$routesArray[$key] = explode("?",$value)[0];
+foreach ($routesArray as $key => $value)
+{
+    $routesArray[$key] = explode("?",$value)[0];
+    // $routesArray[$key] = explode("?",$value)[1];
 }
 
-/*=============================================
+/*====================================================
 Validar si existe la base de datos con la tabla admins
-=============================================*/
-
+====================================================*/
 $url = "admins";
 $method = "GET";
 $fields = array();
-
-// echo '<pre>$url '; print_r($url); echo '</pre>';
-
 $adminTable = CurlController::request($url,$method,$fields);
 
-// echo '<pre>$adminTable '; print_r($adminTable); echo '</pre>';
-
-if($adminTable->status == 404){
-
-	$admin = null;
-
-}else{
-
-	$admin = $adminTable->results[0];
-	// echo '<br><pre>$adminTable '; print_r($adminTable->status); echo '</pre>';
-
+if($adminTable->status == 404)
+// if($adminTable === null)
+{
+    $admin = null;
+}
+else if($adminTable->status == 400)
+{
+    echo json_encode($adminTable);
+    die;
+}
+else
+{
+    $admin = $adminTable->results[0];
+    // echo '<br><pre>$adminTable '; print_r($adminTable->status); echo '</pre>';
 }
 
 // echo '<pre>$admin '; print_r($admin); echo '</pre>';
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/9966/9966194.png">
-
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 	<!--=============================================
 	Validamos si admin existe
 	===============================================-->
-
 	<?php if (!empty($admin)): ?>
 
 		<!--=============================================
 		Título del Dashboard
 		===============================================-->
-
 		<title><?php echo $admin->title_admin ?></title>
 
 		<!--=============================================
 		Típografía del dashboard
 		===============================================-->
-
 		<?php if ($admin->font_admin != null): ?>
-
 			<?php echo $admin->font_admin ?>
-
 		<?php endif ?>
 
 		<!--=============================================
 		Estilos propios del dashboard
 		===============================================-->
-
 		<style>
 
 			/*=============================================
 			Típografía del dashboard
 			=============================================*/
-
 			<?php if ($admin->font_admin != null):?>
-
 				body{
 					font-family: <?php echo str_replace("+"," ",explode("=",explode(":",explode("?",$admin->font_admin)[1])[0])[1]) ?>, sans-serif !important;
 				}
-
 			<?php endif ?>
 
 			/*=============================================
 			Color del dashboard
 			=============================================*/
-
 			.backColor{
 				background: <?php echo $admin->color_admin ?> !important;
 				color: #FFF !important;
@@ -128,25 +114,19 @@ if($adminTable->status == 404){
 			.page-link {
 				color: <?php echo $admin->color_admin ?> !important;
 			}
-
 		</style>
-
 	<?php else: ?>
-
 		<title>CMS Builder</title>
-
 	<?php endif ?>
 
 	<!--=============================================
 	CUSTOM JS SERVER
 	===============================================-->
-
 	<script src="/views/assets/js/alerts/alerts.js"></script>
 
 	<!--=============================================
 	PLUGINS CSS
 	===============================================-->
-
 	<!-- https://www.w3schools.com/bootstrap5/ -->
 	<link rel="stylesheet" href="/views/assets/plugins/bootstrap5/bootstrap.min.css" >
 	<!-- https://fontawesome.com/v5/search -->
@@ -177,7 +157,6 @@ if($adminTable->status == 404){
 	<!--=============================================
 	PLUGINS JS
 	===============================================-->
-
 	<!-- https://jquery.com/ -->
 	<script src="/views/assets/plugins/jquery/jquery.min.js"></script>
 	<!-- https://jqueryui.com/ -->
@@ -225,25 +204,20 @@ if($adminTable->status == 404){
 	<link rel="stylesheet" href="/views/assets/css/fms/fms.css">
 	<link rel="stylesheet" href="/views/assets/css/chat/chat.css">
 
-
 </head>
 <body>
-
 	<?php
-
-	if(!isset($_SESSION["admin"])){
-
-		if($admin == null){
-
+	if(!isset($_SESSION["admin"]))
+    {
+		if($admin == null)
+        {
 			include "pages/install/install.php";
-
-		}else{
-
+		}
+        else
+        {
 			include "pages/login/login.php";
 		}
-
 	}
-
 	?>
 
 	<?php if (isset($_SESSION["admin"])): ?>
@@ -251,199 +225,157 @@ if($adminTable->status == 404){
 		<!--=============================================
 		PLANTILLA DASHBOARD
 		===============================================-->
-
 		<div class="d-flex backDashboard" id="wrapper">
 
 			<!--=============================================
 			SIDEBAR
 			===============================================-->
-
 			<?php include "modules/sidebar.php" ?>
-
 			<div id="page-content-wrapper">
 
 				<!--=============================================
 				NAV
 				===============================================-->
-
 				<?php include "modules/nav.php" ?>
 
 				<!--=============================================
 				MAIN PAGE
 				===============================================-->
-
 				<?php if (!empty($routesArray[0])): ?>
-
 					<?php if ($routesArray[0] == "logout"): ?>
-
 						<?php include "pages/".$routesArray[0]."/".$routesArray[0].".php"; ?>
-
 					<?php else: ?>
 
 						<!--=========================================
 						Validar permisos
 						===========================================-->
-
 						<?php if ($_SESSION["admin"]->rol_admin == "superadmin" || $_SESSION["admin"]->rol_admin == "admin" || $_SESSION["admin"]->rol_admin == "editor" && isset(json_decode(urldecode($_SESSION["admin"]->permissions_admin), true)[$routesArray[0]]) && json_decode(urldecode($_SESSION["admin"]->permissions_admin), true)[$routesArray[0]] == "on"): ?>
 
 							<!--=========================================
 							Agregamos páginas dinámicas y personalizadas
 							===========================================-->
-
 							<?php
+                            $url = "pages?linkTo=url_page&equalTo=".$routesArray[0];
+                            $method = "GET";
+                            $fields = array();
+                            $page = CurlController::request($url,$method,$fields);
 
-								$url = "pages?linkTo=url_page&equalTo=".$routesArray[0];
-								$method = "GET";
-								$fields = array();
-
-								$page = CurlController::request($url,$method,$fields);
-
-								if($page->status == 200 && $page->results[0]->type_page == "modules"){
-
-									include "pages/dynamic/dynamic.php";
-
-								}else if($page->status == 200 && $page->results[0]->type_page == "custom"){
-
-									include "pages/custom/".$routesArray[0]."/".$routesArray[0].".php";
-
-								}else{
-
-									include "pages/404/404.php";
-
-								}
-
+                            if($page->status == 200 && $page->results[0]->type_page == "modules")
+                            {
+                                include "pages/dynamic/dynamic.php";
+                            }
+                            else if($page->status == 200 && $page->results[0]->type_page == "custom")
+                            {
+                                include "pages/custom/".$routesArray[0]."/".$routesArray[0].".php";
+                            }
+                            else
+                            {
+                                include "pages/404/404.php";
+                            }
 							?>
 
 						<?php else: ?>
-
 							<?php include "pages/404/404.php"; ?>
-
 						<?php endif ?>
-
 					<?php endif ?>
-
 				<?php else: ?>
 
 
 					<!--=========================================
 				 	Validar permisos para super y admins
 					===========================================-->
-
 					<?php if ($_SESSION["admin"]->rol_admin == "superadmin" || $_SESSION["admin"]->rol_admin == "admin"): ?>
 
 						<!--=========================================
 						Agregamos la página inicial
 						===========================================-->
-
 						<?php
+                        $url = "pages?linkTo=order_page&equalTo=1";
+                        $method = "GET";
+                        $fields = array();
+                        $page = CurlController::request($url,$method,$fields);
 
-							$url = "pages?linkTo=order_page&equalTo=1";
-							$method = "GET";
-							$fields = array();
-
-							$page = CurlController::request($url,$method,$fields);
-
-							if($page->status == 200 && $page->results[0]->type_page == "modules"){
-
-								include "pages/dynamic/dynamic.php";
-
-							}else if($page->status == 200 && $page->results[0]->type_page == "custom"){
-
-								include "pages/custom/".$page->results[0]->url_page."/".$page->results[0]->url_page.".php";
-
-							}else{
-
-								include "pages/404/404.php";
-
-							}
-
+                        if($page->status == 200 && $page->results[0]->type_page == "modules")
+                        {
+                            include "pages/dynamic/dynamic.php";
+                        }
+                        else if($page->status == 200 && $page->results[0]->type_page == "custom")
+                        {
+                            include "pages/custom/".$page->results[0]->url_page."/".$page->results[0]->url_page.".php";
+                        }
+                        else
+                        {
+                            include "pages/404/404.php";
+                        }
 						?>
 
 					<?php else: ?>
 
-					<!--=========================================
-				 	Validar permisos para editores
-					===========================================-->
-
+                        <!--=========================================
+                        Validar permisos para editores
+                        ===========================================-->
 						<?php if ($_SESSION["admin"]->rol_admin == "editor"): ?>
-
 							<?php
+                            $url = "pages?linkTo=url_page&equalTo=".array_keys(json_decode(urldecode($_SESSION["admin"]->permissions_admin),true))[0];
+                            $method = "GET";
+                            $fields = array();
+                            $page = CurlController::request($url,$method,$fields);
+                            $routesArray[0] = array_keys(json_decode(urldecode($_SESSION["admin"]->permissions_admin),true))[0];
 
-								$url = "pages?linkTo=url_page&equalTo=".array_keys(json_decode(urldecode($_SESSION["admin"]->permissions_admin),true))[0];
-								$method = "GET";
-								$fields = array();
-
-								$page = CurlController::request($url,$method,$fields);
-
-								$routesArray[0] = array_keys(json_decode(urldecode($_SESSION["admin"]->permissions_admin),true))[0];
-
-								if($page->status == 200 && $page->results[0]->type_page == "modules"){
-
-									include "pages/dynamic/dynamic.php";
-
-								}else if($page->status == 200 && $page->results[0]->type_page == "custom"){
-
-									include "pages/custom/".$page->results[0]->url_page."/".$page->results[0]->url_page.".php";
-
-								}else{
-
-									include "pages/404/404.php";
-
-								}
-
+                            if($page->status == 200 && $page->results[0]->type_page == "modules")
+                            {
+                                include "pages/dynamic/dynamic.php";
+                            }
+                            else if($page->status == 200 && $page->results[0]->type_page == "custom")
+                            {
+                                include "pages/custom/".$page->results[0]->url_page."/".$page->results[0]->url_page.".php";
+                            }
+                            else
+                            {
+                                include "pages/404/404.php";
+                            }
 							?>
 
 						<?php endif ?>
-
 					<?php endif ?>
-
 				<?php endif ?>
-
 			</div>
-
 		</div>
 
 		<?php
-
 		/*=============================================
     	Incluimos modal de perfiles
     	=============================================*/
-
     	include "modules/modals/profile.php";
 		require_once "controllers/admins.controller.php";
 		$update = new AdminsController();
 	    $update->updateAdmin();
 
-	    if($_SESSION["admin"]->rol_admin == "superadmin"){
-
+	    if($_SESSION["admin"]->rol_admin == "superadmin")
+        {
 	    	/*=============================================
 	    	Incluimos modal de páginas
 	    	=============================================*/
-
 		    include "views/modules/modals/pages.php";
-
 		    require_once "controllers/pages.controller.php";
+
 			$managePage = new PagesController();
 		    $managePage->managePage();
 
 		    /*=============================================
 	    	Incluimos modal de módulos
 	    	=============================================*/
-
 		    include "views/modules/modals/modules.php";
-
 		    require_once "controllers/modules.controller.php";
+
 			$manageModule = new ModulesController();
 			$manageModule->manageModule();
-
 		}
-
 		?>
 
 	<!--=============================================
 	CUSTOM JS
 	===============================================-->
-
 	<script src="/views/assets/js/dashboard/dashboard.js"></script>
 	<script src="/views/assets/js/pages/pages.js"></script>
 	<script src="/views/assets/js/modules/modules.js"></script>
@@ -451,11 +383,9 @@ if($adminTable->status == 404){
 	<script src="/views/assets/js/dynamic-tables/dynamic-tables.js"></script>
 	<script src="/views/assets/js/fms/fms.js"></script>
 
-
 	<?php endif ?>
 
 	<script src="/views/assets/js/forms/forms.js"></script>
-
 
 </body>
 </html>

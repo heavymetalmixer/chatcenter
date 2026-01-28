@@ -20,15 +20,29 @@ class CurlController{
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_POSTFIELDS => $fields,
+            // CURLOPT_VERBOSE => true,
             CURLOPT_HTTPHEADER => array(
                 'Authorization: gsdfgdfhdsfhsdfgh4332465dfhdfgh34sdgsdfg345AFSGFghdrfh4'
             ),
         ));
 
+        // curl_setopt($curl, CURLOPT_URL, 'http://api-chatcenter.com/'.$url);
+        // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        // curl_setopt($curl, CURLOPT_ENCODING, '');
+        // curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+        // curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+        // curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        // curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        // curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+        // curl_setopt($curl, CURLOPT_POSTFIELDS, $fields);
+        // curl_setopt($curl,CURLOPT_HTTPHEADER, array(
+        //         'Authorization: gsdfgdfhdsfhsdfgh4332465dfhdfgh34sdgsdfg345AFSGFghdrfh4'
+        // ));
+
         $response = curl_exec($curl);
         // echo '<br>$response'; print_r($response); echo '<br>';
 
-        curl_close($curl);
+        // curl_close($curl);
         $response = json_decode($response);
         // echo '<br>$response'; print_r($response); echo '<br>';
 

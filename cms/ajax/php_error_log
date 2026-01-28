@@ -1,0 +1,5 @@
+[28-Jan-2026 15:29:34 America/Bogota] PHP Warning:  Attempt to read property "status" on null in C:\laragon\www\chatcenter\cms\ajax\chat.ajax.php on line 597
+[28-Jan-2026 15:29:34 America/Bogota] PHP Warning:  Attempt to read property "status" on null in C:\laragon\www\chatcenter\cms\ajax\chat.ajax.php on line 597
+[28-Jan-2026 15:29:34 America/Bogota] PHP Warning:  Attempt to read property "status" on null in C:\laragon\www\chatcenter\cms\ajax\chat.ajax.php on line 40
+[28-Jan-2026 15:29:37 America/Bogota] PHP Warning:  Undefined variable $lastIdMessage in C:\laragon\www\chatcenter\cms\ajax\chat.ajax.php on line 766
+[28-Jan-2026 15:29:37 America/Bogota] PHP Warning:  Undefined variable $lastIdMessage in C:\laragon\www\chatcenter\cms\ajax\chat.ajax.php on line 766
